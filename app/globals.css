@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+/*
+  NIMBUS design system.
+  These CSS variables are our single source of truth for the brand look.
+  Change a value here once, and it updates everywhere on the site.
+*/
+@theme inline {
+  /* Colors */
+  --color-paper: #f7f7f4; /* off-white base background */
+  --color-ink: #14161a; /* soft near-black for text */
+  --color-mist: #ececea; /* light grey surfaces / placeholders */
+  --color-line: #e4e4df; /* hairline borders */
+  --color-muted: #6d7178; /* secondary / muted text */
+  --color-storm: #2a5a7c; /* THE accent: deep storm blue */
+  --color-storm-dark: #1e415b; /* darker accent for hover */
+  --color-storm-tint: #eef3f6; /* very light accent wash */
+
+  /* Fonts (wired to next/font in layout.tsx) */
+  --font-heading: var(--font-space);
+  --font-body: var(--font-inter);
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body), Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* A gentle scroll-reveal helper we can reuse later */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    animation: reveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/*
+  Subtle falling rain — used ONLY inside the dark hero.
+  Each drop is a thin fading line; positions/speeds are set per-drop in JSX.
+  GPU-friendly (animates transform only) and disabled for reduced-motion users.
+*/
+.rain-drop {
+  position: absolute;
+  top: -80px;
+  width: 1.5px;
+  border-radius: 9999px;
+  background: linear-gradient(to bottom, transparent, rgba(178, 202, 219, 0.9));
+  animation-name: rainfall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+@keyframes rainfall {
+  to {
+    transform: translateY(780px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rain-drop {
+    animation: none;
+    opacity: 0 !important;
+  }
+}
+
+/* Little "bump" the cart icon does when an item is added. */
+@keyframes cart-bump {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.3); }
+  60% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+.cart-bump {
+  animation: cart-bump 0.4s ease;
+}
