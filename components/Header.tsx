@@ -6,7 +6,7 @@ import { UmbrellaMark, SearchIcon, HeartIcon, UserIcon } from "./icons";
 import { CartButton } from "./CartButton";
 
 // Pages that get a stripped-down header (just the logo) — like real stores' auth pages.
-const MINIMAL_ROUTES = ["/login", "/signup", "/welcome"];
+const MINIMAL_ROUTES = ["/login", "/signup", "/welcome", "/forgot-password", "/reset-password", "/verify-email"];
 
 export function Header({ loggedIn, admin = false }: { loggedIn: boolean; admin?: boolean }) {
   const pathname = usePathname();

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "@/components/LogoutButton";
+import { AccountVerifyBanner } from "@/components/AccountVerifyBanner";
 import { AddressManager } from "@/components/AddressManager";
 import { getMyAddresses } from "@/lib/addresses";
 import { getMyOrders } from "@/lib/orders";
@@ -26,7 +27,14 @@ export default async function AccountPage() {
     <div className="mx-auto w-full max-w-3xl px-5 py-12">
       <h1 className="font-heading text-3xl font-semibold tracking-tight">My account</h1>
 
-      <div className="mt-8 rounded-2xl border border-line bg-white p-6">
+      <div className="mt-6">
+        <AccountVerifyBanner
+          email={user.email!}
+          verified={user.user_metadata?.otp_verified === true}
+        />
+      </div>
+
+      <div className="rounded-2xl border border-line bg-white p-6">
         <p className="text-sm text-muted">Signed in as</p>
         <p className="mt-0.5 text-lg font-medium">{user.email}</p>
         <div className="mt-4">

@@ -32,10 +32,8 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           router.push("/welcome");
           router.refresh();
         } else {
-          // Email confirmation is on → user must confirm first.
-          setMessage(
-            "Almost there! Check your email to confirm your account, then log in.",
-          );
+          // Email confirmation is on → send them to enter the 6-digit code.
+          router.push(`/verify-email?email=${encodeURIComponent(email)}`);
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -93,7 +91,14 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       </div>
 
       <div>
-        <label htmlFor="password" className="text-sm font-medium">Password</label>
+        <div className="flex items-center justify-between">
+          <label htmlFor="password" className="text-sm font-medium">Password</label>
+          {!isSignup && (
+            <a href="/forgot-password" className="text-xs font-medium text-storm hover:underline">
+              Forgot password?
+            </a>
+          )}
+        </div>
         <input
           id="password"
           type="password"

@@ -7,7 +7,7 @@ import { UmbrellaMark } from "./icons";
 // The site-wide footer. Hidden on the minimal login / signup pages.
 export function Footer() {
   const pathname = usePathname();
-  if (["/login", "/signup", "/welcome"].includes(pathname)) return null;
+  if (["/login", "/signup", "/welcome", "/forgot-password", "/reset-password", "/verify-email"].includes(pathname)) return null;
 
   return (
     <footer className="border-t border-line bg-ink text-paper">
