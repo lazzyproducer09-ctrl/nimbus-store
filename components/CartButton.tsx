@@ -24,12 +24,13 @@ export function CartButton() {
     <button
       onClick={openCart}
       aria-label="Open cart"
-      className="relative transition-transform hover:scale-110"
+      className="group relative flex flex-col items-center transition-transform hover:scale-110"
     >
       <BagIcon className={`h-5 w-5 ${bump ? "cart-bump" : ""}`} />
+      <span className="mt-0.5 text-[10px] text-muted group-hover:text-ink">Cart</span>
       {hydrated && count > 0 && (
         <span
-          className={`absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-storm px-1 text-[10px] font-semibold text-white ${
+          className={`absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-storm px-1 text-[10px] font-semibold text-white ${
             bump ? "cart-bump" : ""
           }`}
         >

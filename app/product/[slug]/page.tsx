@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProductBySlug } from "@/lib/products";
+import { getProductBySlug, getSimilarProducts } from "@/lib/products";
 import { inr } from "@/lib/format";
 import { UmbrellaMark } from "@/components/icons";
 import { ProductOptions } from "@/components/ProductOptions";
+import { ProductCard } from "@/components/ProductCard";
+import { WishlistButton } from "@/components/WishlistButton";
 
 export const revalidate = 60;
 
@@ -22,6 +24,8 @@ export default async function ProductPage({
   const discount = product.compare_at_price
     ? Math.round((1 - product.price / product.compare_at_price) * 100)
     : 0;
+
+  const similar = await getSimilarProducts(product.category, product.id);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-5 py-10">
@@ -114,6 +118,22 @@ export default async function ProductPage({
           {/* size / colour / quantity + add to cart */}
           <ProductOptions product={product} />
 
+          <div className="mt-3">
+            <WishlistButton
+              variant="labeled"
+              item={{
+                productId: product.id,
+                slug: product.slug,
+                name: product.name,
+                price: product.price,
+                compare_at_price: product.compare_at_price,
+                image: product.images[0] ?? null,
+                rating: product.rating,
+                review_count: product.review_count,
+              }}
+            />
+          </div>
+
           {/* trust badges */}
           <div className="mt-8 grid grid-cols-3 gap-3 border-t border-line pt-6 text-center text-xs text-muted">
             <div>
@@ -131,6 +151,20 @@ export default async function ProductPage({
           </div>
         </div>
       </div>
+
+      {/* ---- similar products ---- */}
+      {similar.length > 0 && (
+        <section className="mt-16">
+          <h2 className="font-heading text-2xl font-semibold tracking-tight">
+            You may also like
+          </h2>
+          <div className="mt-6 grid grid-cols-2 gap-5 md:grid-cols-4">
+            {similar.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

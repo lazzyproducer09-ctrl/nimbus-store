@@ -1,13 +1,20 @@
 import Link from "next/link";
 import { getAllOrders } from "@/lib/orders";
 import { getAllProducts } from "@/lib/products-admin";
+import { getSetting } from "@/lib/settings";
 import { inr } from "@/lib/format";
+import { HeroImageManager } from "@/components/HeroImageManager";
 
 export default async function AdminDashboard() {
-  const [orders, products] = await Promise.all([getAllOrders(), getAllProducts()]);
+  const [orders, products, heroImage] = await Promise.all([
+    getAllOrders(),
+    getAllProducts(),
+    getSetting("hero_image_url"),
+  ]);
   const paid = orders.filter((o) => o.status === "paid");
   const revenue = paid.reduce((n, o) => n + o.total, 0);
   const lowStock = products.filter((p) => p.stock < 10);
+  const featuredCount = products.filter((p) => p.is_featured).length;
 
   const stats = [
     { label: "Revenue (paid)", value: inr(revenue), icon: "₹", tint: "bg-green-100 text-green-700" },
@@ -33,6 +40,24 @@ export default async function AdminDashboard() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* homepage hero image */}
+      <HeroImageManager currentUrl={heroImage} />
+
+      {/* featured control */}
+      <div className="rounded-2xl border border-line bg-white p-6">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h2 className="font-heading text-lg font-semibold">Featured on homepage</h2>
+            <p className="mt-1 text-xs text-muted">
+              {featuredCount} product{featuredCount === 1 ? "" : "s"} marked &ldquo;Featured&rdquo; show in the homepage bestsellers row. Toggle it per product.
+            </p>
+          </div>
+          <Link href="/admin/products" className="flex-shrink-0 text-sm font-medium text-storm hover:underline">
+            Manage →
+          </Link>
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">

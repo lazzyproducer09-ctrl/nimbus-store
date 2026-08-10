@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { UmbrellaMark, SearchIcon, HeartIcon, UserIcon } from "./icons";
+import { UmbrellaMark, SearchIcon, UserIcon } from "./icons";
 import { CartButton } from "./CartButton";
+import { WishlistHeaderButton } from "./WishlistHeaderButton";
 
 // Pages that get a stripped-down header (just the logo) — like real stores' auth pages.
 const MINIMAL_ROUTES = ["/login", "/signup", "/welcome", "/forgot-password", "/reset-password", "/verify-email"];
@@ -42,10 +43,7 @@ export function Header({ loggedIn, admin = false }: { loggedIn: boolean; admin?:
           <Link className="transition-colors hover:text-ink" href="#">About</Link>
         </div>
 
-        <div className="flex items-center gap-4 text-ink">
-          <Link href="/shop" aria-label="Search" className="transition-transform hover:scale-110">
-            <SearchIcon className="h-5 w-5" />
-          </Link>
+        <div className="flex items-center gap-4 text-ink sm:gap-5">
           {admin && (
             <Link
               href="/admin"
@@ -62,16 +60,24 @@ export function Header({ loggedIn, admin = false }: { loggedIn: boolean; admin?:
               Orders
             </Link>
           )}
-          {/* Wishlist page is built in an upcoming milestone */}
-          <Link href="#" aria-label="Wishlist" className="transition-transform hover:scale-110">
-            <HeartIcon className="h-5 w-5" />
+          <Link
+            href="/shop"
+            aria-label="Search"
+            className="group flex flex-col items-center transition-transform hover:scale-110"
+          >
+            <SearchIcon className="h-5 w-5" />
+            <span className="mt-0.5 text-[10px] text-muted group-hover:text-ink">Search</span>
           </Link>
+          <WishlistHeaderButton />
           <Link
             href={loggedIn ? "/account" : "/login"}
             aria-label={loggedIn ? "My account" : "Log in"}
-            className="transition-transform hover:scale-110"
+            className="group flex flex-col items-center transition-transform hover:scale-110"
           >
             <UserIcon className="h-5 w-5" />
+            <span className="mt-0.5 text-[10px] text-muted group-hover:text-ink">
+              {loggedIn ? "Account" : "Login"}
+            </span>
           </Link>
           <CartButton />
         </div>

@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CartProvider } from "@/lib/cart-context";
+import { WishlistProvider } from "@/lib/wishlist-context";
 import { CartDrawer } from "@/components/CartDrawer";
 import { createClient } from "@/lib/supabase/server";
 import { isAdmin } from "@/lib/admin";
@@ -40,10 +41,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col overflow-x-hidden">
         <CartProvider>
-          <Header loggedIn={!!user} admin={isAdmin(user?.email)} />
-          <main className="flex flex-1 flex-col">{children}</main>
-          <Footer />
-          <CartDrawer />
+          <WishlistProvider>
+            <Header loggedIn={!!user} admin={isAdmin(user?.email)} />
+            <main className="flex flex-1 flex-col">{children}</main>
+            <Footer />
+            <CartDrawer />
+          </WishlistProvider>
         </CartProvider>
       </body>
     </html>

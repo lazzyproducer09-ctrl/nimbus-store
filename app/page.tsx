@@ -6,9 +6,8 @@ import Link from "next/link";
 import { getFeaturedProducts } from "@/lib/products";
 import { ProductCard } from "@/components/ProductCard";
 import { UmbrellaMark } from "@/components/icons";
-
-// Re-check the database for product changes at most once a minute.
-export const revalidate = 60;
+import { createClient } from "@/lib/supabase/server";
+import { getSetting } from "@/lib/settings";
 
 const CATEGORY_TILES = [
   { name: "Raincoats", blurb: "Stay dry, in style" },
@@ -20,6 +19,14 @@ const CATEGORY_TILES = [
 export default async function Home() {
   // Ask the database for our featured products (runs on the server).
   const products = await getFeaturedProducts();
+  const heroImage = await getSetting("hero_image_url");
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const fullName: string =
+    user?.user_metadata?.full_name || user?.user_metadata?.name || "";
+  const firstName = fullName.trim().split(" ")[0];
 
   return (
     <div className="flex flex-1 flex-col font-body text-ink">
@@ -63,7 +70,7 @@ export default async function Home() {
           <div className="reveal">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-paper/70 backdrop-blur-sm">
               <span className="h-1.5 w-1.5 rounded-full bg-storm" />
-              Built for the Indian monsoon
+              {firstName ? `Hi, ${firstName} 👋 · welcome back` : "Built for the Indian monsoon"}
             </span>
             <h1 className="mt-5 font-heading text-5xl font-semibold leading-[1.05] tracking-tight md:text-6xl">
               Stay dry.
@@ -92,10 +99,19 @@ export default async function Home() {
 
           {/* floating product frame */}
           <div className="reveal relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-sm md:aspect-square">
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-paper/50">
-              <UmbrellaMark className="h-14 w-14 text-storm" />
-              <span className="text-xs tracking-wide">hero product photo</span>
-            </div>
+            {heroImage ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={heroImage}
+                alt="NIMBUS rainwear"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            ) : (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-paper/50">
+                <UmbrellaMark className="h-14 w-14 text-storm" />
+                <span className="text-xs tracking-wide">hero product photo</span>
+              </div>
+            )}
           </div>
         </div>
       </section>

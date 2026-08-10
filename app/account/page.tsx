@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "@/components/LogoutButton";
 import { AccountVerifyBanner } from "@/components/AccountVerifyBanner";
+import { PersonalInfo } from "@/components/PersonalInfo";
 import { AddressManager } from "@/components/AddressManager";
 import { getMyAddresses } from "@/lib/addresses";
 import { getMyOrders } from "@/lib/orders";
@@ -23,6 +24,7 @@ export default async function AccountPage() {
   const addresses = await getMyAddresses();
   const orders = await getMyOrders();
   const isVerified = user.user_metadata?.otp_verified === true;
+  const name: string = user.user_metadata?.full_name || user.user_metadata?.name || "";
 
   return (
     <div className="mx-auto w-full max-w-3xl px-5 py-12">
@@ -36,17 +38,12 @@ export default async function AccountPage() {
       </div>
 
       <div className="rounded-2xl border border-line bg-white p-6">
-        <p className="text-sm text-muted">Signed in as</p>
-        <div className="mt-0.5 flex flex-wrap items-center gap-2">
-          <p className="text-lg font-medium">{user.email}</p>
-          {isVerified && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700">
-              ✓ Verified
-            </span>
-          )}
+        <div className="flex items-center justify-between">
+          <h2 className="font-heading text-lg font-semibold">Personal information</h2>
+          <LogoutButton />
         </div>
         <div className="mt-4">
-          <LogoutButton />
+          <PersonalInfo initialName={name} email={user.email!} verified={isVerified} />
         </div>
       </div>
 

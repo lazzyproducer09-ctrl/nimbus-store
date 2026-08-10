@@ -5,6 +5,7 @@ import type { Product } from "@/lib/products";
 import { inr } from "@/lib/format";
 import { useCart } from "@/lib/cart-context";
 import { UmbrellaMark } from "./icons";
+import { WishlistButton } from "./WishlistButton";
 
 // One product card. Image + name link to the product page; an "Add to cart"
 // control (which becomes a − quantity + stepper) sits at the bottom.
@@ -33,7 +34,22 @@ export function ProductCard({ product: p }: { product: Product }) {
   }
 
   return (
-    <div className="group flex flex-col">
+    <div className="group relative flex flex-col">
+      {/* wishlist heart (sits over the image, not part of the link) */}
+      <div className="absolute right-3 top-3 z-20">
+        <WishlistButton
+          item={{
+            productId: p.id,
+            slug: p.slug,
+            name: p.name,
+            price: p.price,
+            compare_at_price: p.compare_at_price,
+            image: p.images[0] ?? null,
+            rating: p.rating,
+            review_count: p.review_count,
+          }}
+        />
+      </div>
       <Link href={`/product/${p.slug}`} className="block">
         <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-line bg-mist shadow-sm transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl">
           {p.tag && (
