@@ -18,8 +18,24 @@ export function AccountVerifyBanner({
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [justVerified, setJustVerified] = useState(false);
 
-  if (verified) return null;
+  if (verified && !justVerified) return null;
+
+  // Success state: shown for a moment right after verifying, before the
+  // page refreshes and this banner disappears for good.
+  if (justVerified) {
+    return (
+      <div className="mb-6 rounded-2xl border border-green-200 bg-green-50 p-5">
+        <p className="text-sm font-medium text-green-800">
+          ✅ Email verified successfully!
+        </p>
+        <p className="mt-0.5 text-xs text-green-700">
+          Your account is now fully secured.
+        </p>
+      </div>
+    );
+  }
 
   async function sendCode() {
     setLoading(true);
@@ -51,7 +67,10 @@ export function AccountVerifyBanner({
     }
     await supabase.auth.updateUser({ data: { otp_verified: true } });
     setLoading(false);
-    router.refresh();
+    setJustVerified(true);
+    // Give the customer a moment to see the success message, then refresh
+    // the page data so the badge appears and this banner goes away.
+    setTimeout(() => router.refresh(), 1800);
   }
 
   return (

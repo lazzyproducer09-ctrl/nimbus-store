@@ -10,6 +10,7 @@ export function VerifyEmailForm({ email }: { email: string }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resent, setResent] = useState(false);
+  const [verified, setVerified] = useState(false);
 
   async function verify(e: React.FormEvent) {
     e.preventDefault();
@@ -27,8 +28,11 @@ export function VerifyEmailForm({ email }: { email: string }) {
       return;
     }
     await supabase.auth.updateUser({ data: { otp_verified: true } });
-    router.push("/welcome");
-    router.refresh();
+    setVerified(true);
+    setTimeout(() => {
+      router.push("/welcome");
+      router.refresh();
+    }, 1200);
   }
 
   async function resend() {
@@ -38,6 +42,15 @@ export function VerifyEmailForm({ email }: { email: string }) {
     const { error } = await supabase.auth.resend({ type: "signup", email });
     if (error) setError(error.message);
     else setResent(true);
+  }
+
+  if (verified) {
+    return (
+      <div className="rounded-lg bg-green-50 px-4 py-6 text-center">
+        <p className="text-sm font-medium text-green-800">✅ Email verified successfully!</p>
+        <p className="mt-1 text-xs text-green-700">Taking you to the next step…</p>
+      </div>
+    );
   }
 
   return (

@@ -22,6 +22,7 @@ export default async function AccountPage() {
 
   const addresses = await getMyAddresses();
   const orders = await getMyOrders();
+  const isVerified = user.user_metadata?.otp_verified === true;
 
   return (
     <div className="mx-auto w-full max-w-3xl px-5 py-12">
@@ -36,7 +37,14 @@ export default async function AccountPage() {
 
       <div className="rounded-2xl border border-line bg-white p-6">
         <p className="text-sm text-muted">Signed in as</p>
-        <p className="mt-0.5 text-lg font-medium">{user.email}</p>
+        <div className="mt-0.5 flex flex-wrap items-center gap-2">
+          <p className="text-lg font-medium">{user.email}</p>
+          {isVerified && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700">
+              ✓ Verified
+            </span>
+          )}
+        </div>
         <div className="mt-4">
           <LogoutButton />
         </div>
