@@ -18,6 +18,7 @@ export type Product = {
   tag: string | null;
   is_featured: boolean;
   is_active: boolean;
+  sort_order: number;
   created_at: string;
 };
 
@@ -27,7 +28,7 @@ export async function getFeaturedProducts(): Promise<Product[]> {
     .from("products")
     .select("*")
     .eq("is_featured", true)
-    .order("created_at", { ascending: true })
+    .order("sort_order", { ascending: true })
     .limit(4);
 
   if (error) {
@@ -100,7 +101,7 @@ export async function getProducts(opts: {
       query = query.order("rating", { ascending: false });
       break;
     default:
-      query = query.order("created_at", { ascending: true });
+      query = query.order("sort_order", { ascending: true });
   }
 
   const { data, error } = await query;
@@ -122,6 +123,7 @@ export async function getSimilarProducts(
     .eq("is_active", true)
     .eq("category", category)
     .neq("id", excludeId)
+    .order("sort_order", { ascending: true })
     .limit(4);
   if (error) {
     console.error("Failed to load similar products:", error.message);

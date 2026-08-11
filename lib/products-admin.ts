@@ -8,7 +8,7 @@ export async function getAllProducts(): Promise<Product[]> {
   const { data, error } = await supabase
     .from("products")
     .select("*")
-    .order("created_at", { ascending: false });
+    .order("sort_order", { ascending: true });
   if (error) {
     console.error("Failed to load all products:", error.message);
     return [];

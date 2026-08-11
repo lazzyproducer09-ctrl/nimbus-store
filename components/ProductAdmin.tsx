@@ -134,7 +134,8 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
         const { error } = await supabase.from("products").update(payload).eq("id", editingId);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("products").insert(payload);
+        const nextOrder = initialProducts.reduce((max, p) => Math.max(max, p.sort_order), -1) + 1;
+        const { error } = await supabase.from("products").insert({ ...payload, sort_order: nextOrder });
         if (error) throw error;
       }
       setShowForm(false);
@@ -149,6 +150,22 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
   async function remove(p: Product) {
     await supabase.from("products").delete().eq("id", p.id);
     setPendingDelete(null);
+    router.refresh();
+  }
+
+  const [reordering, setReordering] = useState<string | null>(null);
+
+  async function move(index: number, direction: -1 | 1) {
+    const target = index + direction;
+    if (target < 0 || target >= initialProducts.length) return;
+    const a = initialProducts[index];
+    const b = initialProducts[target];
+    setReordering(a.id);
+    await Promise.all([
+      supabase.from("products").update({ sort_order: b.sort_order }).eq("id", a.id),
+      supabase.from("products").update({ sort_order: a.sort_order }).eq("id", b.id),
+    ]);
+    setReordering(null);
     router.refresh();
   }
 
@@ -272,9 +289,32 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
         </form>
       )}
 
-      <div className="mt-4 space-y-2">
-        {initialProducts.map((p) => (
+      <p className="mt-4 text-xs text-muted">
+        Order below = order on the shop page &amp; homepage. Use ↑ / ↓ to reorder.
+      </p>
+      <div className="mt-2 space-y-2">
+        {initialProducts.map((p, i) => (
           <div key={p.id} className="flex items-center gap-3 rounded-xl border border-line bg-white p-3">
+            <div className="flex flex-shrink-0 flex-col">
+              <button
+                type="button"
+                onClick={() => move(i, -1)}
+                disabled={i === 0 || reordering !== null}
+                className="flex h-6 w-6 items-center justify-center rounded text-muted transition-colors hover:bg-mist hover:text-ink disabled:opacity-25"
+                aria-label="Move up"
+              >
+                ↑
+              </button>
+              <button
+                type="button"
+                onClick={() => move(i, 1)}
+                disabled={i === initialProducts.length - 1 || reordering !== null}
+                className="flex h-6 w-6 items-center justify-center rounded text-muted transition-colors hover:bg-mist hover:text-ink disabled:opacity-25"
+                aria-label="Move down"
+              >
+                ↓
+              </button>
+            </div>
             <div className="h-14 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-line bg-mist">
               {p.images?.[0] ? (
                 // eslint-disable-next-line @next/next/no-img-element
