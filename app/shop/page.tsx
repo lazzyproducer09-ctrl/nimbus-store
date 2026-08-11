@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getProducts, CATEGORIES, type SortOption } from "@/lib/products";
 import { ProductCard } from "@/components/ProductCard";
+import { Reveal } from "@/components/Reveal";
 import { SearchIcon } from "@/components/icons";
 
 export const revalidate = 60;
@@ -128,8 +129,10 @@ export default async function ShopPage({
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-5 md:grid-cols-4">
-          {products.map((p) => (
-            <ProductCard key={p.id} product={p} />
+          {products.map((p, i) => (
+            <Reveal key={p.id} delay={(i % 4) * 70}>
+              <ProductCard product={p} />
+            </Reveal>
           ))}
         </div>
       )}

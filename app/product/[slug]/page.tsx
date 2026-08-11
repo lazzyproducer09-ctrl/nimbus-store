@@ -2,9 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProductBySlug, getSimilarProducts } from "@/lib/products";
 import { inr } from "@/lib/format";
-import { UmbrellaMark } from "@/components/icons";
 import { ProductOptions } from "@/components/ProductOptions";
 import { ProductCard } from "@/components/ProductCard";
+import { ProductGallery } from "@/components/ProductGallery";
 import { WishlistButton } from "@/components/WishlistButton";
 
 export const revalidate = 60;
@@ -52,32 +52,7 @@ export default async function ProductPage({
       <div className="grid gap-10 md:grid-cols-2">
         {/* ---- gallery ---- */}
         <div>
-          <div className="relative aspect-square overflow-hidden rounded-3xl border border-line bg-mist">
-            {product.images.length > 0 ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={product.images[0]}
-                alt={product.name}
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-            ) : (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-storm/50">
-                <UmbrellaMark className="h-20 w-20" />
-                <span className="text-xs text-muted">product photo</span>
-              </div>
-            )}
-          </div>
-          {/* thumbnail row (placeholders until real photos are uploaded) */}
-          <div className="mt-3 grid grid-cols-4 gap-3">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div
-                key={i}
-                className="flex aspect-square items-center justify-center rounded-xl border border-line bg-mist text-storm/30"
-              >
-                <UmbrellaMark className="h-6 w-6" />
-              </div>
-            ))}
-          </div>
+          <ProductGallery images={product.images} name={product.name} />
 
           {/* product video, if the admin uploaded one */}
           {product.video_url && (
@@ -142,6 +117,26 @@ export default async function ProductPage({
               <span className="text-green-700">✓ In stock — ready to ship</span>
             )}
           </p>
+
+          {/* delivery & assurance strip — right where buying decisions happen */}
+          <div className="mt-5 grid grid-cols-2 gap-3 rounded-2xl border border-line bg-white p-4 text-xs sm:grid-cols-4">
+            <div className="flex flex-col items-center gap-1 text-center">
+              <span className="text-lg">🚚</span>
+              <span className="font-medium">Delivery in 3–6 days</span>
+            </div>
+            <div className="flex flex-col items-center gap-1 text-center">
+              <span className="text-lg">💵</span>
+              <span className="font-medium">Cash on delivery</span>
+            </div>
+            <div className="flex flex-col items-center gap-1 text-center">
+              <span className="text-lg">↩️</span>
+              <span className="font-medium">7-day easy returns</span>
+            </div>
+            <div className="flex flex-col items-center gap-1 text-center">
+              <span className="text-lg">🔒</span>
+              <span className="font-medium">Secure payment</span>
+            </div>
+          </div>
 
           {/* size / colour / quantity + add to cart */}
           <ProductOptions product={product} />

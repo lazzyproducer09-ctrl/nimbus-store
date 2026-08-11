@@ -55,7 +55,29 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-paper/10 pt-6 text-xs text-paper/50 md:flex-row">
+        {/* trust + accepted payments */}
+        <div className="mt-12 flex flex-col gap-4 border-t border-paper/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-xs font-medium text-paper/70">We accept</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {["UPI", "Visa", "Mastercard", "RuPay", "Net Banking", "COD"].map((m) => (
+                <span
+                  key={m}
+                  className="rounded-md border border-paper/15 bg-paper/5 px-2.5 py-1 text-[11px] font-medium text-paper/70"
+                >
+                  {m}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-paper/60">
+            <span>🇮🇳 Made in India</span>
+            <span>🔒 SSL secured</span>
+            <span>✓ Genuine products</span>
+          </div>
+        </div>
+
+        <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-paper/10 pt-6 text-xs text-paper/50 md:flex-row">
           <span>© 2026 NIMBUS. All rights reserved.</span>
           <span className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-green-400" />
