@@ -5,14 +5,18 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { ConfirmDialog } from "./ConfirmDialog";
 
-// Lets a customer request cancellation of a confirmed (paid/shipped) order.
+// Lets a customer REQUEST cancellation of a confirmed (paid/shipped) order.
+// The request goes to a "pending review" state; an admin approves it to cancel.
 export function CancelOrderButton({ orderId }: { orderId: string }) {
   const router = useRouter();
   const supabase = createClient();
   const [open, setOpen] = useState(false);
+  const [sending, setSending] = useState(false);
 
-  async function cancel() {
-    await supabase.from("orders").update({ status: "cancelled" }).eq("id", orderId);
+  async function requestCancel() {
+    setSending(true);
+    await supabase.from("orders").update({ status: "cancel_requested" }).eq("id", orderId);
+    setSending(false);
     setOpen(false);
     router.refresh();
   }
@@ -28,9 +32,9 @@ export function CancelOrderButton({ orderId }: { orderId: string }) {
       <ConfirmDialog
         open={open}
         title="Request cancellation?"
-        message="This order will be cancelled, and any payment will be refunded within 5–7 business days."
-        confirmLabel="Cancel order"
-        onConfirm={cancel}
+        message="We’ll send this cancellation request for review. Once it’s approved, any online payment is refunded to your original method within 5–7 business days."
+        confirmLabel={sending ? "Sending…" : "Send request"}
+        onConfirm={requestCancel}
         onCancel={() => setOpen(false)}
       />
     </>

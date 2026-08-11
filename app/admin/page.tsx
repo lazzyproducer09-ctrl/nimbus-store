@@ -7,14 +7,17 @@ import { HeroImageManager } from "@/components/HeroImageManager";
 import { SoundSettings } from "@/components/SoundSettings";
 
 export default async function AdminDashboard() {
-  const [orders, products, heroImage, heroVideo, soundEnabled, soundVolume] = await Promise.all([
-    getAllOrders(),
-    getAllProducts(),
-    getSetting("hero_image_url"),
-    getSetting("hero_video_url"),
-    getSetting("sound_enabled"),
-    getSetting("sound_volume"),
-  ]);
+  const [orders, products, heroImage, heroVideo, soundEnabled, soundVolume, soundType] =
+    await Promise.all([
+      getAllOrders(),
+      getAllProducts(),
+      getSetting("hero_image_url"),
+      getSetting("hero_video_url"),
+      getSetting("sound_enabled"),
+      getSetting("sound_volume"),
+      getSetting("sound_type"),
+    ]);
+  const cancelRequests = orders.filter((o) => o.status === "cancel_requested");
   const paid = orders.filter((o) => o.status === "paid");
   const revenue = paid.reduce((n, o) => n + o.total, 0);
   const lowStock = products.filter((p) => p.stock < 10);
@@ -29,6 +32,27 @@ export default async function AdminDashboard() {
 
   return (
     <div className="space-y-6">
+      {/* cancellation requests waiting for review */}
+      {cancelRequests.length > 0 && (
+        <Link
+          href="/admin/orders"
+          className="flex items-center justify-between gap-3 rounded-2xl border border-orange-300 bg-orange-50 p-5 transition-colors hover:bg-orange-100"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">⚠️</span>
+            <div>
+              <p className="font-heading font-semibold text-orange-800">
+                {cancelRequests.length} cancellation request{cancelRequests.length === 1 ? "" : "s"} to review
+              </p>
+              <p className="text-xs text-orange-700">
+                A customer asked to cancel. Approve or reject it in Orders.
+              </p>
+            </div>
+          </div>
+          <span className="flex-shrink-0 text-sm font-medium text-orange-800">Review →</span>
+        </Link>
+      )}
+
       {/* stat cards */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {stats.map((s) => (
@@ -53,6 +77,7 @@ export default async function AdminDashboard() {
       <SoundSettings
         initialEnabled={soundEnabled !== "false"}
         initialVolume={soundVolume ? parseFloat(soundVolume) : 0.5}
+        initialType={(soundType ?? "chime") as "chime" | "ding" | "coin" | "fanfare"}
       />
 
       {/* featured control */}

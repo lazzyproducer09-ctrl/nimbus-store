@@ -4,7 +4,13 @@ import type { CartItem } from "./cart-context";
 export type Order = {
   id: string;
   user_id: string;
-  status: "created" | "paid" | "shipped" | "delivered" | "cancelled";
+  status:
+    | "created"
+    | "paid"
+    | "shipped"
+    | "delivered"
+    | "cancel_requested"
+    | "cancelled";
   subtotal: number;
   shipping: number;
   total: number;

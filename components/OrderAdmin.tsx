@@ -13,9 +13,12 @@ const STATUS: Record<string, { label: string; cls: string; dot: string }> = {
   paid: { label: "Confirmed", cls: "bg-green-100 text-green-700", dot: "bg-green-500" },
   shipped: { label: "Shipped", cls: "bg-blue-100 text-blue-700", dot: "bg-blue-500" },
   delivered: { label: "Delivered", cls: "bg-emerald-100 text-emerald-700", dot: "bg-emerald-500" },
+  cancel_requested: { label: "Cancellation requested", cls: "bg-orange-100 text-orange-700", dot: "bg-orange-500" },
   cancelled: { label: "Cancelled", cls: "bg-red-100 text-red-700", dot: "bg-red-500" },
 };
-const STATUS_KEYS = Object.keys(STATUS);
+// Statuses the admin can set manually from the dropdown (cancel_requested is
+// customer-driven, so it's shown but not manually selectable).
+const STATUS_KEYS = ["created", "paid", "shipped", "delivered", "cancelled"];
 
 export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
   const router = useRouter();
@@ -49,8 +52,14 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
       {initialOrders.map((o) => {
         const s = STATUS[o.status] ?? { label: o.status, cls: "bg-mist text-muted", dot: "bg-muted" };
         const itemCount = o.items.reduce((n, it) => n + it.quantity, 0);
+        const cancelReq = o.status === "cancel_requested";
         return (
-          <div key={o.id} className="overflow-hidden rounded-2xl border border-line bg-white">
+          <div
+            key={o.id}
+            className={`overflow-hidden rounded-2xl border bg-white ${
+              cancelReq ? "border-orange-300 ring-1 ring-orange-200" : "border-line"
+            }`}
+          >
             {/* top bar */}
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-paper/40 px-5 py-3">
               <div className="flex items-center gap-3">
@@ -112,16 +121,46 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
               </div>
             </div>
 
+            {/* cancellation request banner + approve/reject */}
+            {cancelReq && (
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-orange-200 bg-orange-50 px-5 py-3">
+                <span className="text-sm font-medium text-orange-800">
+                  ⚠️ Customer requested cancellation — review this order.
+                </span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => updateStatus(o.id, "cancelled")}
+                    disabled={updating === o.id}
+                    className="h-9 rounded-full bg-red-600 px-4 text-sm font-medium text-white transition-colors hover:bg-red-700 disabled:opacity-50"
+                  >
+                    Approve &amp; cancel
+                  </button>
+                  <button
+                    onClick={() => updateStatus(o.id, "paid")}
+                    disabled={updating === o.id}
+                    className="h-9 rounded-full border border-ink/15 px-4 text-sm font-medium transition-colors hover:border-ink/40 disabled:opacity-50"
+                  >
+                    Reject (keep order)
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* actions */}
             <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-5 py-3">
               <div className="flex items-center gap-2">
                 <span className="text-xs text-muted">Update status</span>
                 <select
-                  value={o.status}
+                  value={STATUS_KEYS.includes(o.status) ? o.status : ""}
                   onChange={(e) => updateStatus(o.id, e.target.value)}
                   disabled={updating === o.id}
                   className="h-9 rounded-lg border border-line bg-white px-2 text-sm outline-none focus:border-storm disabled:opacity-50"
                 >
+                  {!STATUS_KEYS.includes(o.status) && (
+                    <option value="" disabled>
+                      {STATUS[o.status]?.label ?? o.status}
+                    </option>
+                  )}
                   {STATUS_KEYS.map((k) => (
                     <option key={k} value={k}>{STATUS[k].label}</option>
                   ))}

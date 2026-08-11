@@ -6,7 +6,8 @@ import { getSetting } from "@/lib/settings";
 import { inr } from "@/lib/format";
 import { PendingOrderActions } from "@/components/PendingOrderActions";
 import { CancelOrderButton } from "@/components/CancelOrderButton";
-import { SuccessSound } from "@/components/SuccessSound";
+import { OrderConfirmedCheck } from "@/components/OrderConfirmedCheck";
+import type { ChimeType } from "@/lib/chime";
 
 export const metadata: Metadata = { title: "Order — NIMBUS" };
 
@@ -35,11 +36,17 @@ const HEAD: Record<string, { icon: string; bg: string; title: string; sub: strin
     title: "Payment pending",
     sub: "Your payment isn’t complete yet. Finish it below to confirm your order.",
   },
+  cancel_requested: {
+    icon: "⏳",
+    bg: "bg-amber-100 text-amber-600",
+    title: "Cancellation requested",
+    sub: "We’ve received your cancellation request. Our team will review it shortly.",
+  },
   cancelled: {
     icon: "✕",
     bg: "bg-red-100 text-red-600",
     title: "Order cancelled",
-    sub: "This order was cancelled.",
+    sub: "This order has been cancelled.",
   },
 };
 
@@ -56,24 +63,41 @@ export default async function OrderPage({
   const isPending = order.status === "created";
   const a = order.address;
 
-  // Play a success chime on order confirmation, if the admin enabled sounds.
+  // Sound settings (admin-controlled).
   const soundOn = (await getSetting("sound_enabled")) !== "false"; // default ON
-  const soundVolume = parseFloat((await getSetting("sound_volume")) ?? "0.5");
+  const soundVolumeRaw = parseFloat((await getSetting("sound_volume")) ?? "0.5");
+  const soundVolume = isNaN(soundVolumeRaw) ? 0.5 : soundVolumeRaw;
+  const soundType = ((await getSetting("sound_type")) ?? "chime") as ChimeType;
+
+  const isCancelledFlow = order.status === "cancelled" || order.status === "cancel_requested";
 
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-12">
-      {order.status === "paid" && soundOn && (
-        <SuccessSound enabled volume={isNaN(soundVolume) ? 0.5 : soundVolume} />
-      )}
       <div className="rounded-2xl border border-line bg-white p-8 text-center">
-        <div className={`mx-auto flex h-14 w-14 items-center justify-center rounded-full text-2xl ${h.bg}`}>
-          {h.icon}
-        </div>
+        {order.status === "paid" ? (
+          <OrderConfirmedCheck soundEnabled={soundOn} volume={soundVolume} soundType={soundType} />
+        ) : (
+          <div className={`mx-auto flex h-14 w-14 items-center justify-center rounded-full text-2xl ${h.bg}`}>
+            {h.icon}
+          </div>
+        )}
         <h1 className="mt-4 font-heading text-2xl font-semibold tracking-tight">{h.title}</h1>
         <p className="mt-2 text-sm text-muted">{h.sub}</p>
         <p className="mt-3 text-xs text-muted">
           Order ID: <span className="font-mono text-ink">{order.id.slice(0, 8).toUpperCase()}</span>
         </p>
+
+        {/* refund note for the cancellation flow */}
+        {isCancelledFlow && (
+          <div className="mx-auto mt-5 max-w-md rounded-xl border border-line bg-paper/60 p-4 text-left text-xs text-muted">
+            <p className="font-medium text-ink">💳 Refund</p>
+            <p className="mt-1">
+              {order.status === "cancel_requested"
+                ? "Once your cancellation is approved, any online payment will be refunded to your original payment method within 5–7 business days. Cash-on-delivery orders have nothing to refund."
+                : "If you paid online, your refund has been initiated and will reach your original payment method within 5–7 business days. Cash-on-delivery orders have nothing to refund."}
+            </p>
+          </div>
+        )}
 
         {isPending && (
           <PendingOrderActions

@@ -3,19 +3,22 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { playSuccessChime } from "@/lib/chime";
+import { playSuccessChime, CHIME_OPTIONS, type ChimeType } from "@/lib/chime";
 
 export function SoundSettings({
   initialEnabled,
   initialVolume,
+  initialType,
 }: {
   initialEnabled: boolean;
   initialVolume: number;
+  initialType: ChimeType;
 }) {
   const router = useRouter();
   const supabase = createClient();
   const [enabled, setEnabled] = useState(initialEnabled);
   const [volume, setVolume] = useState(initialVolume);
+  const [type, setType] = useState<ChimeType>(initialType);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,6 +30,7 @@ export function SoundSettings({
     const { error } = await supabase.from("site_settings").upsert([
       { key: "sound_enabled", value: enabled ? "true" : "false" },
       { key: "sound_volume", value: String(volume) },
+      { key: "sound_type", value: type },
     ]);
     setSaving(false);
     if (error) setError(error.message);
@@ -58,6 +62,33 @@ export function SoundSettings({
           <span className="font-medium">Play a sound on successful payment</span>
         </label>
 
+        {/* choose which sound */}
+        <div className={enabled ? "" : "pointer-events-none opacity-40"}>
+          <label className="mb-1.5 block text-xs font-medium text-muted">
+            Choose a sound (tap to hear it)
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {CHIME_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => {
+                  setType(opt.value);
+                  setSaved(false);
+                  playSuccessChime(volume, opt.value);
+                }}
+                className={`flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+                  type === opt.value
+                    ? "border-storm bg-storm-tint text-storm"
+                    : "border-line hover:border-ink/40"
+                }`}
+              >
+                🔊 {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* volume */}
         <div className={enabled ? "" : "pointer-events-none opacity-40"}>
           <label className="mb-1 block text-xs font-medium text-muted">
@@ -80,10 +111,10 @@ export function SoundSettings({
         <div className="flex flex-wrap items-center gap-3">
           <button
             type="button"
-            onClick={() => playSuccessChime(volume)}
+            onClick={() => playSuccessChime(volume, type)}
             className="h-10 rounded-full border border-ink/15 px-5 text-sm font-medium transition-colors hover:border-storm hover:text-storm"
           >
-            🔊 Test sound
+            🔊 Test selected
           </button>
           <button
             onClick={save}
