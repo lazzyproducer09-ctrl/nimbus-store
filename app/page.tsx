@@ -8,7 +8,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/Reveal";
 import { UmbrellaMark } from "@/components/icons";
 import { createClient } from "@/lib/supabase/server";
-import { getSetting } from "@/lib/settings";
+import { getSettings } from "@/lib/settings";
 
 const CATEGORY_TILES = [
   { name: "Raincoats", blurb: "Stay dry, in style" },
@@ -18,14 +18,17 @@ const CATEGORY_TILES = [
 ];
 
 export default async function Home() {
-  // Ask the database for our featured products (runs on the server).
-  const products = await getFeaturedProducts();
-  const heroImage = await getSetting("hero_image_url");
-  const heroVideo = await getSetting("hero_video_url");
+  // Fetch everything the homepage needs AT THE SAME TIME (in parallel) instead
+  // of one-after-another — this cuts the server response time noticeably.
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const [products, settings, userRes] = await Promise.all([
+    getFeaturedProducts(),
+    getSettings(["hero_image_url", "hero_video_url"]),
+    supabase.auth.getUser(),
+  ]);
+  const heroImage = settings["hero_image_url"];
+  const heroVideo = settings["hero_video_url"];
+  const user = userRes.data.user;
   const fullName: string =
     user?.user_metadata?.full_name || user?.user_metadata?.name || "";
   const firstName = fullName.trim().split(" ")[0];

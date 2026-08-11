@@ -1,22 +1,28 @@
 import Link from "next/link";
 import { getAllOrders } from "@/lib/orders";
 import { getAllProducts } from "@/lib/products-admin";
-import { getSetting } from "@/lib/settings";
+import { getSettings } from "@/lib/settings";
 import { inr } from "@/lib/format";
 import { HeroImageManager } from "@/components/HeroImageManager";
 import { SoundSettings } from "@/components/SoundSettings";
 
 export default async function AdminDashboard() {
-  const [orders, products, heroImage, heroVideo, soundEnabled, soundVolume, soundType] =
-    await Promise.all([
-      getAllOrders(),
-      getAllProducts(),
-      getSetting("hero_image_url"),
-      getSetting("hero_video_url"),
-      getSetting("sound_enabled"),
-      getSetting("sound_volume"),
-      getSetting("sound_type"),
-    ]);
+  const [orders, products, settings] = await Promise.all([
+    getAllOrders(),
+    getAllProducts(),
+    getSettings([
+      "hero_image_url",
+      "hero_video_url",
+      "sound_enabled",
+      "sound_volume",
+      "sound_type",
+    ]),
+  ]);
+  const heroImage = settings["hero_image_url"];
+  const heroVideo = settings["hero_video_url"];
+  const soundEnabled = settings["sound_enabled"];
+  const soundVolume = settings["sound_volume"];
+  const soundType = settings["sound_type"];
   const cancelRequests = orders.filter((o) => o.status === "cancel_requested");
   const paid = orders.filter((o) => o.status === "paid");
   const revenue = paid.reduce((n, o) => n + o.total, 0);

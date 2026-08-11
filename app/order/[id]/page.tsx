@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getOrderById } from "@/lib/orders";
-import { getSetting } from "@/lib/settings";
+import { getSettings } from "@/lib/settings";
 import { inr } from "@/lib/format";
 import { PendingOrderActions } from "@/components/PendingOrderActions";
 import { CancelOrderButton } from "@/components/CancelOrderButton";
@@ -56,18 +56,21 @@ export default async function OrderPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const order = await getOrderById(id);
+  // Load the order and the (admin-controlled) sound settings in parallel.
+  const [order, settings] = await Promise.all([
+    getOrderById(id),
+    getSettings(["sound_enabled", "sound_volume", "sound_type"]),
+  ]);
   if (!order) notFound();
 
   const h = HEAD[order.status] ?? HEAD.created;
   const isPending = order.status === "created";
   const a = order.address;
 
-  // Sound settings (admin-controlled).
-  const soundOn = (await getSetting("sound_enabled")) !== "false"; // default ON
-  const soundVolumeRaw = parseFloat((await getSetting("sound_volume")) ?? "0.5");
+  const soundOn = settings["sound_enabled"] !== "false"; // default ON
+  const soundVolumeRaw = parseFloat(settings["sound_volume"] ?? "0.5");
   const soundVolume = isNaN(soundVolumeRaw) ? 0.5 : soundVolumeRaw;
-  const soundType = ((await getSetting("sound_type")) ?? "chime") as ChimeType;
+  const soundType = (settings["sound_type"] ?? "chime") as ChimeType;
 
   const isCancelledFlow = order.status === "cancelled" || order.status === "cancel_requested";
 
