@@ -16,6 +16,11 @@ export function ProductCard({ product: p }: { product: Product }) {
   const hoverImage = p.images[1];
   const shownImage = hovering && hoverImage ? hoverImage : p.images[0];
 
+  const discount = p.compare_at_price
+    ? Math.round((1 - p.price / p.compare_at_price) * 100)
+    : 0;
+  const lowStock = p.stock > 0 && p.stock <= 5;
+
   // Quick-add uses the first size/colour as defaults (change them on the product page).
   const size = p.sizes[0] ?? null;
   const color = p.colors[0] ?? null;
@@ -66,6 +71,11 @@ export function ProductCard({ product: p }: { product: Product }) {
               {p.tag}
             </span>
           )}
+          {discount > 0 && (
+            <span className="absolute bottom-3 left-3 z-10 rounded-full bg-storm px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm">
+              {discount}% OFF
+            </span>
+          )}
           {shownImage ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -91,6 +101,11 @@ export function ProductCard({ product: p }: { product: Product }) {
             <span className="text-ink">{p.rating}</span>
             <span>({p.review_count})</span>
           </div>
+          {lowStock && (
+            <p className="mt-1 text-[11px] font-medium text-red-600">
+              Only {p.stock} left
+            </p>
+          )}
         </div>
         <div className="text-right">
           <span className="block whitespace-nowrap text-sm font-semibold">{inr(p.price)}</span>

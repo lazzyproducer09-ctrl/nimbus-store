@@ -24,6 +24,10 @@ export default async function ProductPage({
   const discount = product.compare_at_price
     ? Math.round((1 - product.price / product.compare_at_price) * 100)
     : 0;
+  const savings = product.compare_at_price
+    ? product.compare_at_price - product.price
+    : 0;
+  const lowStock = product.stock > 0 && product.stock <= 5;
 
   const similar = await getSimilarProducts(product.category, product.id);
 
@@ -116,15 +120,26 @@ export default async function ProductPage({
             )}
           </div>
 
+          {savings > 0 && (
+            <p className="mt-2 text-sm font-medium text-green-700">
+              You save {inr(savings)} on this order 🎉
+            </p>
+          )}
+          <p className="mt-1 text-xs text-muted">Inclusive of all taxes · Free shipping over ₹999</p>
+
           {product.description && (
             <p className="mt-5 leading-relaxed text-muted">{product.description}</p>
           )}
 
           <p className="mt-4 text-sm">
-            {product.stock > 0 ? (
-              <span className="text-green-700">In stock — ready to ship</span>
+            {product.stock <= 0 ? (
+              <span className="font-medium text-red-600">Currently out of stock</span>
+            ) : lowStock ? (
+              <span className="font-medium text-red-600">
+                🔥 Selling fast — only {product.stock} left in stock
+              </span>
             ) : (
-              <span className="text-red-600">Currently out of stock</span>
+              <span className="text-green-700">✓ In stock — ready to ship</span>
             )}
           </p>
 

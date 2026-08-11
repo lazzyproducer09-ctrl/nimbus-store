@@ -5,6 +5,7 @@
 import Link from "next/link";
 import { getFeaturedProducts } from "@/lib/products";
 import { ProductCard } from "@/components/ProductCard";
+import { Reveal } from "@/components/Reveal";
 import { UmbrellaMark } from "@/components/icons";
 import { createClient } from "@/lib/supabase/server";
 import { getSetting } from "@/lib/settings";
@@ -20,6 +21,7 @@ export default async function Home() {
   // Ask the database for our featured products (runs on the server).
   const products = await getFeaturedProducts();
   const heroImage = await getSetting("hero_image_url");
+  const heroVideo = await getSetting("hero_video_url");
   const supabase = await createClient();
   const {
     data: { user },
@@ -68,9 +70,14 @@ export default async function Home() {
 
         <div className="relative mx-auto grid w-full max-w-6xl items-center gap-10 px-5 py-24 md:grid-cols-2">
           <div className="reveal">
+            {firstName && (
+              <p className="mb-3 font-heading text-lg font-medium text-paper/90">
+                Welcome back, <span className="text-storm-light">{firstName}</span> 👋
+              </p>
+            )}
             <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-paper/70 backdrop-blur-sm">
-              <span className="h-1.5 w-1.5 rounded-full bg-storm" />
-              {firstName ? `Hi, ${firstName} 👋 · welcome back` : "Built for the Indian monsoon"}
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-storm" />
+              Built for the Indian monsoon
             </span>
             <h1 className="mt-5 font-heading text-5xl font-semibold leading-[1.05] tracking-tight md:text-6xl">
               Stay dry.
@@ -98,13 +105,22 @@ export default async function Home() {
           </div>
 
           {/* floating product frame */}
-          <div className="reveal relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-sm md:aspect-square">
-            {heroImage ? (
+          <div className="reveal group relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] shadow-2xl backdrop-blur-sm md:aspect-square">
+            {heroVideo ? (
+              <video
+                src={heroVideo}
+                className="absolute inset-0 h-full w-full object-cover"
+                autoPlay
+                muted
+                loop
+                playsInline
+              />
+            ) : heroImage ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={heroImage}
                 alt="NIMBUS rainwear"
-                className="absolute inset-0 h-full w-full object-cover"
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
             ) : (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-paper/50">
@@ -156,8 +172,10 @@ export default async function Home() {
           </p>
         ) : (
           <div className="grid grid-cols-2 gap-5 md:grid-cols-4">
-            {products.map((p) => (
-              <ProductCard key={p.id} product={p} />
+            {products.map((p, i) => (
+              <Reveal key={p.id} delay={i * 80}>
+                <ProductCard product={p} />
+              </Reveal>
             ))}
           </div>
         )}
@@ -170,16 +188,22 @@ export default async function Home() {
             Shop by category
           </h2>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            {CATEGORY_TILES.map((c) => (
-              <Link
-                key={c.name}
-                href={`/shop?category=${encodeURIComponent(c.name)}`}
-                className="group relative flex aspect-square flex-col justify-end overflow-hidden rounded-2xl border border-line bg-mist p-5 transition-all hover:-translate-y-1 hover:shadow-lg"
-              >
-                <UmbrellaMark className="absolute right-4 top-4 h-8 w-8 text-storm/30 transition-transform duration-500 group-hover:scale-110" />
-                <span className="font-heading text-lg font-semibold">{c.name}</span>
-                <span className="text-xs text-muted">{c.blurb}</span>
-              </Link>
+            {CATEGORY_TILES.map((c, i) => (
+              <Reveal key={c.name} delay={i * 80}>
+                <Link
+                  href={`/shop?category=${encodeURIComponent(c.name)}`}
+                  className="group relative flex aspect-square flex-col justify-end overflow-hidden rounded-2xl border border-line bg-gradient-to-br from-mist to-white p-5 transition-all duration-300 hover:-translate-y-1.5 hover:border-storm/30 hover:shadow-xl"
+                >
+                  <UmbrellaMark className="absolute right-4 top-4 h-8 w-8 text-storm/30 transition-all duration-500 group-hover:rotate-12 group-hover:scale-125 group-hover:text-storm/50" />
+                  <span className="font-heading text-lg font-semibold transition-colors group-hover:text-storm">
+                    {c.name}
+                  </span>
+                  <span className="text-xs text-muted">{c.blurb}</span>
+                  <span className="mt-2 text-xs font-medium text-storm opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    Shop now →
+                  </span>
+                </Link>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -187,12 +211,44 @@ export default async function Home() {
 
       {/* ================= REVIEW / TRUST QUOTE ================= */}
       <section className="mx-auto w-full max-w-3xl px-5 py-24 text-center">
-        <div className="mb-4 text-storm">★★★★★</div>
-        <blockquote className="font-heading text-2xl font-medium leading-relaxed tracking-tight md:text-3xl">
-          &ldquo;Survived three days of Mumbai rain and I stayed completely dry.
-          Feels premium, looks even better.&rdquo;
-        </blockquote>
-        <p className="mt-5 text-sm text-muted">Aarav M. — Verified buyer, Mumbai</p>
+        <Reveal>
+          <div className="mb-4 text-storm">★★★★★</div>
+          <blockquote className="font-heading text-2xl font-medium leading-relaxed tracking-tight md:text-3xl">
+            &ldquo;Survived three days of Mumbai rain and I stayed completely dry.
+            Feels premium, looks even better.&rdquo;
+          </blockquote>
+          <p className="mt-5 text-sm text-muted">Aarav M. — Verified buyer, Mumbai</p>
+        </Reveal>
+      </section>
+
+      {/* ================= CLOSING CTA / GUARANTEE ================= */}
+      <section className="relative overflow-hidden bg-ink text-paper">
+        <div className="pointer-events-none absolute left-1/2 top-1/2 h-[360px] w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-storm/20 blur-[120px]" />
+        <div className="relative mx-auto w-full max-w-4xl px-5 py-20 text-center">
+          <Reveal>
+            <h2 className="font-heading text-3xl font-semibold tracking-tight md:text-4xl">
+              Don&rsquo;t let the rain slow you down.
+            </h2>
+            <p className="mx-auto mt-4 max-w-lg text-paper/70">
+              Free shipping over ₹999, easy 7-day returns, and cash on delivery
+              across India. Gear up before the next downpour.
+            </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <Link
+                href="/shop"
+                className="inline-flex h-12 items-center justify-center rounded-full bg-white px-8 text-sm font-medium text-ink shadow-lg transition-all hover:-translate-y-0.5 hover:bg-paper active:translate-y-0"
+              >
+                Shop the collection
+              </Link>
+            </div>
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs text-paper/60">
+              <span>🚚 Free shipping over ₹999</span>
+              <span>↩️ 7-day easy returns</span>
+              <span>🔒 Secure Razorpay payments</span>
+              <span>💵 Cash on delivery</span>
+            </div>
+          </Reveal>
+        </div>
       </section>
     </div>
   );

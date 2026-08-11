@@ -6,10 +6,11 @@ import { inr } from "@/lib/format";
 import { HeroImageManager } from "@/components/HeroImageManager";
 
 export default async function AdminDashboard() {
-  const [orders, products, heroImage] = await Promise.all([
+  const [orders, products, heroImage, heroVideo] = await Promise.all([
     getAllOrders(),
     getAllProducts(),
     getSetting("hero_image_url"),
+    getSetting("hero_video_url"),
   ]);
   const paid = orders.filter((o) => o.status === "paid");
   const revenue = paid.reduce((n, o) => n + o.total, 0);
@@ -42,8 +43,8 @@ export default async function AdminDashboard() {
         ))}
       </div>
 
-      {/* homepage hero image */}
-      <HeroImageManager currentUrl={heroImage} />
+      {/* homepage hero image / video */}
+      <HeroImageManager currentUrl={heroImage} currentVideoUrl={heroVideo} />
 
       {/* featured control */}
       <div className="rounded-2xl border border-line bg-white p-6">

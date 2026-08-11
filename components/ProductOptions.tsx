@@ -8,7 +8,7 @@ import { useCart } from "@/lib/cart-context";
 // The size / colour / quantity pickers and the Add-to-Cart / Buy-Now buttons.
 export function ProductOptions({ product }: { product: Product }) {
   const router = useRouter();
-  const { addItem, items, openCart } = useCart();
+  const { addItem, items, openCart, updateQuantity, removeItem } = useCart();
   const [size, setSize] = useState<string | null>(product.sizes[0] ?? null);
   const [color, setColor] = useState<string | null>(product.colors[0] ?? null);
   const [qty, setQty] = useState(1);
@@ -109,16 +109,45 @@ export function ProductOptions({ product }: { product: Product }) {
         </div>
       )}
 
-      <div className="flex flex-col gap-3 sm:flex-row">
-        {cartLine ? (
-          // Already in cart → don't keep stacking; go view/adjust it.
-          <button
-            onClick={openCart}
-            className="h-12 flex-1 rounded-full bg-storm text-sm font-medium text-white transition-all hover:-translate-y-0.5 hover:bg-storm-dark active:translate-y-0"
-          >
-            ✓ In cart ({cartLine.quantity}) — View
-          </button>
-        ) : (
+      {cartLine ? (
+        // Already in cart → adjust quantity or remove it right here.
+        <div className="space-y-3">
+          <div className="flex items-center justify-between rounded-full border border-storm bg-storm-tint px-2 py-1.5">
+            <button
+              onClick={() => updateQuantity(cartLine.id, cartLine.quantity - 1)}
+              className="flex h-9 w-11 items-center justify-center rounded-full text-xl text-storm transition-colors hover:bg-white"
+              aria-label="Decrease quantity"
+            >
+              −
+            </button>
+            <span className="text-sm font-medium text-storm">
+              {cartLine.quantity} in cart
+            </span>
+            <button
+              onClick={() => updateQuantity(cartLine.id, cartLine.quantity + 1)}
+              className="flex h-9 w-11 items-center justify-center rounded-full text-xl text-storm transition-colors hover:bg-white"
+              aria-label="Increase quantity"
+            >
+              +
+            </button>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <button
+              onClick={openCart}
+              className="h-12 flex-1 rounded-full bg-ink text-sm font-medium text-white transition-all hover:-translate-y-0.5 hover:bg-storm active:translate-y-0"
+            >
+              View cart
+            </button>
+            <button
+              onClick={() => removeItem(cartLine.id)}
+              className="h-12 flex-1 rounded-full border border-ink/15 text-sm font-medium text-muted transition-all hover:-translate-y-0.5 hover:border-red-300 hover:text-red-600 active:translate-y-0"
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-3 sm:flex-row">
           <button
             onClick={add}
             disabled={outOfStock}
@@ -126,15 +155,15 @@ export function ProductOptions({ product }: { product: Product }) {
           >
             {outOfStock ? "Out of stock" : "Add to cart"}
           </button>
-        )}
-        <button
-          onClick={buyNow}
-          disabled={outOfStock}
-          className="h-12 flex-1 rounded-full border border-ink/15 text-sm font-medium transition-all hover:-translate-y-0.5 hover:border-ink/40 active:translate-y-0 disabled:opacity-40"
-        >
-          Buy now
-        </button>
-      </div>
+          <button
+            onClick={buyNow}
+            disabled={outOfStock}
+            className="h-12 flex-1 rounded-full border border-ink/15 text-sm font-medium transition-all hover:-translate-y-0.5 hover:border-ink/40 active:translate-y-0 disabled:opacity-40"
+          >
+            Buy now
+          </button>
+        </div>
+      )}
     </div>
   );
 }
