@@ -18,6 +18,7 @@ type FormState = {
   sizes: string;
   colors: string;
   images: string[];
+  video_url: string | null;
   is_featured: boolean;
   is_active: boolean;
 };
@@ -32,6 +33,7 @@ const EMPTY: FormState = {
   sizes: "",
   colors: "",
   images: [],
+  video_url: null,
   is_featured: false,
   is_active: true,
 };
@@ -53,6 +55,7 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
   const [form, setForm] = useState<FormState>(EMPTY);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Product | null>(null);
 
@@ -76,6 +79,7 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
       sizes: p.sizes.join(", "),
       colors: p.colors.join(", "),
       images: p.images ?? [],
+      video_url: p.video_url ?? null,
       is_featured: p.is_featured,
       is_active: p.is_active,
     });
@@ -106,6 +110,25 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
     }
   }
 
+  async function handleVideoUpload(files: FileList | null) {
+    const file = files?.[0];
+    if (!file) return;
+    setUploadingVideo(true);
+    setError(null);
+    try {
+      const ext = file.name.split(".").pop() || "mp4";
+      const path = `video-${crypto.randomUUID()}.${ext}`;
+      const { error } = await supabase.storage.from("product-images").upload(path, file);
+      if (error) throw error;
+      const { data } = supabase.storage.from("product-images").getPublicUrl(path);
+      set("video_url", data.publicUrl);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Video upload failed.");
+    } finally {
+      setUploadingVideo(false);
+    }
+  }
+
   async function save(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
@@ -125,6 +148,7 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
         sizes: parseList(form.sizes),
         colors: parseList(form.colors),
         images: form.images,
+        video_url: form.video_url,
         stock: parseInt(form.stock, 10) || 0,
         is_featured: form.is_featured,
         is_active: form.is_active,
@@ -259,6 +283,27 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
             </div>
           </div>
 
+          <div>
+            <label className={labelClass}>Product video (optional)</label>
+            {form.video_url ? (
+              <div className="flex items-center gap-3">
+                <video src={form.video_url} className="h-16 w-28 rounded-lg border border-line object-cover" muted />
+                <button
+                  type="button"
+                  onClick={() => set("video_url", null)}
+                  className="rounded-full border border-line px-3 py-1 text-xs font-medium text-muted transition-colors hover:border-red-300 hover:text-red-600"
+                >
+                  Remove video
+                </button>
+              </div>
+            ) : (
+              <label className="flex h-16 w-28 cursor-pointer items-center justify-center rounded-lg border border-dashed border-line text-xs text-muted hover:border-storm">
+                {uploadingVideo ? "Uploading…" : "+ Add video"}
+                <input type="file" accept="video/*" className="hidden" onChange={(e) => handleVideoUpload(e.target.files)} />
+              </label>
+            )}
+          </div>
+
           <div className="flex gap-6 text-sm">
             <label className="flex items-center gap-2">
               <input type="checkbox" checked={form.is_featured} onChange={(e) => set("is_featured", e.target.checked)} /> Featured
@@ -273,7 +318,7 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
           <div className="flex gap-3">
             <button
               type="submit"
-              disabled={saving || uploading}
+              disabled={saving || uploading || uploadingVideo}
               className="h-10 rounded-full bg-storm px-5 text-sm font-medium text-white transition-colors hover:bg-storm-dark disabled:opacity-50"
             >
               {saving ? "Saving…" : editingId ? "Save changes" : "Add product"}

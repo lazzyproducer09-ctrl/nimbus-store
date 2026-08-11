@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import type { Product } from "@/lib/products";
 import { inr } from "@/lib/format";
@@ -11,6 +12,9 @@ import { WishlistButton } from "./WishlistButton";
 // control (which becomes a − quantity + stepper) sits at the bottom.
 export function ProductCard({ product: p }: { product: Product }) {
   const { addItem, items, updateQuantity } = useCart();
+  const [hovering, setHovering] = useState(false);
+  const hoverImage = p.images[1];
+  const shownImage = hovering && hoverImage ? hoverImage : p.images[0];
 
   // Quick-add uses the first size/colour as defaults (change them on the product page).
   const size = p.sizes[0] ?? null;
@@ -50,19 +54,24 @@ export function ProductCard({ product: p }: { product: Product }) {
           }}
         />
       </div>
-      <Link href={`/product/${p.slug}`} className="block">
+      <Link
+        href={`/product/${p.slug}`}
+        className="block"
+        onMouseEnter={() => setHovering(true)}
+        onMouseLeave={() => setHovering(false)}
+      >
         <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-line bg-mist shadow-sm transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl">
           {p.tag && (
             <span className="absolute left-3 top-3 z-10 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-medium text-ink shadow-sm">
               {p.tag}
             </span>
           )}
-          {p.images.length > 0 ? (
+          {shownImage ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={p.images[0]}
+              src={shownImage}
               alt={p.name}
-              className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className="absolute inset-0 h-full w-full object-cover transition-opacity duration-200"
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center text-storm/50 transition-transform duration-500 group-hover:scale-105">

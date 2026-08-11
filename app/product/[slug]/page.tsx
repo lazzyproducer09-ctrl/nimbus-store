@@ -74,6 +74,19 @@ export default async function ProductPage({
               </div>
             ))}
           </div>
+
+          {/* product video, if the admin uploaded one */}
+          {product.video_url && (
+            <div className="mt-4">
+              <p className="mb-2 text-sm font-medium">Product video</p>
+              <video
+                src={product.video_url}
+                controls
+                playsInline
+                className="w-full rounded-2xl border border-line bg-mist"
+              />
+            </div>
+          )}
         </div>
 
         {/* ---- info ---- */}
