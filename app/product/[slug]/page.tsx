@@ -102,10 +102,6 @@ export default async function ProductPage({
           )}
           <p className="mt-1 text-xs text-muted">Inclusive of all taxes · Free shipping over ₹999</p>
 
-          {product.description && (
-            <p className="mt-5 leading-relaxed text-muted">{product.description}</p>
-          )}
-
           <p className="mt-4 text-sm">
             {product.stock <= 0 ? (
               <span className="font-medium text-red-600">Currently out of stock</span>
@@ -174,6 +170,35 @@ export default async function ProductPage({
           </div>
         </div>
       </div>
+
+      {/* ---- product details (long description + stacked detail images) ---- */}
+      {(product.description || product.description_images.length > 0) && (
+        <section className="mt-16 border-t border-line pt-12">
+          <h2 className="text-center font-heading text-2xl font-semibold tracking-tight">
+            Product details
+          </h2>
+
+          {product.description && (
+            <p className="mx-auto mt-5 max-w-2xl text-center leading-relaxed text-muted">
+              {product.description}
+            </p>
+          )}
+
+          {product.description_images.length > 0 && (
+            <div className="mx-auto mt-8 max-w-2xl space-y-4">
+              {product.description_images.map((url, i) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  key={i}
+                  src={url}
+                  alt={`${product.name} detail ${i + 1}`}
+                  className="w-full rounded-2xl border border-line"
+                />
+              ))}
+            </div>
+          )}
+        </section>
+      )}
 
       {/* ---- similar products ---- */}
       {similar.length > 0 && (

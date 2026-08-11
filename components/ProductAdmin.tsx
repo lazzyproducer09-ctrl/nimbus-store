@@ -18,6 +18,7 @@ type FormState = {
   sizes: string;
   colors: string;
   images: string[];
+  description_images: string[];
   video_url: string | null;
   is_featured: boolean;
   is_active: boolean;
@@ -33,6 +34,7 @@ const EMPTY: FormState = {
   sizes: "",
   colors: "",
   images: [],
+  description_images: [],
   video_url: null,
   is_featured: false,
   is_active: true,
@@ -55,6 +57,7 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
   const [form, setForm] = useState<FormState>(EMPTY);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingDesc, setUploadingDesc] = useState(false);
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Product | null>(null);
@@ -79,6 +82,7 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
       sizes: p.sizes.join(", "),
       colors: p.colors.join(", "),
       images: p.images ?? [],
+      description_images: p.description_images ?? [],
       video_url: p.video_url ?? null,
       is_featured: p.is_featured,
       is_active: p.is_active,
@@ -107,6 +111,28 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
       setError(e instanceof Error ? e.message : "Image upload failed.");
     } finally {
       setUploading(false);
+    }
+  }
+
+  async function handleDescUpload(files: FileList | null) {
+    if (!files || files.length === 0) return;
+    setUploadingDesc(true);
+    setError(null);
+    try {
+      const urls: string[] = [];
+      for (const file of Array.from(files)) {
+        const ext = file.name.split(".").pop() || "jpg";
+        const path = `desc-${crypto.randomUUID()}.${ext}`;
+        const { error } = await supabase.storage.from("product-images").upload(path, file);
+        if (error) throw error;
+        const { data } = supabase.storage.from("product-images").getPublicUrl(path);
+        urls.push(data.publicUrl);
+      }
+      set("description_images", [...form.description_images, ...urls]);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Image upload failed.");
+    } finally {
+      setUploadingDesc(false);
     }
   }
 
@@ -148,6 +174,7 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
         sizes: parseList(form.sizes),
         colors: parseList(form.colors),
         images: form.images,
+        description_images: form.description_images,
         video_url: form.video_url,
         stock: parseInt(form.stock, 10) || 0,
         is_featured: form.is_featured,
@@ -310,6 +337,33 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
                 <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleUpload(e.target.files)} />
               </label>
             </div>
+          </div>
+
+          <div>
+            <label className={labelClass}>Description images (the long detail photos shown lower on the product page)</label>
+            <div className="flex flex-wrap gap-2">
+              {form.description_images.map((url, i) => (
+                <div key={i} className="relative h-24 w-20 overflow-hidden rounded-lg border border-line">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={url} alt="" className="h-full w-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => set("description_images", form.description_images.filter((_, idx) => idx !== i))}
+                    className="absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-bl bg-black/60 text-[10px] text-white"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+              <label className="flex h-24 w-20 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-line text-lg text-muted hover:border-storm">
+                {uploadingDesc ? "…" : "+"}
+                <span className="text-[9px]">detail</span>
+                <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleDescUpload(e.target.files)} />
+              </label>
+            </div>
+            <p className="mt-1 text-[11px] text-muted">
+              These stack top-to-bottom in a &ldquo;Product details&rdquo; section. Upload the tall feature images your supplier gives you.
+            </p>
           </div>
 
           <div>

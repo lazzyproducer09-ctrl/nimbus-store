@@ -12,6 +12,7 @@ export type Product = {
   sizes: string[];
   colors: string[];
   images: string[];
+  description_images: string[];
   video_url: string | null;
   stock: number;
   rating: number;
