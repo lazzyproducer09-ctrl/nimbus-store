@@ -4,13 +4,16 @@ import { getAllProducts } from "@/lib/products-admin";
 import { getSetting } from "@/lib/settings";
 import { inr } from "@/lib/format";
 import { HeroImageManager } from "@/components/HeroImageManager";
+import { SoundSettings } from "@/components/SoundSettings";
 
 export default async function AdminDashboard() {
-  const [orders, products, heroImage, heroVideo] = await Promise.all([
+  const [orders, products, heroImage, heroVideo, soundEnabled, soundVolume] = await Promise.all([
     getAllOrders(),
     getAllProducts(),
     getSetting("hero_image_url"),
     getSetting("hero_video_url"),
+    getSetting("sound_enabled"),
+    getSetting("sound_volume"),
   ]);
   const paid = orders.filter((o) => o.status === "paid");
   const revenue = paid.reduce((n, o) => n + o.total, 0);
@@ -45,6 +48,12 @@ export default async function AdminDashboard() {
 
       {/* homepage hero image / video */}
       <HeroImageManager currentUrl={heroImage} currentVideoUrl={heroVideo} />
+
+      {/* order success sound */}
+      <SoundSettings
+        initialEnabled={soundEnabled !== "false"}
+        initialVolume={soundVolume ? parseFloat(soundVolume) : 0.5}
+      />
 
       {/* featured control */}
       <div className="rounded-2xl border border-line bg-white p-6">

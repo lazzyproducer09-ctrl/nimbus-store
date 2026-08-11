@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getOrderById } from "@/lib/orders";
+import { getSetting } from "@/lib/settings";
 import { inr } from "@/lib/format";
 import { PendingOrderActions } from "@/components/PendingOrderActions";
 import { CancelOrderButton } from "@/components/CancelOrderButton";
+import { SuccessSound } from "@/components/SuccessSound";
 
 export const metadata: Metadata = { title: "Order — NIMBUS" };
 
@@ -54,8 +56,15 @@ export default async function OrderPage({
   const isPending = order.status === "created";
   const a = order.address;
 
+  // Play a success chime on order confirmation, if the admin enabled sounds.
+  const soundOn = (await getSetting("sound_enabled")) !== "false"; // default ON
+  const soundVolume = parseFloat((await getSetting("sound_volume")) ?? "0.5");
+
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-12">
+      {order.status === "paid" && soundOn && (
+        <SuccessSound enabled volume={isNaN(soundVolume) ? 0.5 : soundVolume} />
+      )}
       <div className="rounded-2xl border border-line bg-white p-8 text-center">
         <div className={`mx-auto flex h-14 w-14 items-center justify-center rounded-full text-2xl ${h.bg}`}>
           {h.icon}
