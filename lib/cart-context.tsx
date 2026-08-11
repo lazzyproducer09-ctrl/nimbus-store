@@ -19,19 +19,27 @@ export type CartItem = {
   size: string | null;
   color: string | null;
   quantity: number;
+  selected: boolean; // is this line ticked for checkout?
 };
 
 type CartContextType = {
   items: CartItem[];
   count: number;
   subtotal: number;
+  selectedItems: CartItem[];
+  selectedCount: number;
+  selectedSubtotal: number;
   isOpen: boolean;
   hydrated: boolean;
   openCart: () => void;
   closeCart: () => void;
-  addItem: (item: Omit<CartItem, "id" | "quantity">, quantity?: number) => void;
+  addItem: (item: Omit<CartItem, "id" | "quantity" | "selected">, quantity?: number) => void;
   removeItem: (id: string) => void;
+  removeItems: (ids: string[]) => void;
   updateQuantity: (id: string, quantity: number) => void;
+  toggleSelected: (id: string) => void;
+  setAllSelected: (selected: boolean) => void;
+  selectOnly: (id: string) => void;
   clearCart: () => void;
 };
 
@@ -51,7 +59,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setItems(JSON.parse(raw));
+      if (raw) {
+        const parsed = JSON.parse(raw) as CartItem[];
+        // Older saved carts had no `selected` flag — default those to ticked.
+        setItems(parsed.map((i) => ({ ...i, selected: i.selected !== false })));
+      }
     } catch {
       /* ignore malformed storage */
     }
@@ -73,17 +85,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const id = lineId(item.productId, item.size, item.color);
       const existing = prev.find((p) => p.id === id);
       if (existing) {
+        // Bump quantity and (re-)tick it — adding implies intent to buy.
         return prev.map((p) =>
-          p.id === id ? { ...p, quantity: p.quantity + quantity } : p,
+          p.id === id ? { ...p, quantity: p.quantity + quantity, selected: true } : p,
         );
       }
-      return [...prev, { ...item, id, quantity }];
+      return [...prev, { ...item, id, quantity, selected: true }];
     });
     setIsOpen(true); // slide the drawer open on add
   }, []);
 
   const removeItem = useCallback((id: string) => {
     setItems((prev) => prev.filter((p) => p.id !== id));
+  }, []);
+
+  const removeItems = useCallback((ids: string[]) => {
+    const drop = new Set(ids);
+    setItems((prev) => prev.filter((p) => !drop.has(p.id)));
   }, []);
 
   const updateQuantity = useCallback((id: string, quantity: number) => {
@@ -95,12 +113,30 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     );
   }, []);
 
+  const toggleSelected = useCallback((id: string) => {
+    setItems((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, selected: !p.selected } : p)),
+    );
+  }, []);
+
+  const setAllSelected = useCallback((selected: boolean) => {
+    setItems((prev) => prev.map((p) => ({ ...p, selected })));
+  }, []);
+
+  // Tick exactly one line and untick the rest (used by "Buy now").
+  const selectOnly = useCallback((id: string) => {
+    setItems((prev) => prev.map((p) => ({ ...p, selected: p.id === id })));
+  }, []);
+
   const clearCart = useCallback(() => setItems([]), []);
   const openCart = useCallback(() => setIsOpen(true), []);
   const closeCart = useCallback(() => setIsOpen(false), []);
 
   const count = items.reduce((n, p) => n + p.quantity, 0);
   const subtotal = items.reduce((n, p) => n + p.price * p.quantity, 0);
+  const selectedItems = items.filter((p) => p.selected);
+  const selectedCount = selectedItems.reduce((n, p) => n + p.quantity, 0);
+  const selectedSubtotal = selectedItems.reduce((n, p) => n + p.price * p.quantity, 0);
 
   return (
     <CartContext.Provider
@@ -108,13 +144,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         items,
         count,
         subtotal,
+        selectedItems,
+        selectedCount,
+        selectedSubtotal,
         isOpen,
         hydrated,
         openCart,
         closeCart,
         addItem,
         removeItem,
+        removeItems,
         updateQuantity,
+        toggleSelected,
+        setAllSelected,
+        selectOnly,
         clearCart,
       }}
     >

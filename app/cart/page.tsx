@@ -8,8 +8,19 @@ import { UmbrellaMark } from "@/components/icons";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 
 export default function CartPage() {
-  const { items, subtotal, count, updateQuantity, removeItem } = useCart();
+  const {
+    items,
+    count,
+    selectedItems,
+    selectedCount,
+    selectedSubtotal,
+    updateQuantity,
+    removeItem,
+    toggleSelected,
+    setAllSelected,
+  } = useCart();
   const [pendingId, setPendingId] = useState<string | null>(null);
+  const allSelected = items.length > 0 && selectedItems.length === items.length;
 
   // Empty cart state
   if (items.length === 0) {
@@ -30,9 +41,10 @@ export default function CartPage() {
     );
   }
 
-  // Free shipping over ₹999 — matches our homepage promise.
-  const shipping = subtotal >= 999 ? 0 : 79;
-  const total = subtotal + shipping;
+  // Free shipping over ₹999 — matches our homepage promise. Only SELECTED items count.
+  // Nothing selected → no shipping charge shown.
+  const shipping = selectedSubtotal > 0 && selectedSubtotal < 999 ? 79 : 0;
+  const total = selectedSubtotal + shipping;
 
   return (
     <div className="mx-auto w-full max-w-6xl px-5 py-10">
@@ -42,9 +54,29 @@ export default function CartPage() {
 
       <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_360px]">
         {/* items */}
-        <ul className="divide-y divide-line border-y border-line">
+        <div>
+          <label className="mb-3 flex cursor-pointer items-center gap-2 text-sm text-muted">
+            <input
+              type="checkbox"
+              checked={allSelected}
+              onChange={(e) => setAllSelected(e.target.checked)}
+              className="h-4 w-4 accent-storm"
+            />
+            Select all ({selectedItems.length}/{items.length})
+          </label>
+          <ul className="divide-y divide-line border-y border-line">
           {items.map((it) => (
-            <li key={it.id} className="flex gap-4 py-5">
+            <li
+              key={it.id}
+              className={`flex gap-4 py-5 transition-opacity ${it.selected ? "" : "opacity-55"}`}
+            >
+              <input
+                type="checkbox"
+                checked={it.selected}
+                onChange={() => toggleSelected(it.id)}
+                aria-label={`Select ${it.name}`}
+                className="mt-1 h-5 w-5 flex-shrink-0 accent-storm"
+              />
               <Link
                 href={`/product/${it.slug}`}
                 className="relative h-28 w-24 flex-shrink-0 overflow-hidden rounded-xl border border-line bg-mist"
@@ -108,23 +140,27 @@ export default function CartPage() {
               </div>
             </li>
           ))}
-        </ul>
+          </ul>
+        </div>
 
         {/* order summary */}
         <aside className="h-fit rounded-2xl border border-line bg-white p-6">
           <h2 className="font-heading text-lg font-semibold">Order summary</h2>
+          <p className="mt-1 text-xs text-muted">
+            {selectedCount} item{selectedCount === 1 ? "" : "s"} selected
+          </p>
           <div className="mt-4 space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-muted">Subtotal</span>
-              <span>{inr(subtotal)}</span>
+              <span>{inr(selectedSubtotal)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted">Shipping</span>
               <span>{shipping === 0 ? "Free" : inr(shipping)}</span>
             </div>
-            {shipping > 0 && (
+            {shipping > 0 && selectedSubtotal > 0 && (
               <p className="text-xs text-muted">
-                Add {inr(999 - subtotal)} more for free shipping.
+                Add {inr(999 - selectedSubtotal)} more for free shipping.
               </p>
             )}
             <div className="mt-2 flex justify-between border-t border-line pt-3 text-base font-semibold">
@@ -133,12 +169,21 @@ export default function CartPage() {
             </div>
           </div>
 
-          <Link
-            href="/checkout"
-            className="mt-5 flex h-12 w-full items-center justify-center rounded-full bg-storm text-sm font-medium text-white transition-all hover:-translate-y-0.5 hover:bg-storm-dark"
-          >
-            Proceed to checkout
-          </Link>
+          {selectedCount === 0 ? (
+            <button
+              disabled
+              className="mt-5 flex h-12 w-full cursor-not-allowed items-center justify-center rounded-full bg-mist text-sm font-medium text-muted"
+            >
+              Select items to checkout
+            </button>
+          ) : (
+            <Link
+              href="/checkout"
+              className="mt-5 flex h-12 w-full items-center justify-center rounded-full bg-storm text-sm font-medium text-white transition-all hover:-translate-y-0.5 hover:bg-storm-dark"
+            >
+              Checkout ({selectedCount}) · {inr(total)}
+            </Link>
+          )}
 
           <div className="mt-4 flex items-center justify-center gap-2 text-xs text-muted">
             <span className="h-1.5 w-1.5 rounded-full bg-green-500" />

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { Product } from "@/lib/products";
 import { inr } from "@/lib/format";
 import { useCart } from "@/lib/cart-context";
@@ -11,7 +12,8 @@ import { WishlistButton } from "./WishlistButton";
 // One product card. Image + name link to the product page; an "Add to cart"
 // control (which becomes a − quantity + stepper) sits at the bottom.
 export function ProductCard({ product: p }: { product: Product }) {
-  const { addItem, items, updateQuantity } = useCart();
+  const router = useRouter();
+  const { addItem, items, updateQuantity, selectOnly } = useCart();
   const [hovering, setHovering] = useState(false);
   const hoverImage = p.images[1];
   const shownImage = hovering && hoverImage ? hoverImage : p.images[0];
@@ -40,6 +42,13 @@ export function ProductCard({ product: p }: { product: Product }) {
       },
       1,
     );
+  }
+
+  // Buy now: add this item, tick ONLY it, and go straight to checkout.
+  function buyNow() {
+    add();
+    selectOnly(lineId);
+    router.push("/checkout");
   }
 
   return (
@@ -117,8 +126,8 @@ export function ProductCard({ product: p }: { product: Product }) {
         </div>
       </div>
 
-      {/* Add-to-cart control */}
-      <div className="mt-2">
+      {/* Add-to-cart + Buy-now controls */}
+      <div className="mt-2 space-y-2">
         {cartLine ? (
           <div className="flex h-9 items-center justify-between rounded-full border border-storm text-storm">
             <button
@@ -145,6 +154,12 @@ export function ProductCard({ product: p }: { product: Product }) {
             Add to cart
           </button>
         )}
+        <button
+          onClick={buyNow}
+          className="h-9 w-full rounded-full bg-storm text-sm font-medium text-white transition-colors hover:bg-storm-dark"
+        >
+          Buy now
+        </button>
       </div>
     </div>
   );

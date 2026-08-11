@@ -8,7 +8,7 @@ import { useCart } from "@/lib/cart-context";
 // The size / colour / quantity pickers and the Add-to-Cart / Buy-Now buttons.
 export function ProductOptions({ product }: { product: Product }) {
   const router = useRouter();
-  const { addItem, items, openCart, updateQuantity, removeItem } = useCart();
+  const { addItem, items, openCart, updateQuantity, removeItem, selectOnly } = useCart();
   const [size, setSize] = useState<string | null>(product.sizes[0] ?? null);
   const [color, setColor] = useState<string | null>(product.colors[0] ?? null);
   const [qty, setQty] = useState(1);
@@ -36,8 +36,23 @@ export function ProductOptions({ product }: { product: Product }) {
   }
 
   function buyNow() {
-    if (!cartLine) add();
-    router.push("/cart");
+    if (!cartLine) {
+      addItem(
+        {
+          productId: product.id,
+          slug: product.slug,
+          name: product.name,
+          price: product.price,
+          image: product.images[0] ?? null,
+          size,
+          color,
+        },
+        qty,
+      );
+    }
+    // Tick only this item, then head straight to checkout.
+    selectOnly(lineId);
+    router.push("/checkout");
   }
 
   return (

@@ -231,13 +231,42 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
             </div>
             <div>
               <label className={labelClass}>Compare price (₹)</label>
-              <input type="number" className={inputClass} value={form.compare_at_price} onChange={(e) => set("compare_at_price", e.target.value)} />
+              <input type="number" className={inputClass} value={form.compare_at_price} onChange={(e) => set("compare_at_price", e.target.value)} placeholder="Original / MRP" />
             </div>
             <div>
               <label className={labelClass}>Stock</label>
               <input type="number" className={inputClass} value={form.stock} onChange={(e) => set("stock", e.target.value)} />
             </div>
           </div>
+
+          {/* Live offer preview — the discount badge customers see is auto-calculated. */}
+          {(() => {
+            const price = parseInt(form.price, 10);
+            const compare = parseInt(form.compare_at_price, 10);
+            if (!isNaN(price) && !isNaN(compare) && compare > price) {
+              const pct = Math.round((1 - price / compare) * 100);
+              return (
+                <div className="flex items-center gap-2 rounded-lg bg-storm-tint px-3 py-2 text-xs text-storm">
+                  <span className="rounded-full bg-storm px-2 py-0.5 font-semibold text-white">{pct}% OFF</span>
+                  <span>
+                    Customers see this offer. Save ₹{compare - price} — set “Compare price” higher than “Price” to show a discount, leave it blank for no offer.
+                  </span>
+                </div>
+              );
+            }
+            if (form.compare_at_price && !isNaN(compare) && compare <= price) {
+              return (
+                <p className="text-xs text-amber-600">
+                  Compare price must be higher than Price to show a discount.
+                </p>
+              );
+            }
+            return (
+              <p className="text-xs text-muted">
+                Tip: set a “Compare price” higher than “Price” to show a “% OFF” offer badge.
+              </p>
+            );
+          })()}
 
           <div>
             <label className={labelClass}>Description</label>
@@ -381,6 +410,11 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
                 {!p.is_active && (
                   <span className="rounded-full bg-mist px-2 py-0.5 text-[10px] font-medium text-muted">
                     Hidden
+                  </span>
+                )}
+                {p.compare_at_price && p.compare_at_price > p.price && (
+                  <span className="rounded-full bg-storm px-2 py-0.5 text-[10px] font-semibold text-white">
+                    {Math.round((1 - p.price / p.compare_at_price) * 100)}% OFF
                   </span>
                 )}
               </div>

@@ -10,8 +10,16 @@ import { ConfirmDialog } from "./ConfirmDialog";
 
 // The slide-out cart panel. Always mounted; it slides in/out based on `isOpen`.
 export function CartDrawer() {
-  const { items, subtotal, isOpen, closeCart, count, updateQuantity, removeItem } =
-    useCart();
+  const {
+    items,
+    selectedSubtotal,
+    isOpen,
+    closeCart,
+    count,
+    updateQuantity,
+    removeItem,
+    toggleSelected,
+  } = useCart();
   const [pendingId, setPendingId] = useState<string | null>(null);
   const pathname = usePathname();
 
@@ -67,7 +75,14 @@ export function CartDrawer() {
             <div className="flex-1 overflow-y-auto px-5 py-4">
               <ul className="space-y-4">
                 {items.map((it) => (
-                  <li key={it.id} className="flex gap-3">
+                  <li key={it.id} className={`flex gap-3 ${it.selected ? "" : "opacity-55"}`}>
+                    <input
+                      type="checkbox"
+                      checked={it.selected}
+                      onChange={() => toggleSelected(it.id)}
+                      aria-label={`Select ${it.name}`}
+                      className="mt-1 h-4 w-4 flex-shrink-0 accent-storm"
+                    />
                     <Link
                       href={`/product/${it.slug}`}
                       onClick={closeCart}
@@ -128,11 +143,11 @@ export function CartDrawer() {
 
             <div className="border-t border-line px-5 py-4">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted">Subtotal</span>
-                <span className="font-semibold">{inr(subtotal)}</span>
+                <span className="text-muted">Selected subtotal</span>
+                <span className="font-semibold">{inr(selectedSubtotal)}</span>
               </div>
               <p className="mt-1 text-xs text-muted">
-                Shipping &amp; taxes calculated at checkout.
+                Tick items to include them. Shipping &amp; taxes at checkout.
               </p>
               <Link
                 href="/cart"

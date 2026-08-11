@@ -31,7 +31,7 @@ export function CheckoutClient({
   addresses: Address[];
 }) {
   const router = useRouter();
-  const { items, subtotal, clearCart } = useCart();
+  const { selectedItems, selectedSubtotal, removeItems } = useCart();
 
   const defaultAddr = addresses.find((a) => a.is_default) ?? addresses[0];
   const [selectedId, setSelectedId] = useState<string | undefined>(defaultAddr?.id);
@@ -48,17 +48,17 @@ export function CheckoutClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addresses]);
 
-  const shipping = subtotal >= 999 ? 0 : 79;
-  const total = subtotal + shipping;
+  const shipping = selectedSubtotal >= 999 ? 0 : 79;
+  const total = selectedSubtotal + shipping;
   const selectedAddress = addresses.find((a) => a.id === selectedId);
 
-  // Empty cart guard
-  if (items.length === 0) {
+  // Nothing selected to buy → send them back to the cart.
+  if (selectedItems.length === 0) {
     return (
       <div className="mt-8 rounded-2xl border border-line bg-white p-8 text-center">
-        <p className="text-sm text-muted">Your cart is empty.</p>
-        <Link href="/shop" className="mt-3 inline-block text-sm font-medium text-storm hover:underline">
-          Go shopping
+        <p className="text-sm text-muted">No items selected for checkout.</p>
+        <Link href="/cart" className="mt-3 inline-block text-sm font-medium text-storm hover:underline">
+          Go to cart
         </Link>
       </div>
     );
@@ -76,7 +76,7 @@ export function CheckoutClient({
       const res = await fetch("/api/razorpay/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items, address: selectedAddress }),
+        body: JSON.stringify({ items: selectedItems, address: selectedAddress }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Could not start checkout.");
@@ -109,7 +109,8 @@ export function CheckoutClient({
           });
           const v = await verifyRes.json();
           if (v.success) {
-            clearCart();
+            // Remove only the items we just paid for; leave the rest in the cart.
+            removeItems(selectedItems.map((i) => i.id));
             router.push(`/order/${data.orderId}`);
           } else {
             setError("Payment could not be verified. If money was deducted, it will be refunded.");
@@ -195,7 +196,7 @@ export function CheckoutClient({
       <aside className="h-fit rounded-2xl border border-line bg-white p-6">
         <h2 className="font-heading text-lg font-semibold">Order summary</h2>
         <ul className="mt-4 space-y-2 text-sm">
-          {items.map((it) => (
+          {selectedItems.map((it) => (
             <li key={it.id} className="flex justify-between gap-2">
               <span className="text-muted">
                 {it.name}
@@ -208,7 +209,7 @@ export function CheckoutClient({
         <div className="mt-4 space-y-2 border-t border-line pt-4 text-sm">
           <div className="flex justify-between">
             <span className="text-muted">Subtotal</span>
-            <span>{inr(subtotal)}</span>
+            <span>{inr(selectedSubtotal)}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted">Shipping</span>
