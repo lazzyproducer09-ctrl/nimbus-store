@@ -53,6 +53,8 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
   // when the admin is typing a decline reason for a specific order
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [reason, setReason] = useState("");
+  // per-order refund reference input
+  const [refundRef, setRefundRef] = useState<Record<string, string>>({});
 
   async function write(o: Order, payload: Record<string, unknown>) {
     setUpdating(o.id);
@@ -61,10 +63,17 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
     router.refresh();
   }
 
+  // If money was collected (paid_at set), a cancel/return opens a pending refund.
+  const refundPending = (o: Order) =>
+    o.paid_at && !o.refund_status ? { refund_status: "pending" } : {};
+
   async function updateStatus(o: Order, status: string) {
     const payload: Record<string, unknown> = { status };
     const now = new Date().toISOString();
-    if (status === "cancelled") payload.cancelled_at = now;
+    if (status === "cancelled") {
+      payload.cancelled_at = now;
+      Object.assign(payload, refundPending(o));
+    }
     if (status === "paid" && !o.paid_at) payload.paid_at = now;
     await write(o, payload);
   }
@@ -76,13 +85,26 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
     if (o.status === "return_requested") {
       await write(o, { status: "return_approved", return_approved_at: now });
     } else {
-      await write(o, { status: "cancelled", cancelled_at: now });
+      await write(o, { status: "cancelled", cancelled_at: now, ...refundPending(o) });
     }
   }
 
-  // Mark an approved return as physically received back → complete + refund.
+  // Mark an approved return as physically received back → complete + open refund.
   async function markReceived(o: Order) {
-    await write(o, { status: "returned", returned_at: new Date().toISOString() });
+    await write(o, {
+      status: "returned",
+      returned_at: new Date().toISOString(),
+      ...refundPending(o),
+    });
+  }
+
+  // Admin confirms the refund has actually been paid out.
+  async function markRefunded(o: Order) {
+    await write(o, {
+      refund_status: "refunded",
+      refunded_at: new Date().toISOString(),
+      refund_reference: (refundRef[o.id] ?? "").trim() || null,
+    });
   }
 
   // Decline a request → restore the order and record the reason + kind.
@@ -300,6 +322,37 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
                 >
                   Mark as received (complete return)
                 </button>
+              </div>
+            )}
+
+            {/* refund control (for paid orders that were cancelled / returned) */}
+            {o.refund_status === "pending" && (
+              <div className="border-t border-green-200 bg-green-50/60 px-5 py-3">
+                <p className="text-sm font-medium text-green-800">💳 Refund pending</p>
+                <p className="mt-0.5 text-xs text-green-700">
+                  Refund the customer to their original payment method, then mark it done here.
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <input
+                    value={refundRef[o.id] ?? ""}
+                    onChange={(e) => setRefundRef((m) => ({ ...m, [o.id]: e.target.value }))}
+                    placeholder="Refund/UTR reference (optional)"
+                    className="h-9 flex-1 rounded-lg border border-green-200 bg-white px-3 text-sm outline-none focus:border-green-400"
+                  />
+                  <button
+                    onClick={() => markRefunded(o)}
+                    disabled={updating === o.id}
+                    className="h-9 rounded-full bg-green-600 px-4 text-sm font-medium text-white transition-colors hover:bg-green-700 disabled:opacity-50"
+                  >
+                    Mark refund as done
+                  </button>
+                </div>
+              </div>
+            )}
+            {o.refund_status === "refunded" && (
+              <div className="border-t border-line bg-green-50/40 px-5 py-2.5 text-xs text-green-800">
+                ✓ Refunded{o.refunded_at ? ` on ${fmtDateTime(o.refunded_at)}` : ""}
+                {o.refund_reference ? ` · Ref: ${o.refund_reference}` : ""}
               </div>
             )}
 

@@ -194,17 +194,23 @@ export default async function OrderPage({
 
               {/* refund */}
               <li className="flex gap-3">
-                <span className={`mt-0.5 ${refundActive ? "text-storm" : "text-muted"}`}>💳</span>
+                <span className={`mt-0.5 ${order.refund_status === "refunded" ? "text-green-600" : refundActive ? "text-storm" : "text-muted"}`}>
+                  {order.refund_status === "refunded" ? "✓" : "💳"}
+                </span>
                 <span className="text-xs">
-                  <span className="font-medium text-ink">Refund</span>
+                  <span className="font-medium text-ink">
+                    {order.refund_status === "refunded" ? "Refund completed" : "Refund"}
+                  </span>
                   <span className="mt-0.5 block text-muted">
-                    {refundActive
-                      ? refundBy
-                        ? `Online payments are refunded to the original method by around ${refundBy}. Cash-on-delivery orders have nothing to refund.`
-                        : "Online payments are refunded within 5–7 business days. Cash-on-delivery orders have nothing to refund."
-                      : isReturnFlow
-                        ? "Your refund is processed once we receive the returned item. Cash-on-delivery orders have nothing to refund."
-                        : "Refund begins once your cancellation is approved. Cash-on-delivery orders have nothing to refund."}
+                    {order.refund_status === "refunded"
+                      ? `Refunded to your original payment method${order.refunded_at ? ` on ${fmt(order.refunded_at)}` : ""}${order.refund_reference ? ` · Ref: ${order.refund_reference}` : ""}.`
+                      : order.refund_status === "pending"
+                        ? `Refund initiated — it should reach your original payment method within 5–7 business days${refundBy ? ` (by around ${refundBy})` : ""}.`
+                        : refundActive
+                          ? "If you paid online, your refund will be processed shortly. Cash-on-delivery orders have nothing to refund."
+                          : isReturnFlow
+                            ? "Your refund is processed once we receive the returned item. Cash-on-delivery orders have nothing to refund."
+                            : "Refund begins once your cancellation is approved. Cash-on-delivery orders have nothing to refund."}
                   </span>
                 </span>
               </li>

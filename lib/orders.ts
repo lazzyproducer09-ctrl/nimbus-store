@@ -55,6 +55,9 @@ export type Order = {
   return_approved_at: string | null;
   returned_at: string | null;
   payment_attempts: number;
+  refund_status: string | null;
+  refunded_at: string | null;
+  refund_reference: string | null;
 };
 
 // The logged-in user's orders (newest first).

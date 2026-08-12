@@ -43,6 +43,7 @@ function eventsFor(o: Order): { at: string; label: string }[] {
     { at: o.return_approved_at, label: "Return approved" },
     { at: o.returned_at, label: "Item received — return complete" },
     { at: o.rejected_at, label: `Request declined${o.reject_reason ? ` — “${o.reject_reason}”` : ""}` },
+    { at: o.refunded_at, label: `Refund completed${o.refund_reference ? ` — Ref: ${o.refund_reference}` : ""}` },
   ];
   return ev
     .filter((e): e is { at: string; label: string } => !!e.at)
