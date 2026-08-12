@@ -66,27 +66,55 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Payment setup failed." }, { status: 500 });
   }
 
-  const { data: order, error: orderErr } = await supabase
+  const orderFields = {
+    user_id: user.id,
+    status: "created",
+    subtotal,
+    shipping,
+    total,
+    items,
+    address,
+    razorpay_order_id: rzpOrder.id,
+  };
+
+  // Avoid piling up duplicate pending orders: if this user already has an
+  // unpaid ("created") order, REUSE it (update it with this attempt) instead
+  // of inserting a brand-new row every time they open the payment window.
+  const { data: existing } = await supabase
     .from("orders")
-    .insert({
-      user_id: user.id,
-      status: "created",
-      subtotal,
-      shipping,
-      total,
-      items,
-      address,
-      razorpay_order_id: rzpOrder.id,
-    })
     .select("id")
-    .single();
-  if (orderErr || !order) {
-    console.error("Order insert failed:", orderErr?.message);
-    return NextResponse.json({ error: "Could not save your order." }, { status: 500 });
+    .eq("user_id", user.id)
+    .eq("status", "created")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  let orderId: string;
+  if (existing) {
+    const { error: updErr } = await supabase
+      .from("orders")
+      .update(orderFields)
+      .eq("id", existing.id);
+    if (updErr) {
+      console.error("Order update failed:", updErr.message);
+      return NextResponse.json({ error: "Could not save your order." }, { status: 500 });
+    }
+    orderId = existing.id;
+  } else {
+    const { data: order, error: orderErr } = await supabase
+      .from("orders")
+      .insert(orderFields)
+      .select("id")
+      .single();
+    if (orderErr || !order) {
+      console.error("Order insert failed:", orderErr?.message);
+      return NextResponse.json({ error: "Could not save your order." }, { status: 500 });
+    }
+    orderId = order.id;
   }
 
   return NextResponse.json({
-    orderId: order.id,
+    orderId,
     razorpayOrderId: rzpOrder.id,
     amount: total * 100,
     keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,

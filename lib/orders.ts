@@ -1,6 +1,16 @@
 import { createClient } from "./supabase/server";
 import type { CartItem } from "./cart-context";
 
+// Customer-friendly labels for each order status (shared across pages).
+export const ORDER_STATUS_LABEL: Record<string, string> = {
+  created: "Payment pending",
+  paid: "Confirmed",
+  shipped: "Shipped",
+  delivered: "Delivered",
+  cancel_requested: "Cancellation requested",
+  cancelled: "Cancelled",
+};
+
 export type Order = {
   id: string;
   user_id: string;

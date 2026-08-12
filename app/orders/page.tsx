@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { getMyOrders } from "@/lib/orders";
+import { getMyOrders, ORDER_STATUS_LABEL } from "@/lib/orders";
 import { inr } from "@/lib/format";
 import { UmbrellaMark } from "@/components/icons";
 
@@ -13,16 +13,11 @@ const STATUS_STYLES: Record<string, string> = {
   created: "bg-amber-100 text-amber-700",
   shipped: "bg-blue-100 text-blue-700",
   delivered: "bg-green-100 text-green-700",
+  cancel_requested: "bg-orange-100 text-orange-700",
   cancelled: "bg-red-100 text-red-700",
 };
 
-const STATUS_LABEL: Record<string, string> = {
-  paid: "Confirmed",
-  created: "Payment pending",
-  shipped: "Shipped",
-  delivered: "Delivered",
-  cancelled: "Cancelled",
-};
+const STATUS_LABEL = ORDER_STATUS_LABEL;
 
 export default async function OrdersPage() {
   const supabase = await createClient();

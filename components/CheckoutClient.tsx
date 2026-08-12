@@ -118,7 +118,12 @@ export function CheckoutClient({
           }
         },
         modal: {
-          ondismiss: () => setPaying(false),
+          // If they close the payment window without paying, take them to the
+          // order page where it shows "Payment pending" + Complete / Cancel.
+          ondismiss: () => {
+            setPaying(false);
+            router.push(`/order/${data.orderId}`);
+          },
         },
       });
       rzp.open();

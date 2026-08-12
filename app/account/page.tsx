@@ -7,7 +7,7 @@ import { AccountVerifyBanner } from "@/components/AccountVerifyBanner";
 import { PersonalInfo } from "@/components/PersonalInfo";
 import { AddressManager } from "@/components/AddressManager";
 import { getMyAddresses } from "@/lib/addresses";
-import { getMyOrders } from "@/lib/orders";
+import { getMyOrders, ORDER_STATUS_LABEL } from "@/lib/orders";
 import { inr } from "@/lib/format";
 
 export const metadata: Metadata = { title: "My account — NIMBUS" };
@@ -85,13 +85,21 @@ export default async function AccountPage() {
                     </span>
                   </span>
                   <span
-                    className={`rounded-full px-2.5 py-1 text-[11px] font-medium capitalize ${
-                      o.status === "paid"
+                    className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${
+                      o.status === "paid" || o.status === "delivered"
                         ? "bg-green-100 text-green-700"
-                        : "bg-mist text-muted"
+                        : o.status === "created"
+                          ? "bg-amber-100 text-amber-700"
+                          : o.status === "shipped"
+                            ? "bg-blue-100 text-blue-700"
+                            : o.status === "cancel_requested"
+                              ? "bg-orange-100 text-orange-700"
+                              : o.status === "cancelled"
+                                ? "bg-red-100 text-red-700"
+                                : "bg-mist text-muted"
                     }`}
                   >
-                    {o.status}
+                    {ORDER_STATUS_LABEL[o.status] ?? o.status}
                   </span>
                 </Link>
               </li>
