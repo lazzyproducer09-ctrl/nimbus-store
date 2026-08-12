@@ -54,6 +54,7 @@ export type Order = {
   return_requested_at: string | null;
   return_approved_at: string | null;
   returned_at: string | null;
+  payment_attempts: number;
 };
 
 // The logged-in user's orders (newest first).
@@ -79,6 +80,21 @@ export async function getAllOrders(): Promise<Order[]> {
     .order("created_at", { ascending: false });
   if (error) {
     console.error("Failed to load all orders:", error.message);
+    return [];
+  }
+  return data as Order[];
+}
+
+// All orders for one user (admin only — RLS returns rows only for an admin).
+export async function getOrdersByUser(userId: string): Promise<Order[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+  if (error) {
+    console.error("Failed to load user orders:", error.message);
     return [];
   }
   return data as Order[];

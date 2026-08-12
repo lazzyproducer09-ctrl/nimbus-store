@@ -7,6 +7,7 @@ const TABS = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/products", label: "Products" },
   { href: "/admin/orders", label: "Orders" },
+  { href: "/admin/customers", label: "Customers" },
 ];
 
 export function AdminTabs() {

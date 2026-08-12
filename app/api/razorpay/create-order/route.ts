@@ -82,7 +82,7 @@ export async function POST(request: Request) {
   // of inserting a brand-new row every time they open the payment window.
   const { data: existing } = await supabase
     .from("orders")
-    .select("id")
+    .select("id, payment_attempts")
     .eq("user_id", user.id)
     .eq("status", "created")
     .order("created_at", { ascending: false })
@@ -93,7 +93,7 @@ export async function POST(request: Request) {
   if (existing) {
     const { error: updErr } = await supabase
       .from("orders")
-      .update(orderFields)
+      .update({ ...orderFields, payment_attempts: (existing.payment_attempts ?? 0) + 1 })
       .eq("id", existing.id);
     if (updErr) {
       console.error("Order update failed:", updErr.message);
@@ -103,7 +103,7 @@ export async function POST(request: Request) {
   } else {
     const { data: order, error: orderErr } = await supabase
       .from("orders")
-      .insert(orderFields)
+      .insert({ ...orderFields, payment_attempts: 1 })
       .select("id")
       .single();
     if (orderErr || !order) {
