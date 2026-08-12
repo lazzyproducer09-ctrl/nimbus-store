@@ -7,7 +7,13 @@ import { ConfirmDialog } from "./ConfirmDialog";
 
 // Lets a customer REQUEST cancellation of a confirmed (paid/shipped) order.
 // The request goes to a "pending review" state; an admin approves it to cancel.
-export function CancelOrderButton({ orderId }: { orderId: string }) {
+export function CancelOrderButton({
+  orderId,
+  currentStatus,
+}: {
+  orderId: string;
+  currentStatus: string;
+}) {
   const router = useRouter();
   const supabase = createClient();
   const [open, setOpen] = useState(false);
@@ -19,7 +25,11 @@ export function CancelOrderButton({ orderId }: { orderId: string }) {
     setError(null);
     const { error } = await supabase
       .from("orders")
-      .update({ status: "cancel_requested", cancel_requested_at: new Date().toISOString() })
+      .update({
+        status: "cancel_requested",
+        prev_status: currentStatus,
+        cancel_requested_at: new Date().toISOString(),
+      })
       .eq("id", orderId);
     setSending(false);
     if (error) {

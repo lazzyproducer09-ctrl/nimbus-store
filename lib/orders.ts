@@ -9,6 +9,8 @@ export const ORDER_STATUS_LABEL: Record<string, string> = {
   delivered: "Delivered",
   cancel_requested: "Cancellation requested",
   cancelled: "Cancelled",
+  return_requested: "Return requested",
+  returned: "Returned",
 };
 
 export type Order = {
@@ -20,7 +22,9 @@ export type Order = {
     | "shipped"
     | "delivered"
     | "cancel_requested"
-    | "cancelled";
+    | "cancelled"
+    | "return_requested"
+    | "returned";
   subtotal: number;
   shipping: number;
   total: number;
@@ -40,6 +44,12 @@ export type Order = {
   paid_at: string | null;
   cancel_requested_at: string | null;
   cancelled_at: string | null;
+  prev_status: string | null;
+  reject_reason: string | null;
+  rejected_at: string | null;
+  return_reason: string | null;
+  return_requested_at: string | null;
+  returned_at: string | null;
 };
 
 // The logged-in user's orders (newest first).

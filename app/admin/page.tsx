@@ -23,7 +23,9 @@ export default async function AdminDashboard() {
   const soundEnabled = settings["sound_enabled"];
   const soundVolume = settings["sound_volume"];
   const soundType = settings["sound_type"];
-  const cancelRequests = orders.filter((o) => o.status === "cancel_requested");
+  const cancelRequests = orders.filter(
+    (o) => o.status === "cancel_requested" || o.status === "return_requested",
+  );
   const paid = orders.filter((o) => o.status === "paid");
   const revenue = paid.reduce((n, o) => n + o.total, 0);
   const lowStock = products.filter((p) => p.stock < 10);
@@ -48,10 +50,10 @@ export default async function AdminDashboard() {
             <span className="text-2xl">⚠️</span>
             <div>
               <p className="font-heading font-semibold text-orange-800">
-                {cancelRequests.length} cancellation request{cancelRequests.length === 1 ? "" : "s"} to review
+                {cancelRequests.length} request{cancelRequests.length === 1 ? "" : "s"} to review
               </p>
               <p className="text-xs text-orange-700">
-                A customer asked to cancel. Approve or reject it in Orders.
+                A customer asked to cancel or return. Approve or decline it in Orders.
               </p>
             </div>
           </div>

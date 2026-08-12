@@ -6,6 +6,7 @@ import { getSettings } from "@/lib/settings";
 import { inr } from "@/lib/format";
 import { PendingOrderActions } from "@/components/PendingOrderActions";
 import { CancelOrderButton } from "@/components/CancelOrderButton";
+import { RequestReturnButton } from "@/components/RequestReturnButton";
 import { OrderConfirmedCheck } from "@/components/OrderConfirmedCheck";
 import type { ChimeType } from "@/lib/chime";
 
@@ -15,38 +16,50 @@ const HEAD: Record<string, { icon: string; bg: string; title: string; sub: strin
   paid: {
     icon: "✓",
     bg: "bg-green-100 text-green-600",
-    title: "Order confirmed!",
-    sub: "Thank you — your payment was successful and your order is being prepared.",
+    title: "Order confirmed",
+    sub: "Payment received. We’re preparing your order for dispatch.",
   },
   shipped: {
     icon: "🚚",
     bg: "bg-blue-100 text-blue-600",
     title: "Order shipped",
-    sub: "Your order is on its way.",
+    sub: "Your order has been dispatched and is on its way.",
   },
   delivered: {
     icon: "✓",
     bg: "bg-emerald-100 text-emerald-600",
     title: "Order delivered",
-    sub: "Delivered — hope you love it!",
+    sub: "Delivered. If something isn’t right, you can request a return within 7 days.",
   },
   created: {
     icon: "⏳",
     bg: "bg-amber-100 text-amber-600",
     title: "Payment pending",
-    sub: "Your payment isn’t complete yet. Finish it below to confirm your order.",
+    sub: "Complete your payment below to confirm this order.",
   },
   cancel_requested: {
     icon: "⏳",
     bg: "bg-amber-100 text-amber-600",
-    title: "Cancellation requested",
-    sub: "We’ve received your cancellation request. Our team will review it shortly.",
+    title: "Cancellation under review",
+    sub: "Your request is being reviewed. We’ll update this page once it’s processed.",
   },
   cancelled: {
     icon: "✕",
     bg: "bg-red-100 text-red-600",
     title: "Order cancelled",
     sub: "This order has been cancelled.",
+  },
+  return_requested: {
+    icon: "⏳",
+    bg: "bg-amber-100 text-amber-600",
+    title: "Return under review",
+    sub: "Your return request is being reviewed. We’ll update this page once it’s processed.",
+  },
+  returned: {
+    icon: "↩",
+    bg: "bg-emerald-100 text-emerald-600",
+    title: "Return complete",
+    sub: "Your return has been processed.",
   },
 };
 
@@ -72,9 +85,14 @@ export default async function OrderPage({
   const soundVolume = isNaN(soundVolumeRaw) ? 0.5 : soundVolumeRaw;
   const soundType = (settings["sound_type"] ?? "chime") as ChimeType;
 
-  const isCancelledFlow = order.status === "cancelled" || order.status === "cancel_requested";
+  const isCancelFlow = order.status === "cancelled" || order.status === "cancel_requested";
+  const isReturnFlow = order.status === "returned" || order.status === "return_requested";
+  // A request was declined and the order returned to its earlier state.
+  const wasRejected =
+    !!order.rejected_at &&
+    (order.status === "paid" || order.status === "shipped" || order.status === "delivered");
 
-  // Nicely formatted date + time (IST-style) for the order timeline.
+  // Nicely formatted date + time for the order timeline.
   const fmt = (t: string | null) =>
     t
       ? new Date(t).toLocaleString("en-IN", {
@@ -85,10 +103,18 @@ export default async function OrderPage({
           minute: "2-digit",
         })
       : null;
-  // Estimated refund date = 7 days after cancellation.
-  const refundBy = order.cancelled_at
-    ? fmt(new Date(new Date(order.cancelled_at).getTime() + 7 * 864e5).toISOString())
+  // Estimated refund date = 7 days after the order was cancelled / returned.
+  const settledAt = order.cancelled_at ?? order.returned_at;
+  const refundBy = settledAt
+    ? fmt(new Date(new Date(settledAt).getTime() + 7 * 864e5).toISOString())
     : null;
+
+  // Unified values so one tracker works for both cancellation and return.
+  const inFlow = isCancelFlow || isReturnFlow;
+  const flowLabel = isReturnFlow ? "Return" : "Cancellation";
+  const requestedAt = isReturnFlow ? order.return_requested_at : order.cancel_requested_at;
+  const isSettled = isReturnFlow ? order.status === "returned" : order.status === "cancelled";
+  const settledLabel = isReturnFlow ? "Return approved" : "Approved & cancelled";
 
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-12">
@@ -109,48 +135,59 @@ export default async function OrderPage({
           <p className="mt-1 text-xs text-muted">Confirmed on {fmt(order.paid_at)}</p>
         )}
 
-        {/* refund tracker for the cancellation flow */}
-        {isCancelledFlow && (
+        {/* a request was declined by the store */}
+        {wasRejected && (
+          <div className="mx-auto mt-5 max-w-md rounded-xl border border-red-200 bg-red-50 p-4 text-left">
+            <p className="text-sm font-semibold text-red-800">
+              Your request was declined
+            </p>
+            <p className="mt-1 text-xs text-red-700">
+              {order.reject_reason
+                ? order.reject_reason
+                : "This order can no longer be cancelled or returned."}
+            </p>
+          </div>
+        )}
+
+        {/* refund tracker — works for both cancellation and return */}
+        {inFlow && (
           <div className="mx-auto mt-5 max-w-md rounded-xl border border-line bg-paper/60 p-5 text-left">
-            <p className="text-sm font-semibold text-ink">Cancellation &amp; refund</p>
+            <p className="text-sm font-semibold text-ink">{flowLabel} &amp; refund</p>
             <ol className="mt-3 space-y-3">
-              {/* step 1: requested */}
               <li className="flex gap-3">
                 <span className="mt-0.5 text-green-600">✓</span>
                 <span className="text-xs">
-                  <span className="font-medium text-ink">Cancellation requested</span>
-                  {order.cancel_requested_at && (
-                    <span className="mt-0.5 block text-muted">{fmt(order.cancel_requested_at)}</span>
+                  <span className="font-medium text-ink">{flowLabel} requested</span>
+                  {requestedAt && (
+                    <span className="mt-0.5 block text-muted">{fmt(requestedAt)}</span>
                   )}
                 </span>
               </li>
 
-              {/* step 2: review / approved */}
               <li className="flex gap-3">
-                <span className={`mt-0.5 ${order.status === "cancelled" ? "text-green-600" : "text-amber-500"}`}>
-                  {order.status === "cancelled" ? "✓" : "⏳"}
+                <span className={`mt-0.5 ${isSettled ? "text-green-600" : "text-amber-500"}`}>
+                  {isSettled ? "✓" : "⏳"}
                 </span>
                 <span className="text-xs">
                   <span className="font-medium text-ink">
-                    {order.status === "cancelled" ? "Approved & cancelled" : "Awaiting review by our team"}
+                    {isSettled ? settledLabel : "Under review by our team"}
                   </span>
-                  {order.cancelled_at && (
-                    <span className="mt-0.5 block text-muted">{fmt(order.cancelled_at)}</span>
+                  {settledAt && (
+                    <span className="mt-0.5 block text-muted">{fmt(settledAt)}</span>
                   )}
                 </span>
               </li>
 
-              {/* step 3: refund */}
               <li className="flex gap-3">
-                <span className={`mt-0.5 ${order.status === "cancelled" ? "text-storm" : "text-muted"}`}>💳</span>
+                <span className={`mt-0.5 ${isSettled ? "text-storm" : "text-muted"}`}>💳</span>
                 <span className="text-xs">
                   <span className="font-medium text-ink">Refund</span>
                   <span className="mt-0.5 block text-muted">
-                    {order.status === "cancelled"
+                    {isSettled
                       ? refundBy
-                        ? `If you paid online, it will reach your original payment method by ~${refundBy}. Cash-on-delivery orders have nothing to refund.`
-                        : "If you paid online, your refund is on its way (5–7 business days). COD orders have nothing to refund."
-                      : "Refund starts once your cancellation is approved. COD orders have nothing to refund."}
+                        ? `Online payments are refunded to the original method by around ${refundBy}. Cash-on-delivery orders have nothing to refund.`
+                        : "Online payments are refunded within 5–7 business days. Cash-on-delivery orders have nothing to refund."
+                      : `Refund begins once your ${flowLabel.toLowerCase()} is approved. Cash-on-delivery orders have nothing to refund.`}
                   </span>
                 </span>
               </li>
@@ -168,9 +205,15 @@ export default async function OrderPage({
           />
         )}
 
+        {/* cancel (before delivery) or return (after delivery) */}
         {(order.status === "paid" || order.status === "shipped") && (
           <div className="mt-5">
-            <CancelOrderButton orderId={order.id} />
+            <CancelOrderButton orderId={order.id} currentStatus={order.status} />
+          </div>
+        )}
+        {order.status === "delivered" && (
+          <div className="mt-5">
+            <RequestReturnButton orderId={order.id} />
           </div>
         )}
       </div>

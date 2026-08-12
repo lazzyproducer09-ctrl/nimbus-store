@@ -15,6 +15,8 @@ const STATUS_STYLES: Record<string, string> = {
   delivered: "bg-green-100 text-green-700",
   cancel_requested: "bg-orange-100 text-orange-700",
   cancelled: "bg-red-100 text-red-700",
+  return_requested: "bg-orange-100 text-orange-700",
+  returned: "bg-purple-100 text-purple-700",
 };
 
 const STATUS_LABEL = ORDER_STATUS_LABEL;
