@@ -12,11 +12,20 @@ export function CancelOrderButton({ orderId }: { orderId: string }) {
   const supabase = createClient();
   const [open, setOpen] = useState(false);
   const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function requestCancel() {
     setSending(true);
-    await supabase.from("orders").update({ status: "cancel_requested" }).eq("id", orderId);
+    setError(null);
+    const { error } = await supabase
+      .from("orders")
+      .update({ status: "cancel_requested", cancel_requested_at: new Date().toISOString() })
+      .eq("id", orderId);
     setSending(false);
+    if (error) {
+      setError("Could not send the request. Please try again.");
+      return;
+    }
     setOpen(false);
     router.refresh();
   }
@@ -29,6 +38,7 @@ export function CancelOrderButton({ orderId }: { orderId: string }) {
       >
         Request cancellation
       </button>
+      {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
       <ConfirmDialog
         open={open}
         title="Request cancellation?"

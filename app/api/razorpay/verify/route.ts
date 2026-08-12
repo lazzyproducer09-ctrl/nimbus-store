@@ -35,7 +35,7 @@ export async function POST(request: Request) {
 
   const { error } = await supabase
     .from("orders")
-    .update({ status: "paid", razorpay_payment_id })
+    .update({ status: "paid", razorpay_payment_id, paid_at: new Date().toISOString() })
     .eq("id", orderId)
     .eq("user_id", user.id);
   if (error) {

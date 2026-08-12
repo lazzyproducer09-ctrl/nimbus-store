@@ -84,8 +84,15 @@ export function PendingOrderActions({
   }
 
   async function cancel() {
-    await supabase.from("orders").update({ status: "cancelled" }).eq("id", orderId);
+    const { error } = await supabase
+      .from("orders")
+      .update({ status: "cancelled", cancelled_at: new Date().toISOString() })
+      .eq("id", orderId);
     setConfirmCancel(false);
+    if (error) {
+      setError("Could not cancel. Please try again.");
+      return;
+    }
     router.refresh();
   }
 

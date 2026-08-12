@@ -37,6 +37,9 @@ export type Order = {
   razorpay_order_id: string | null;
   razorpay_payment_id: string | null;
   created_at: string;
+  paid_at: string | null;
+  cancel_requested_at: string | null;
+  cancelled_at: string | null;
 };
 
 // The logged-in user's orders (newest first).

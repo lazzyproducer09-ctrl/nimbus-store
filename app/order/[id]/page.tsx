@@ -74,6 +74,22 @@ export default async function OrderPage({
 
   const isCancelledFlow = order.status === "cancelled" || order.status === "cancel_requested";
 
+  // Nicely formatted date + time (IST-style) for the order timeline.
+  const fmt = (t: string | null) =>
+    t
+      ? new Date(t).toLocaleString("en-IN", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : null;
+  // Estimated refund date = 7 days after cancellation.
+  const refundBy = order.cancelled_at
+    ? fmt(new Date(new Date(order.cancelled_at).getTime() + 7 * 864e5).toISOString())
+    : null;
+
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-12">
       <div className="rounded-2xl border border-line bg-white p-8 text-center">
@@ -89,16 +105,56 @@ export default async function OrderPage({
         <p className="mt-3 text-xs text-muted">
           Order ID: <span className="font-mono text-ink">{order.id.slice(0, 8).toUpperCase()}</span>
         </p>
+        {order.paid_at && (
+          <p className="mt-1 text-xs text-muted">Confirmed on {fmt(order.paid_at)}</p>
+        )}
 
-        {/* refund note for the cancellation flow */}
+        {/* refund tracker for the cancellation flow */}
         {isCancelledFlow && (
-          <div className="mx-auto mt-5 max-w-md rounded-xl border border-line bg-paper/60 p-4 text-left text-xs text-muted">
-            <p className="font-medium text-ink">💳 Refund</p>
-            <p className="mt-1">
-              {order.status === "cancel_requested"
-                ? "Once your cancellation is approved, any online payment will be refunded to your original payment method within 5–7 business days. Cash-on-delivery orders have nothing to refund."
-                : "If you paid online, your refund has been initiated and will reach your original payment method within 5–7 business days. Cash-on-delivery orders have nothing to refund."}
-            </p>
+          <div className="mx-auto mt-5 max-w-md rounded-xl border border-line bg-paper/60 p-5 text-left">
+            <p className="text-sm font-semibold text-ink">Cancellation &amp; refund</p>
+            <ol className="mt-3 space-y-3">
+              {/* step 1: requested */}
+              <li className="flex gap-3">
+                <span className="mt-0.5 text-green-600">✓</span>
+                <span className="text-xs">
+                  <span className="font-medium text-ink">Cancellation requested</span>
+                  {order.cancel_requested_at && (
+                    <span className="mt-0.5 block text-muted">{fmt(order.cancel_requested_at)}</span>
+                  )}
+                </span>
+              </li>
+
+              {/* step 2: review / approved */}
+              <li className="flex gap-3">
+                <span className={`mt-0.5 ${order.status === "cancelled" ? "text-green-600" : "text-amber-500"}`}>
+                  {order.status === "cancelled" ? "✓" : "⏳"}
+                </span>
+                <span className="text-xs">
+                  <span className="font-medium text-ink">
+                    {order.status === "cancelled" ? "Approved & cancelled" : "Awaiting review by our team"}
+                  </span>
+                  {order.cancelled_at && (
+                    <span className="mt-0.5 block text-muted">{fmt(order.cancelled_at)}</span>
+                  )}
+                </span>
+              </li>
+
+              {/* step 3: refund */}
+              <li className="flex gap-3">
+                <span className={`mt-0.5 ${order.status === "cancelled" ? "text-storm" : "text-muted"}`}>💳</span>
+                <span className="text-xs">
+                  <span className="font-medium text-ink">Refund</span>
+                  <span className="mt-0.5 block text-muted">
+                    {order.status === "cancelled"
+                      ? refundBy
+                        ? `If you paid online, it will reach your original payment method by ~${refundBy}. Cash-on-delivery orders have nothing to refund.`
+                        : "If you paid online, your refund is on its way (5–7 business days). COD orders have nothing to refund."
+                      : "Refund starts once your cancellation is approved. COD orders have nothing to refund."}
+                  </span>
+                </span>
+              </li>
+            </ol>
           </div>
         )}
 

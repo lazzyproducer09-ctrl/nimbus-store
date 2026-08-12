@@ -20,15 +20,27 @@ const STATUS: Record<string, { label: string; cls: string; dot: string }> = {
 // customer-driven, so it's shown but not manually selectable).
 const STATUS_KEYS = ["created", "paid", "shipped", "delivered", "cancelled"];
 
+const fmtTime = (t: string) =>
+  new Date(t).toLocaleString("en-IN", {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
 export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
   const router = useRouter();
   const supabase = createClient();
   const [updating, setUpdating] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Order | null>(null);
 
-  async function updateStatus(id: string, status: string) {
-    setUpdating(id);
-    await supabase.from("orders").update({ status }).eq("id", id);
+  async function updateStatus(o: Order, status: string) {
+    setUpdating(o.id);
+    const payload: Record<string, unknown> = { status };
+    const now = new Date().toISOString();
+    if (status === "cancelled") payload.cancelled_at = now;
+    if (status === "paid" && !o.paid_at) payload.paid_at = now;
+    await supabase.from("orders").update(payload).eq("id", o.id);
     setUpdating(null);
     router.refresh();
   }
@@ -97,6 +109,15 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
                 </span>
               </div>
 
+              {/* lifecycle times */}
+              {(o.paid_at || o.cancel_requested_at || o.cancelled_at) && (
+                <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-muted">
+                  {o.paid_at && <span>Confirmed: {fmtTime(o.paid_at)}</span>}
+                  {o.cancel_requested_at && <span>Cancel requested: {fmtTime(o.cancel_requested_at)}</span>}
+                  {o.cancelled_at && <span>Cancelled: {fmtTime(o.cancelled_at)}</span>}
+                </div>
+              )}
+
               {/* items */}
               <div className="mt-3 flex flex-wrap gap-2">
                 {o.items.map((it, i) => (
@@ -129,14 +150,14 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
                 </span>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => updateStatus(o.id, "cancelled")}
+                    onClick={() => updateStatus(o, "cancelled")}
                     disabled={updating === o.id}
                     className="h-9 rounded-full bg-red-600 px-4 text-sm font-medium text-white transition-colors hover:bg-red-700 disabled:opacity-50"
                   >
                     Approve &amp; cancel
                   </button>
                   <button
-                    onClick={() => updateStatus(o.id, "paid")}
+                    onClick={() => updateStatus(o, "paid")}
                     disabled={updating === o.id}
                     className="h-9 rounded-full border border-ink/15 px-4 text-sm font-medium transition-colors hover:border-ink/40 disabled:opacity-50"
                   >
@@ -152,7 +173,7 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
                 <span className="text-xs text-muted">Update status</span>
                 <select
                   value={STATUS_KEYS.includes(o.status) ? o.status : ""}
-                  onChange={(e) => updateStatus(o.id, e.target.value)}
+                  onChange={(e) => updateStatus(o, e.target.value)}
                   disabled={updating === o.id}
                   className="h-9 rounded-lg border border-line bg-white px-2 text-sm outline-none focus:border-storm disabled:opacity-50"
                 >
