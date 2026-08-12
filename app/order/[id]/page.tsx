@@ -55,11 +55,17 @@ const HEAD: Record<string, { icon: string; bg: string; title: string; sub: strin
     title: "Return under review",
     sub: "Your return request is being reviewed. We’ll update this page once it’s processed.",
   },
+  return_approved: {
+    icon: "📦",
+    bg: "bg-indigo-100 text-indigo-600",
+    title: "Return approved",
+    sub: "Your return is approved. Please send the item back — your refund is processed once we receive it.",
+  },
   returned: {
     icon: "↩",
     bg: "bg-emerald-100 text-emerald-600",
     title: "Return complete",
-    sub: "Your return has been processed.",
+    sub: "We’ve received your item and your return is complete.",
   },
 };
 
@@ -86,7 +92,10 @@ export default async function OrderPage({
   const soundType = (settings["sound_type"] ?? "chime") as ChimeType;
 
   const isCancelFlow = order.status === "cancelled" || order.status === "cancel_requested";
-  const isReturnFlow = order.status === "returned" || order.status === "return_requested";
+  const isReturnFlow =
+    order.status === "returned" ||
+    order.status === "return_requested" ||
+    order.status === "return_approved";
   // A request was declined earlier → block re-requesting the SAME thing.
   const cancelDeclined = order.reject_kind === "cancel";
   const returnDeclined = order.reject_kind === "return";
@@ -108,12 +117,35 @@ export default async function OrderPage({
     ? fmt(new Date(new Date(settledAt).getTime() + 7 * 864e5).toISOString())
     : null;
 
-  // Unified values so one tracker works for both cancellation and return.
+  // Build the tracker steps for whichever flow this order is in.
   const inFlow = isCancelFlow || isReturnFlow;
   const flowLabel = isReturnFlow ? "Return" : "Cancellation";
-  const requestedAt = isReturnFlow ? order.return_requested_at : order.cancel_requested_at;
-  const isSettled = isReturnFlow ? order.status === "returned" : order.status === "cancelled";
-  const settledLabel = isReturnFlow ? "Return approved" : "Approved & cancelled";
+  // Refund only actually begins once the order is cancelled OR the item is received back.
+  const refundActive = order.status === "cancelled" || order.status === "returned";
+  const steps: { label: string; at: string | null; done: boolean }[] = isReturnFlow
+    ? [
+        { label: "Return requested", at: order.return_requested_at, done: true },
+        {
+          label: "Return approved",
+          at: order.return_approved_at,
+          done: order.status === "return_approved" || order.status === "returned",
+        },
+        {
+          label: "Item received — return complete",
+          at: order.returned_at,
+          done: order.status === "returned",
+        },
+      ]
+    : [
+        { label: "Cancellation requested", at: order.cancel_requested_at, done: true },
+        {
+          label: "Approved & cancelled",
+          at: order.cancelled_at,
+          done: order.status === "cancelled",
+        },
+      ];
+  // The first not-yet-done step is the "current" one (shows ⏳).
+  const currentStepIdx = steps.findIndex((st) => !st.done);
 
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-12">
@@ -134,45 +166,45 @@ export default async function OrderPage({
           <p className="mt-1 text-xs text-muted">Confirmed on {fmt(order.paid_at)}</p>
         )}
 
-        {/* refund tracker — works for both cancellation and return */}
+        {/* refund tracker — steps differ for cancellation vs return */}
         {inFlow && (
           <div className="mx-auto mt-5 max-w-md rounded-xl border border-line bg-paper/60 p-5 text-left">
             <p className="text-sm font-semibold text-ink">{flowLabel} &amp; refund</p>
             <ol className="mt-3 space-y-3">
-              <li className="flex gap-3">
-                <span className="mt-0.5 text-green-600">✓</span>
-                <span className="text-xs">
-                  <span className="font-medium text-ink">{flowLabel} requested</span>
-                  {requestedAt && (
-                    <span className="mt-0.5 block text-muted">{fmt(requestedAt)}</span>
-                  )}
-                </span>
-              </li>
+              {steps.map((st, i) => {
+                const isCurrent = i === currentStepIdx;
+                return (
+                  <li key={i} className="flex gap-3">
+                    <span
+                      className={`mt-0.5 ${
+                        st.done ? "text-green-600" : isCurrent ? "text-amber-500" : "text-muted"
+                      }`}
+                    >
+                      {st.done ? "✓" : isCurrent ? "⏳" : "○"}
+                    </span>
+                    <span className="text-xs">
+                      <span className={`font-medium ${st.done || isCurrent ? "text-ink" : "text-muted"}`}>
+                        {isCurrent && !st.done ? `${st.label} — in progress` : st.label}
+                      </span>
+                      {st.at && <span className="mt-0.5 block text-muted">{fmt(st.at)}</span>}
+                    </span>
+                  </li>
+                );
+              })}
 
+              {/* refund */}
               <li className="flex gap-3">
-                <span className={`mt-0.5 ${isSettled ? "text-green-600" : "text-amber-500"}`}>
-                  {isSettled ? "✓" : "⏳"}
-                </span>
-                <span className="text-xs">
-                  <span className="font-medium text-ink">
-                    {isSettled ? settledLabel : "Under review by our team"}
-                  </span>
-                  {settledAt && (
-                    <span className="mt-0.5 block text-muted">{fmt(settledAt)}</span>
-                  )}
-                </span>
-              </li>
-
-              <li className="flex gap-3">
-                <span className={`mt-0.5 ${isSettled ? "text-storm" : "text-muted"}`}>💳</span>
+                <span className={`mt-0.5 ${refundActive ? "text-storm" : "text-muted"}`}>💳</span>
                 <span className="text-xs">
                   <span className="font-medium text-ink">Refund</span>
                   <span className="mt-0.5 block text-muted">
-                    {isSettled
+                    {refundActive
                       ? refundBy
                         ? `Online payments are refunded to the original method by around ${refundBy}. Cash-on-delivery orders have nothing to refund.`
                         : "Online payments are refunded within 5–7 business days. Cash-on-delivery orders have nothing to refund."
-                      : `Refund begins once your ${flowLabel.toLowerCase()} is approved. Cash-on-delivery orders have nothing to refund.`}
+                      : isReturnFlow
+                        ? "Your refund is processed once we receive the returned item. Cash-on-delivery orders have nothing to refund."
+                        : "Refund begins once your cancellation is approved. Cash-on-delivery orders have nothing to refund."}
                   </span>
                 </span>
               </li>

@@ -16,6 +16,7 @@ const STATUS_STYLES: Record<string, string> = {
   cancel_requested: "bg-orange-100 text-orange-700",
   cancelled: "bg-red-100 text-red-700",
   return_requested: "bg-orange-100 text-orange-700",
+  return_approved: "bg-indigo-100 text-indigo-700",
   returned: "bg-purple-100 text-purple-700",
 };
 

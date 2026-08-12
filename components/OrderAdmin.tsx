@@ -16,6 +16,7 @@ const STATUS: Record<string, { label: string; cls: string; dot: string }> = {
   cancel_requested: { label: "Cancellation requested", cls: "bg-orange-100 text-orange-700", dot: "bg-orange-500" },
   cancelled: { label: "Cancelled", cls: "bg-red-100 text-red-700", dot: "bg-red-500" },
   return_requested: { label: "Return requested", cls: "bg-orange-100 text-orange-700", dot: "bg-orange-500" },
+  return_approved: { label: "Return approved · awaiting item", cls: "bg-indigo-100 text-indigo-700", dot: "bg-indigo-500" },
   returned: { label: "Returned", cls: "bg-purple-100 text-purple-700", dot: "bg-purple-500" },
 };
 // Statuses the admin can set manually (request states are customer-driven).
@@ -68,14 +69,20 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
     await write(o, payload);
   }
 
-  // Approve a cancellation → cancelled; approve a return → returned.
+  // Approve a cancellation → cancelled. Approve a return → "return_approved"
+  // (accepted, item not back yet). Item received → "returned" (refund).
   async function approve(o: Order) {
     const now = new Date().toISOString();
     if (o.status === "return_requested") {
-      await write(o, { status: "returned", returned_at: now });
+      await write(o, { status: "return_approved", return_approved_at: now });
     } else {
       await write(o, { status: "cancelled", cancelled_at: now });
     }
+  }
+
+  // Mark an approved return as physically received back → complete + refund.
+  async function markReceived(o: Order) {
+    await write(o, { status: "returned", returned_at: new Date().toISOString() });
   }
 
   // Decline a request → restore the order and record the reason + kind.
@@ -277,6 +284,22 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
                     </button>
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* approved return → mark as physically received (completes + refunds) */}
+            {o.status === "return_approved" && (
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-indigo-200 bg-indigo-50 px-5 py-3">
+                <span className="text-sm font-medium text-indigo-800">
+                  📦 Return approved — mark it received once the item is back with you.
+                </span>
+                <button
+                  onClick={() => markReceived(o)}
+                  disabled={updating === o.id}
+                  className="h-9 rounded-full bg-indigo-600 px-4 text-sm font-medium text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
+                >
+                  Mark as received (complete return)
+                </button>
               </div>
             )}
 

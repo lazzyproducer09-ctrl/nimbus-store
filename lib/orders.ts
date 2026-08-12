@@ -10,6 +10,7 @@ export const ORDER_STATUS_LABEL: Record<string, string> = {
   cancel_requested: "Cancellation requested",
   cancelled: "Cancelled",
   return_requested: "Return requested",
+  return_approved: "Return approved",
   returned: "Returned",
 };
 
@@ -24,6 +25,7 @@ export type Order = {
     | "cancel_requested"
     | "cancelled"
     | "return_requested"
+    | "return_approved"
     | "returned";
   subtotal: number;
   shipping: number;
@@ -50,6 +52,7 @@ export type Order = {
   rejected_at: string | null;
   return_reason: string | null;
   return_requested_at: string | null;
+  return_approved_at: string | null;
   returned_at: string | null;
 };
 
