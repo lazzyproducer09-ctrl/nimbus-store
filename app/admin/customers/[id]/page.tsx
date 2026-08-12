@@ -56,12 +56,18 @@ export default async function CustomerDetailPage({
 }) {
   const { id } = await params;
   const supabase = await createClient();
-  const [{ data: profileData }, orders] = await Promise.all([
+  const [{ data: profileData }, orders, { data: cartRow }] = await Promise.all([
     supabase.rpc("admin_customer_profile", { uid: id }),
     getOrdersByUser(id),
+    supabase.from("user_carts").select("items, updated_at").eq("user_id", id).maybeSingle(),
   ]);
   const profile = profileData as Profile | null;
   if (!profile && orders.length === 0) notFound();
+
+  type CartLine = { name: string; price: number; quantity: number; size: string | null; color: string | null; image: string | null };
+  const cart = ((cartRow?.items ?? []) as CartLine[]).filter((c) => c && c.name);
+  const cartTotal = cart.reduce((n, c) => n + c.price * c.quantity, 0);
+  const cartCount = cart.reduce((n, c) => n + c.quantity, 0);
 
   const paid = orders.filter((o) => ["paid", "shipped", "delivered"].includes(o.status));
   const totalSpent = paid.reduce((n, o) => n + o.total, 0);
@@ -127,10 +133,55 @@ export default async function CustomerDetailPage({
           </div>
         )}
 
-        {/* cart note — carts live in the browser, not the database */}
-        <p className="mt-4 rounded-lg bg-mist/50 px-3 py-2 text-[11px] text-muted">
-          Note: a customer&rsquo;s live cart is stored in their own browser, so it can&rsquo;t be shown
-          here. Their pending (unpaid) orders below are the closest record of what they tried to buy.
+      </div>
+
+      {/* live cart */}
+      <div className="mt-6 rounded-2xl border border-line bg-white p-6">
+        <div className="flex items-center justify-between">
+          <h3 className="font-heading text-lg font-semibold">Current cart</h3>
+          {cartRow?.updated_at && (
+            <span className="text-[11px] text-muted">updated {fmt(cartRow.updated_at)}</span>
+          )}
+        </div>
+        {cart.length === 0 ? (
+          <p className="mt-2 text-sm text-muted">Their cart is empty right now.</p>
+        ) : (
+          <>
+            <ul className="mt-3 divide-y divide-line">
+              {cart.map((c, i) => (
+                <li key={i} className="flex items-center gap-3 py-2.5">
+                  <div className="flex h-11 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-line bg-mist text-storm/40">
+                    {c.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={c.image} alt="" className="h-full w-full object-cover" />
+                    ) : (
+                      <span className="text-xs">🛍</span>
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1 text-sm">
+                    <p className="truncate font-medium">{c.name}</p>
+                    {(c.size || c.color) && (
+                      <p className="text-xs text-muted">{[c.size, c.color].filter(Boolean).join(" · ")}</p>
+                    )}
+                  </div>
+                  <span className="whitespace-nowrap text-sm text-muted">
+                    {inr(c.price)} × {c.quantity}
+                  </span>
+                  <span className="w-20 whitespace-nowrap text-right text-sm font-medium">
+                    {inr(c.price * c.quantity)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-3 flex justify-between border-t border-line pt-3 text-sm font-semibold">
+              <span>{cartCount} item{cartCount === 1 ? "" : "s"} in cart</span>
+              <span>{inr(cartTotal)}</span>
+            </div>
+          </>
+        )}
+        <p className="mt-3 text-[11px] text-muted">
+          This is the cart saved to the customer&rsquo;s account (updated live while they shop when
+          logged in). Guests who aren&rsquo;t signed in keep their cart only in their own browser.
         </p>
       </div>
 

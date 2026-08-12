@@ -7,6 +7,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 // One line in the cart. Same product with a different size/colour is a separate line.
 export type CartItem = {
@@ -54,6 +55,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [supabase] = useState(() => createClient());
 
   // Load the saved cart from the browser once, on first mount.
   useEffect(() => {
@@ -69,6 +72,46 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
     setHydrated(true);
   }, []);
+
+  // Track who is logged in (so we can sync the cart to their account).
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      setUserId(session?.user?.id ?? null);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [supabase]);
+
+  // On login: if the browser cart is empty, pull the saved cart from the account.
+  useEffect(() => {
+    if (!hydrated || !userId) return;
+    let active = true;
+    (async () => {
+      const { data } = await supabase
+        .from("user_carts")
+        .select("items")
+        .eq("user_id", userId)
+        .maybeSingle();
+      if (!active) return;
+      const saved = (data?.items ?? []) as CartItem[];
+      // Only adopt the account cart when the local one is empty (don't clobber).
+      setItems((cur) => (cur.length === 0 && saved.length > 0 ? saved : cur));
+    })();
+    return () => {
+      active = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId, hydrated]);
+
+  // Whenever the cart changes AND the user is logged in, save it to their account
+  // (this is what lets the admin see a customer's cart + cross-device sync).
+  useEffect(() => {
+    if (!hydrated || !userId) return;
+    supabase
+      .from("user_carts")
+      .upsert({ user_id: userId, items, updated_at: new Date().toISOString() })
+      .then(() => {});
+  }, [items, userId, hydrated, supabase]);
 
   // Save the cart to the browser whenever it changes.
   useEffect(() => {
