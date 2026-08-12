@@ -21,6 +21,20 @@ const STATUS: Record<string, { label: string; cls: string; dot: string }> = {
 // Statuses the admin can set manually (request states are customer-driven).
 const STATUS_KEYS = ["created", "paid", "shipped", "delivered", "cancelled"];
 
+// Ready-made decline reasons the admin can tap (they can also type a custom one).
+const CANCEL_REASONS = [
+  "Order has already been shipped.",
+  "Order is out for delivery.",
+  "The cancellation window has passed.",
+  "This item is non-cancellable.",
+];
+const RETURN_REASONS = [
+  "The 7-day return window has passed.",
+  "The item shows signs of use or damage.",
+  "This product is non-returnable.",
+  "Return request could not be verified.",
+];
+
 const fmtDateTime = (t: string) =>
   new Date(t).toLocaleString("en-IN", {
     day: "numeric",
@@ -64,13 +78,14 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
     }
   }
 
-  // Decline a request → restore the order and record the reason.
+  // Decline a request → restore the order and record the reason + kind.
   async function decline(o: Order) {
     const isReturn = o.status === "return_requested";
     const restore = o.prev_status ?? (isReturn ? "delivered" : "paid");
     await write(o, {
       status: restore,
       rejected_at: new Date().toISOString(),
+      reject_kind: isReturn ? "return" : "cancel",
       reject_reason:
         reason.trim() ||
         (isReturn
@@ -196,15 +211,30 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
 
                 {rejectingId === o.id ? (
                   <div className="mt-3">
+                    <p className="mb-1.5 text-xs font-medium text-orange-800">
+                      Pick a reason (or write your own) — the customer will see this:
+                    </p>
+                    <div className="mb-2 flex flex-wrap gap-1.5">
+                      {(isReturn ? RETURN_REASONS : CANCEL_REASONS).map((r) => (
+                        <button
+                          key={r}
+                          type="button"
+                          onClick={() => setReason(r)}
+                          className={`rounded-full border px-3 py-1 text-xs transition-colors ${
+                            reason === r
+                              ? "border-orange-500 bg-orange-100 text-orange-800"
+                              : "border-orange-200 bg-white text-orange-700 hover:border-orange-400"
+                          }`}
+                        >
+                          {r}
+                        </button>
+                      ))}
+                    </div>
                     <textarea
                       value={reason}
                       onChange={(e) => setReason(e.target.value)}
                       rows={2}
-                      placeholder={
-                        isReturn
-                          ? "Reason for declining the return (shown to the customer)…"
-                          : "Reason for declining, e.g. order already shipped (shown to the customer)…"
-                      }
+                      placeholder="…or type a custom reason here"
                       className="w-full rounded-lg border border-orange-200 bg-white px-3 py-2 text-sm outline-none focus:border-orange-400"
                     />
                     <div className="mt-2 flex gap-2">

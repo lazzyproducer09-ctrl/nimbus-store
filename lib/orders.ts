@@ -46,6 +46,7 @@ export type Order = {
   cancelled_at: string | null;
   prev_status: string | null;
   reject_reason: string | null;
+  reject_kind: string | null;
   rejected_at: string | null;
   return_reason: string | null;
   return_requested_at: string | null;

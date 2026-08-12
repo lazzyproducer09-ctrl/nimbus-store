@@ -87,10 +87,9 @@ export default async function OrderPage({
 
   const isCancelFlow = order.status === "cancelled" || order.status === "cancel_requested";
   const isReturnFlow = order.status === "returned" || order.status === "return_requested";
-  // A request was declined and the order returned to its earlier state.
-  const wasRejected =
-    !!order.rejected_at &&
-    (order.status === "paid" || order.status === "shipped" || order.status === "delivered");
+  // A request was declined earlier → block re-requesting the SAME thing.
+  const cancelDeclined = order.reject_kind === "cancel";
+  const returnDeclined = order.reject_kind === "return";
 
   // Nicely formatted date + time for the order timeline.
   const fmt = (t: string | null) =>
@@ -133,20 +132,6 @@ export default async function OrderPage({
         </p>
         {order.paid_at && (
           <p className="mt-1 text-xs text-muted">Confirmed on {fmt(order.paid_at)}</p>
-        )}
-
-        {/* a request was declined by the store */}
-        {wasRejected && (
-          <div className="mx-auto mt-5 max-w-md rounded-xl border border-red-200 bg-red-50 p-4 text-left">
-            <p className="text-sm font-semibold text-red-800">
-              Your request was declined
-            </p>
-            <p className="mt-1 text-xs text-red-700">
-              {order.reject_reason
-                ? order.reject_reason
-                : "This order can no longer be cancelled or returned."}
-            </p>
-          </div>
         )}
 
         {/* refund tracker — works for both cancellation and return */}
@@ -205,15 +190,25 @@ export default async function OrderPage({
           />
         )}
 
-        {/* cancel (before delivery) or return (after delivery) */}
+        {/* cancel (before delivery): allow one request, then Talk to us */}
         {(order.status === "paid" || order.status === "shipped") && (
           <div className="mt-5">
-            <CancelOrderButton orderId={order.id} currentStatus={order.status} />
+            {cancelDeclined ? (
+              <DeclinedNotice reason={order.reject_reason} kind="cancellation" />
+            ) : (
+              <CancelOrderButton orderId={order.id} currentStatus={order.status} />
+            )}
           </div>
         )}
+
+        {/* return (after delivery): allow one request, then Talk to us */}
         {order.status === "delivered" && (
           <div className="mt-5">
-            <RequestReturnButton orderId={order.id} />
+            {returnDeclined ? (
+              <DeclinedNotice reason={order.reject_reason} kind="return" />
+            ) : (
+              <RequestReturnButton orderId={order.id} />
+            )}
           </div>
         )}
       </div>
@@ -276,6 +271,34 @@ export default async function OrderPage({
           View my orders
         </Link>
       </div>
+    </div>
+  );
+}
+
+// Shown when the store has already declined a cancellation/return request —
+// instead of letting the customer keep re-requesting, we point them to support.
+function DeclinedNotice({
+  reason,
+  kind,
+}: {
+  reason: string | null;
+  kind: "cancellation" | "return";
+}) {
+  return (
+    <div className="mx-auto max-w-md rounded-xl border border-red-200 bg-red-50 p-4 text-left">
+      <p className="text-sm font-semibold text-red-800">Your {kind} request was declined</p>
+      <p className="mt-1 text-xs text-red-700">
+        {reason ?? `This order isn’t eligible for ${kind}.`}
+      </p>
+      <p className="mt-2 text-xs text-red-700">
+        If you think this is a mistake, please get in touch — we’re happy to help.
+      </p>
+      <Link
+        href="/contact"
+        className="mt-3 inline-flex h-10 items-center justify-center rounded-full bg-ink px-5 text-sm font-medium text-white transition-colors hover:bg-storm"
+      >
+        Talk to us
+      </Link>
     </div>
   );
 }
