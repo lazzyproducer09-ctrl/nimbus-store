@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import type { Product } from "@/lib/products";
 import { inr } from "@/lib/format";
 import { useCart } from "@/lib/cart-context";
-import { UmbrellaMark } from "./icons";
+import { OffbeatMark } from "./icons";
 import { WishlistButton } from "./WishlistButton";
 
 // One product card. Image + name link to the product page; an "Add to cart"
@@ -82,14 +82,14 @@ export function ProductCard({ product: p }: { product: Product }) {
         onMouseEnter={() => setHovering(true)}
         onMouseLeave={() => setHovering(false)}
       >
-        <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-line bg-mist shadow-sm transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl">
+        <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-edge bg-surface transition-all duration-300 group-hover:-translate-y-1 group-hover:border-volt/40 group-hover:shadow-[0_20px_50px_-20px_rgba(200,255,0,0.25)]">
           {p.tag && (
-            <span className="absolute left-3 top-3 z-10 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-medium text-ink shadow-sm">
+            <span className="absolute left-3 top-3 z-10 rounded-full bg-void/80 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-volt backdrop-blur-sm">
               {p.tag}
             </span>
           )}
           {discount > 0 && (
-            <span className="absolute bottom-3 left-3 z-10 rounded-full bg-storm px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm">
+            <span className="absolute bottom-3 left-3 z-10 rounded-full bg-volt px-2.5 py-1 text-[11px] font-bold text-void shadow-sm">
               {discount}% OFF
             </span>
           )}
@@ -101,8 +101,8 @@ export function ProductCard({ product: p }: { product: Product }) {
               className="absolute inset-0 h-full w-full object-cover transition-opacity duration-200"
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-storm/50 transition-transform duration-500 group-hover:scale-105">
-              <UmbrellaMark className="h-12 w-12" />
+            <div className="absolute inset-0 flex items-center justify-center text-ash-dim transition-transform duration-500 group-hover:scale-105 group-hover:text-volt">
+              <OffbeatMark className="h-12 w-12" />
             </div>
           )}
         </div>
@@ -111,23 +111,23 @@ export function ProductCard({ product: p }: { product: Product }) {
       <div className="mt-3 flex items-start justify-between gap-2">
         <div>
           <Link href={`/product/${p.slug}`}>
-            <h3 className="text-sm font-medium leading-snug hover:underline">{p.name}</h3>
+            <h3 className="text-sm font-medium leading-snug text-chalk transition-colors hover:text-volt">{p.name}</h3>
           </Link>
-          <div className="mt-1 flex items-center gap-1 text-xs text-muted">
-            <span className="text-storm">★</span>
-            <span className="text-ink">{p.rating}</span>
+          <div className="mt-1 flex items-center gap-1 text-xs text-ash">
+            <span className="text-volt">★</span>
+            <span className="text-chalk">{p.rating}</span>
             <span>({p.review_count})</span>
           </div>
           {lowStock && (
-            <p className="mt-1 text-[11px] font-medium text-red-600">
+            <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-red-400">
               Only {p.stock} left
             </p>
           )}
         </div>
         <div className="text-right">
-          <span className="block whitespace-nowrap text-sm font-semibold">{inr(p.price)}</span>
+          <span className="block whitespace-nowrap text-sm font-semibold text-chalk">{inr(p.price)}</span>
           {p.compare_at_price && (
-            <span className="block text-xs text-muted line-through">
+            <span className="block text-xs text-ash-dim line-through">
               {inr(p.compare_at_price)}
             </span>
           )}
@@ -137,10 +137,10 @@ export function ProductCard({ product: p }: { product: Product }) {
       {/* Add-to-cart + Buy-now controls */}
       <div className="mt-2 space-y-2">
         {cartLine ? (
-          <div className="flex h-9 items-center justify-between rounded-full border border-storm text-storm">
+          <div className="flex h-9 items-center justify-between rounded-full border border-volt/60 text-volt">
             <button
               onClick={() => updateQuantity(lineId, cartLine.quantity - 1)}
-              className="flex h-9 w-10 items-center justify-center rounded-l-full text-lg transition-colors hover:bg-storm-tint"
+              className="flex h-9 w-10 items-center justify-center rounded-l-full text-lg transition-colors hover:bg-volt-deep"
               aria-label="Decrease quantity"
             >
               −
@@ -148,7 +148,7 @@ export function ProductCard({ product: p }: { product: Product }) {
             <span className="text-sm font-medium">{cartLine.quantity} in cart</span>
             <button
               onClick={() => updateQuantity(lineId, cartLine.quantity + 1)}
-              className="flex h-9 w-10 items-center justify-center rounded-r-full text-lg transition-colors hover:bg-storm-tint"
+              className="flex h-9 w-10 items-center justify-center rounded-r-full text-lg transition-colors hover:bg-volt-deep"
               aria-label="Increase quantity"
             >
               +
@@ -157,14 +157,14 @@ export function ProductCard({ product: p }: { product: Product }) {
         ) : (
           <button
             onClick={add}
-            className="h-9 w-full rounded-full border border-ink/15 text-sm font-medium transition-colors hover:border-storm hover:text-storm"
+            className="h-9 w-full rounded-full border border-edge text-sm font-medium text-chalk transition-colors hover:border-volt hover:text-volt"
           >
             Add to cart
           </button>
         )}
         <button
           onClick={buyNow}
-          className="h-9 w-full rounded-full bg-storm text-sm font-medium text-white transition-colors hover:bg-storm-dark"
+          className="h-9 w-full rounded-full bg-volt text-sm font-semibold text-void transition-colors hover:bg-volt-dim"
         >
           Buy now
         </button>

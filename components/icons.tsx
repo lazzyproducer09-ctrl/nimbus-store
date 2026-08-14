@@ -1,5 +1,21 @@
 // Shared inline icons (no external icon library needed).
 
+// OFFBEAT brand mark — a bold four-point spark/asterisk. Off-centre on purpose.
+export function OffbeatMark({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <path
+        d="M12 2.5c.5 4.2 1.3 5 5.5 5.5-4.2.5-5 1.3-5.5 5.5-.5-4.2-1.3-5-5.5-5.5 4.2-.5 5-1.3 5.5-5.5Z"
+        fill="currentColor"
+      />
+      <path
+        d="M17.5 15c.28 2.1.7 2.5 2.8 2.75-2.1.28-2.52.68-2.8 2.75-.28-2.07-.7-2.47-2.8-2.75 2.1-.25 2.52-.65 2.8-2.75Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
 export function UmbrellaMark({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>

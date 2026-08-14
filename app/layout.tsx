@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Inter } from "next/font/google";
+import { Syne, Inter, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { Header } from "@/components/Header";
@@ -10,11 +10,11 @@ import { CartDrawer } from "@/components/CartDrawer";
 import { createClient } from "@/lib/supabase/server";
 import { isAdmin } from "@/lib/admin";
 
-// Heading font: modern, confident, a little character.
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space",
+// Display font: geometric, high-character — the OFFBEAT signature.
+const syne = Syne({
+  variable: "--font-syne",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["600", "700", "800"],
 });
 
 // Body font: clean and highly readable, great on phones.
@@ -23,10 +23,17 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+// Mono font: for eyebrow labels, tags and price tickers (the "drop" feel).
+const spaceMono = Space_Mono({
+  variable: "--font-mono",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
 export const metadata: Metadata = {
-  title: "NIMBUS — Premium Rainwear",
+  title: "OFFBEAT — Stuff you didn't know you needed",
   description:
-    "Thoughtfully designed raincoats, umbrellas and rain essentials. Made for the Indian monsoon.",
+    "Offbeat, unexpected, impossibly cool things for people who refuse boring. Curated oddities, gadgets and statement pieces — shipped across India.",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
@@ -38,9 +45,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${spaceGrotesk.variable} ${inter.variable} h-full antialiased`}
+      className={`${syne.variable} ${inter.variable} ${spaceMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col overflow-x-hidden">
+      <body className="grain min-h-full flex flex-col overflow-x-hidden bg-void text-chalk">
         <CartProvider>
           <WishlistProvider>
             <AnnouncementBar />

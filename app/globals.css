@@ -1,29 +1,48 @@
 @import "tailwindcss";
 
 /*
-  NIMBUS design system.
-  These CSS variables are our single source of truth for the brand look.
+  OFFBEAT design system — "Dark Luxe Drop".
+  These CSS variables are the single source of truth for the brand look.
   Change a value here once, and it updates everywhere on the site.
+
+  NOTE: the legacy NIMBUS tokens (paper/ink/storm/…) are kept at the bottom so
+  pages not yet migrated to the dark theme still render until they're converted.
 */
 @theme inline {
-  /* Colors */
-  --color-paper: #f7f7f4; /* off-white base background */
-  --color-ink: #14161a; /* soft near-black for text */
-  --color-mist: #ececea; /* light grey surfaces / placeholders */
-  --color-line: #e4e4df; /* hairline borders */
-  --color-muted: #6d7178; /* secondary / muted text */
-  --color-storm: #2a5a7c; /* THE accent: deep storm blue */
-  --color-storm-dark: #1e415b; /* darker accent for hover */
-  --color-storm-light: #7fb0d0; /* lighter accent for dark backgrounds */
-  --color-storm-tint: #eef3f6; /* very light accent wash */
+  /* ---- OFFBEAT core (dark luxe) ---- */
+  --color-void: #0a0a0b;        /* base background — rich near-black */
+  --color-coal: #101014;        /* cards / panels */
+  --color-surface: #17171c;     /* raised surfaces / inputs */
+  --color-edge: #26262c;        /* hairline borders on dark */
+  --color-edge-soft: #1c1c21;   /* fainter divider */
+  --color-chalk: #f4f4f1;       /* primary text — warm off-white */
+  --color-ash: #85858e;         /* muted / secondary text */
+  --color-ash-dim: #5a5a62;     /* faintest text */
+
+  /* THE accent — electric acid lime */
+  --color-volt: #c8ff00;
+  --color-volt-dim: #a6d600;    /* hover / pressed */
+  --color-volt-deep: #171d05;   /* dark lime wash for chips/backgrounds */
 
   /* Fonts (wired to next/font in layout.tsx) */
-  --font-heading: var(--font-space);
+  --font-heading: var(--font-syne);
   --font-body: var(--font-inter);
+  --font-mono: var(--font-mono);
+
+  /* ---- Legacy NIMBUS tokens (transitional — remove once all pages migrate) ---- */
+  --color-paper: #f7f7f4;
+  --color-ink: #14161a;
+  --color-mist: #ececea;
+  --color-line: #e4e4df;
+  --color-muted: #6d7178;
+  --color-storm: #2a5a7c;
+  --color-storm-dark: #1e415b;
+  --color-storm-light: #7fb0d0;
+  --color-storm-tint: #eef3f6;
 }
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 html {
@@ -31,17 +50,17 @@ html {
 }
 
 body {
-  background: var(--color-paper);
-  color: var(--color-ink);
+  background: var(--color-void);
+  color: var(--color-chalk);
   font-family: var(--font-body), Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-/* Brand-tinted text selection. */
+/* Electric-tinted text selection. */
 ::selection {
-  background: color-mix(in srgb, var(--color-storm) 22%, transparent);
-  color: var(--color-ink);
+  background: var(--color-volt);
+  color: #0a0a0b;
 }
 
 /* Clear, consistent keyboard-focus ring on every interactive element. */
@@ -51,54 +70,42 @@ input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid var(--color-storm);
+  outline: 2px solid var(--color-volt);
   outline-offset: 2px;
   border-radius: 6px;
 }
 
-/* A gentle scroll-reveal helper we can reuse later */
-@media (prefers-reduced-motion: no-preference) {
-  .reveal {
-    animation: reveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-}
-@keyframes reveal {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Custom scrollbar — subtle, on-brand. */
+* {
+  scrollbar-color: var(--color-edge) transparent;
 }
 
 /*
-  Subtle falling rain — used ONLY inside the dark hero.
-  Each drop is a thin fading line; positions/speeds are set per-drop in JSX.
-  GPU-friendly (animates transform only) and disabled for reduced-motion users.
+  Fine film grain overlay — gives the dark surfaces a premium, textured feel
+  (kills the flat "AI template" look). Applied on a fixed full-screen layer.
 */
-.rain-drop {
-  position: absolute;
-  top: -80px;
-  width: 1.5px;
-  border-radius: 9999px;
-  background: linear-gradient(to bottom, transparent, rgba(178, 202, 219, 0.9));
-  animation-name: rainfall;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  will-change: transform;
+.grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-@keyframes rainfall {
-  to {
-    transform: translateY(780px);
-  }
+
+/* Infinite horizontal marquee (announcement ticker + statement band). */
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee var(--marquee-speed, 26s) linear infinite;
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .rain-drop {
-    animation: none;
-    opacity: 0 !important;
-  }
+  .marquee { animation: none; }
 }
 
 /* Scroll-reveal: hidden until <Reveal> adds .is-visible (in view). */
@@ -113,15 +120,19 @@ textarea:focus-visible,
   opacity: 1;
   transform: translateY(0);
 }
+.reveal {
+  animation: reveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 @media (prefers-reduced-motion: reduce) {
-  .reveal-on-scroll {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
+  .reveal-on-scroll { opacity: 1; transform: none; transition: none; }
+  .reveal { animation: none; }
 }
 
-/* Rotating announcement-bar message: gentle fade + rise on each change. */
+/* Rotating announcement message: gentle fade + rise on each change. */
 .announce-msg {
   animation: announce 0.5s ease both;
 }
