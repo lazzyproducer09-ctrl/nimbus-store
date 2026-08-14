@@ -31,21 +31,32 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Please choose a delivery address." }, { status: 400 });
   }
 
-  // SECURITY: never trust prices from the browser. Re-read them from the DB.
+  // SECURITY & FRESHNESS: never trust the browser's snapshot. Re-read the
+  // price AND the photo/name/slug from the DB. A shopper's cart can be days
+  // old and still carry a photo the admin has since removed — the DB is the
+  // single source of truth, so a removed photo never resurfaces in an order.
   const ids = clientItems.map((i) => i.productId);
   const { data: products, error: prodErr } = await supabase
     .from("products")
-    .select("id, price")
+    .select("id, name, slug, price, images")
     .in("id", ids);
   if (prodErr || !products) {
     return NextResponse.json({ error: "Could not load products." }, { status: 500 });
   }
-  const priceMap = new Map(products.map((p) => [p.id, p.price as number]));
+  const productMap = new Map(products.map((p) => [p.id, p]));
 
-  const items = clientItems.map((i) => ({
-    ...i,
-    price: priceMap.get(i.productId) ?? 0,
-  }));
+  const items = clientItems.map((i) => {
+    const p = productMap.get(i.productId);
+    return {
+      ...i,
+      // Client keeps only its own choices (size, colour, quantity). The
+      // product fields below always come fresh from the catalogue.
+      name: p?.name ?? i.name,
+      slug: p?.slug ?? i.slug,
+      price: (p?.price as number) ?? 0,
+      image: p?.images?.[0] ?? null,
+    };
+  });
   const subtotal = items.reduce((n, i) => n + i.price * i.quantity, 0);
   const shipping = subtotal >= 999 ? 0 : 79;
   const total = subtotal + shipping;

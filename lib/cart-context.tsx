@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -63,6 +64,39 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [supabase] = useState(() => createClient());
   // A "Buy now" purchase lives OUTSIDE the cart, so it never lingers there.
   const [buyNowItem, setBuyNowItem] = useState<CartItem | null>(null);
+  // Latest items, readable inside callbacks without re-creating them.
+  const itemsRef = useRef<CartItem[]>([]);
+  useEffect(() => {
+    itemsRef.current = items;
+  }, [items]);
+
+  // Refresh saved cart lines against the LIVE catalogue (photo, price, name).
+  // A cart saved days ago can still carry a photo the admin has since removed;
+  // the DB is the source of truth, so we never keep showing a stale snapshot.
+  const reconcileFromCatalogue = useCallback(async () => {
+    const ids = [...new Set(itemsRef.current.map((i) => i.productId))];
+    if (ids.length === 0) return;
+    const { data, error } = await supabase
+      .from("products")
+      .select("id, name, slug, price, images")
+      .in("id", ids);
+    if (error || !data) return;
+    const byId = new Map(data.map((p) => [p.id, p]));
+    setItems((prev) =>
+      prev.map((line) => {
+        const p = byId.get(line.productId);
+        if (!p) return line; // product no longer exists — leave the line as-is
+        return {
+          ...line,
+          name: p.name,
+          slug: p.slug,
+          price: p.price,
+          image: p.images?.[0] ?? null,
+        };
+      }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Load the saved cart from the browser once, on first mount.
   useEffect(() => {
@@ -105,6 +139,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       /* ignore */
     }
   }, []);
+
+  // Once the cart is loaded (and again on login), refresh its lines against the
+  // live catalogue so a removed photo / changed price never lingers on screen.
+  useEffect(() => {
+    if (!hydrated) return;
+    reconcileFromCatalogue();
+  }, [hydrated, userId, reconcileFromCatalogue]);
 
   // Track who is logged in (so we can sync the cart to their account).
   useEffect(() => {
