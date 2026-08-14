@@ -28,7 +28,7 @@ export default async function Home() {
   const firstName = fullName.trim().split(" ")[0];
 
   return (
-    <div className="flex flex-1 flex-col bg-void font-body text-chalk">
+    <div className="flex flex-1 flex-col font-body text-chalk">
       {/* ===================== HERO ===================== */}
       <section className="relative flex min-h-[640px] items-center overflow-hidden md:min-h-[720px]">
         {/* electric glow + grid backdrop */}
@@ -54,17 +54,17 @@ export default async function Home() {
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-volt" />
               New this week
             </span>
-            <h1 className="mt-6 font-heading text-[3.1rem] font-extrabold leading-[0.98] tracking-tight md:text-7xl">
+            <h1 className="mt-6 font-heading text-[3.4rem] font-black leading-[0.94] tracking-[-0.02em] md:text-[5.4rem]">
               Stuff you didn&rsquo;t
               <br />
               know you{" "}
-              <span className="relative whitespace-nowrap text-volt">
+              <span className="relative whitespace-nowrap italic font-semibold text-volt">
                 needed
-                <span className="absolute -bottom-1 left-0 h-[3px] w-full bg-volt/40" />
+                <span className="absolute -bottom-1.5 left-0 h-px w-full bg-volt/50" />
               </span>
               .
             </h1>
-            <p className="mt-6 max-w-md text-lg leading-8 text-ash">
+            <p className="mt-7 max-w-md text-lg leading-8 text-ash">
               Offbeat gadgets, weird lights and gag-worthy gifts — curated for
               people who scroll right past ordinary. Shipped across India.
             </p>
@@ -197,7 +197,7 @@ export default async function Home() {
           {[0, 1].map((dup) => (
             <div key={dup} className="flex shrink-0 items-center" aria-hidden={dup === 1}>
               {Array.from({ length: 6 }).map((_, i) => (
-                <span key={i} className="flex items-center whitespace-nowrap font-heading text-xl font-extrabold uppercase tracking-tight md:text-2xl">
+                <span key={i} className="flex items-center whitespace-nowrap font-heading text-xl font-black uppercase tracking-tight md:text-2xl">
                   Stuff that starts conversations
                   <OffbeatMark className="mx-6 h-5 w-5" />
                 </span>
@@ -222,7 +222,7 @@ export default async function Home() {
                 href={`/shop?category=${encodeURIComponent(c.name)}`}
                 className="group relative flex aspect-[5/4] flex-col justify-end overflow-hidden rounded-2xl border border-edge bg-coal p-5 transition-all duration-300 hover:-translate-y-1.5 hover:border-volt/50"
               >
-                <span className="pointer-events-none absolute -right-6 -top-8 font-heading text-[6rem] font-extrabold leading-none text-surface transition-colors duration-300 group-hover:text-volt/15">
+                <span className="pointer-events-none absolute -right-6 -top-8 font-heading text-[6rem] font-black leading-none text-surface transition-colors duration-300 group-hover:text-volt/15">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <OffbeatMark className="absolute right-4 top-4 h-6 w-6 text-ash-dim transition-all duration-500 group-hover:rotate-90 group-hover:text-volt" />
@@ -260,7 +260,7 @@ export default async function Home() {
         <div className="pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-volt/10 blur-[130px]" />
         <div className="relative mx-auto w-full max-w-4xl px-5 py-24 text-center">
           <Reveal>
-            <h2 className="font-heading text-4xl font-extrabold tracking-tight md:text-5xl">
+            <h2 className="font-heading text-4xl font-black tracking-tight md:text-5xl">
               Don&rsquo;t be basic.
             </h2>
             <p className="mx-auto mt-5 max-w-lg text-ash">

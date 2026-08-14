@@ -10,23 +10,24 @@
 */
 @theme inline {
   /* ---- OFFBEAT core (dark luxe) ---- */
-  --color-void: #0a0a0b;        /* base background — rich near-black */
-  --color-coal: #101014;        /* cards / panels */
-  --color-surface: #17171c;     /* raised surfaces / inputs */
-  --color-edge: #26262c;        /* hairline borders on dark */
-  --color-edge-soft: #1c1c21;   /* fainter divider */
-  --color-chalk: #f4f4f1;       /* primary text — warm off-white */
-  --color-ash: #85858e;         /* muted / secondary text */
-  --color-ash-dim: #5a5a62;     /* faintest text */
+  --color-void: #0b0b0e;        /* base — deep obsidian with a faint cool cast */
+  --color-coal: #121217;        /* cards / panels */
+  --color-surface: #17171e;     /* raised surfaces / inputs */
+  --color-edge: #2a2a33;        /* hairline borders on dark */
+  --color-edge-soft: #1e1e26;   /* fainter divider */
+  --color-chalk: #f3f1ea;       /* primary text — warm creamy off-white */
+  --color-bone: #e7e0d0;        /* warm secondary highlight (premium contrast) */
+  --color-ash: #9a9aa4;         /* muted / secondary text */
+  --color-ash-dim: #61616b;     /* faintest text */
 
-  /* THE accent — electric acid lime */
-  --color-volt: #c8ff00;
-  --color-volt-dim: #a6d600;    /* hover / pressed */
-  --color-volt-deep: #171d05;   /* dark lime wash for chips/backgrounds */
+  /* THE accent — electric acid lime (refined, a touch off pure neon) */
+  --color-volt: #ccff2e;
+  --color-volt-dim: #b4e61a;    /* hover / pressed */
+  --color-volt-deep: #181f07;   /* dark lime wash for chips/backgrounds */
 
   /* Fonts (wired to next/font in layout.tsx) */
-  --font-heading: var(--font-syne);
-  --font-body: var(--font-inter);
+  --font-heading: var(--font-fraunces);
+  --font-body: var(--font-hanken);
   --font-mono: var(--font-mono);
 
   /* ---- Legacy NIMBUS tokens (transitional — remove once all pages migrate) ---- */
@@ -50,11 +51,29 @@ html {
 }
 
 body {
-  background: var(--color-void);
+  /* Layered ambient light — a cool lime bleed top-right, a warm bronze bleed
+     bottom-left, over deep obsidian. Gives real depth vs. a flat black. */
+  background:
+    radial-gradient(90% 55% at 88% -8%, rgba(204, 255, 46, 0.06), transparent 60%),
+    radial-gradient(80% 55% at 4% 108%, rgba(196, 150, 96, 0.05), transparent 60%),
+    var(--color-void);
+  background-attachment: fixed;
   color: var(--color-chalk);
   font-family: var(--font-body), Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  letter-spacing: -0.011em;
+  isolation: isolate; /* keeps the ambient/grain/vignette layers behind content */
+}
+
+/* Soft page vignette — pulls focus to the centre, adds a premium darkroom feel. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(0, 0, 0, 0.5) 100%);
 }
 
 /* Electric-tinted text selection. */
@@ -88,9 +107,9 @@ textarea:focus-visible,
   content: "";
   position: fixed;
   inset: 0;
-  z-index: 1;
+  z-index: -1;
   pointer-events: none;
-  opacity: 0.035;
+  opacity: 0.045;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 

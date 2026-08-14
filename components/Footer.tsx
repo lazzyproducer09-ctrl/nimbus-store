@@ -16,7 +16,7 @@ export function Footer() {
           <div className="md:col-span-1">
             <div className="flex items-center gap-2">
               <OffbeatMark className="h-5 w-5 text-volt" />
-              <span className="font-heading text-lg font-extrabold tracking-[0.28em]">OFFBEAT</span>
+              <span className="font-heading text-xl font-black tracking-[0.3em]">OFFBEAT</span>
             </div>
             <p className="mt-4 max-w-xs text-sm text-ash">
               Offbeat, unexpected, impossibly cool things — for people who refuse

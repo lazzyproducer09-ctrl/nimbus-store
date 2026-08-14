@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Syne, Inter, Space_Mono } from "next/font/google";
+import { Fraunces, Hanken_Grotesk, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { Header } from "@/components/Header";
@@ -10,16 +10,18 @@ import { CartDrawer } from "@/components/CartDrawer";
 import { createClient } from "@/lib/supabase/server";
 import { isAdmin } from "@/lib/admin";
 
-// Display font: geometric, high-character — the OFFBEAT signature.
-const syne = Syne({
-  variable: "--font-syne",
+// Display font: a high-contrast optical serif with real character — the
+// premium, slightly-offbeat OFFBEAT signature. Italics used for accent words.
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
-  weight: ["600", "700", "800"],
+  weight: ["400", "500", "600", "700", "900"],
+  style: ["normal", "italic"],
 });
 
-// Body font: clean and highly readable, great on phones.
-const inter = Inter({
-  variable: "--font-inter",
+// Body font: a refined, warm grotesk — cleaner & more premium than default sans.
+const hanken = Hanken_Grotesk({
+  variable: "--font-hanken",
   subsets: ["latin"],
 });
 
@@ -45,7 +47,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${syne.variable} ${inter.variable} ${spaceMono.variable} h-full antialiased`}
+      className={`${fraunces.variable} ${hanken.variable} ${spaceMono.variable} h-full antialiased`}
     >
       <body className="grain min-h-full flex flex-col overflow-x-hidden bg-void text-chalk">
         <CartProvider>

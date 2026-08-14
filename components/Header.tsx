@@ -14,7 +14,7 @@ function Wordmark() {
   return (
     <Link href="/" className="flex items-center gap-2">
       <OffbeatMark className="h-5 w-5 text-volt" />
-      <span className="font-heading text-lg font-extrabold tracking-[0.28em] text-chalk">OFFBEAT</span>
+      <span className="font-heading text-xl font-black tracking-[0.3em] text-chalk">OFFBEAT</span>
     </Link>
   );
 }
