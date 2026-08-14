@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getOrderById } from "@/lib/orders";
 import { getSettings } from "@/lib/settings";
 import { inr } from "@/lib/format";
+import { UmbrellaMark } from "@/components/icons";
 import { PendingOrderActions } from "@/components/PendingOrderActions";
 import { CancelOrderButton } from "@/components/CancelOrderButton";
 import { RequestReturnButton } from "@/components/RequestReturnButton";
@@ -254,15 +255,25 @@ export default async function OrderPage({
       {/* Items */}
       <div className="mt-6 rounded-2xl border border-line bg-white p-6">
         <h2 className="font-heading text-lg font-semibold">Items</h2>
-        <ul className="mt-4 space-y-2 text-sm">
+        <ul className="mt-4 space-y-3">
           {order.items.map((it, idx) => (
-            <li key={idx} className="flex justify-between gap-2">
-              <span className="text-muted">
-                {it.name}
-                {it.size ? ` · ${it.size}` : ""}
-                {it.color ? ` · ${it.color}` : ""} × {it.quantity}
-              </span>
-              <span>{inr(it.price * it.quantity)}</span>
+            <li key={idx} className="flex items-center gap-3">
+              <div className="flex h-14 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-line bg-mist text-storm/40">
+                {it.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={it.image} alt={it.name} className="h-full w-full object-cover" />
+                ) : (
+                  <UmbrellaMark className="h-5 w-5" />
+                )}
+              </div>
+              <div className="min-w-0 flex-1 text-sm">
+                <p className="truncate font-medium">{it.name}</p>
+                <p className="text-xs text-muted">
+                  {[it.size, it.color].filter(Boolean).join(" · ")}
+                  {(it.size || it.color) ? " · " : ""}Qty {it.quantity}
+                </p>
+              </div>
+              <span className="whitespace-nowrap text-sm font-medium">{inr(it.price * it.quantity)}</span>
             </li>
           ))}
         </ul>

@@ -13,7 +13,7 @@ import { WishlistButton } from "./WishlistButton";
 // control (which becomes a − quantity + stepper) sits at the bottom.
 export function ProductCard({ product: p }: { product: Product }) {
   const router = useRouter();
-  const { addItem, items, updateQuantity, selectOnly } = useCart();
+  const { addItem, items, updateQuantity, setBuyNow } = useCart();
   const [hovering, setHovering] = useState(false);
   const hoverImage = p.images[1];
   const shownImage = hovering && hoverImage ? hoverImage : p.images[0];
@@ -44,11 +44,19 @@ export function ProductCard({ product: p }: { product: Product }) {
     );
   }
 
-  // Buy now: add this item, tick ONLY it, and go straight to checkout.
+  // Buy now: purchase THIS item directly, without touching the cart.
   function buyNow() {
-    add();
-    selectOnly(lineId);
-    router.push("/checkout");
+    setBuyNow({
+      productId: p.id,
+      slug: p.slug,
+      name: p.name,
+      price: p.price,
+      image: p.images[0] ?? null,
+      size,
+      color,
+      quantity: 1,
+    });
+    router.push("/checkout?buynow=1");
   }
 
   return (

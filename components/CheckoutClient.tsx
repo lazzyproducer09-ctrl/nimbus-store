@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCart } from "@/lib/cart-context";
 import { inr } from "@/lib/format";
+import { UmbrellaMark } from "./icons";
 import type { Address } from "@/lib/addresses";
 import { AddressForm } from "./AddressForm";
 
@@ -31,7 +32,14 @@ export function CheckoutClient({
   addresses: Address[];
 }) {
   const router = useRouter();
-  const { selectedItems, selectedSubtotal, removeItems } = useCart();
+  const searchParams = useSearchParams();
+  const isBuyNow = searchParams.get("buynow") === "1";
+  const { selectedItems, selectedSubtotal, removeItems, buyNowItem, clearBuyNow } = useCart();
+
+  // "Buy now" buys just its one item; otherwise buy the selected cart items.
+  const purchaseItems = isBuyNow && buyNowItem ? [buyNowItem] : selectedItems;
+  const purchaseSubtotal =
+    isBuyNow && buyNowItem ? buyNowItem.price * buyNowItem.quantity : selectedSubtotal;
 
   const defaultAddr = addresses.find((a) => a.is_default) ?? addresses[0];
   const [selectedId, setSelectedId] = useState<string | undefined>(defaultAddr?.id);
@@ -48,17 +56,17 @@ export function CheckoutClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addresses]);
 
-  const shipping = selectedSubtotal >= 999 ? 0 : 79;
-  const total = selectedSubtotal + shipping;
+  const shipping = purchaseSubtotal >= 999 ? 0 : 79;
+  const total = purchaseSubtotal + shipping;
   const selectedAddress = addresses.find((a) => a.id === selectedId);
 
-  // Nothing selected to buy → send them back to the cart.
-  if (selectedItems.length === 0) {
+  // Nothing to buy → send them back to the cart.
+  if (purchaseItems.length === 0) {
     return (
       <div className="mt-8 rounded-2xl border border-line bg-white p-8 text-center">
-        <p className="text-sm text-muted">No items selected for checkout.</p>
-        <Link href="/cart" className="mt-3 inline-block text-sm font-medium text-storm hover:underline">
-          Go to cart
+        <p className="text-sm text-muted">Nothing to check out.</p>
+        <Link href="/shop" className="mt-3 inline-block text-sm font-medium text-storm hover:underline">
+          Go shopping
         </Link>
       </div>
     );
@@ -76,7 +84,7 @@ export function CheckoutClient({
       const res = await fetch("/api/razorpay/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: selectedItems, address: selectedAddress }),
+        body: JSON.stringify({ items: purchaseItems, address: selectedAddress }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Could not start checkout.");
@@ -109,8 +117,9 @@ export function CheckoutClient({
           });
           const v = await verifyRes.json();
           if (v.success) {
-            // Remove only the items we just paid for; leave the rest in the cart.
-            removeItems(selectedItems.map((i) => i.id));
+            // Clear the buy-now slot, or remove just the cart items we paid for.
+            if (isBuyNow) clearBuyNow();
+            else removeItems(selectedItems.map((i) => i.id));
             router.push(`/order/${data.orderId}`);
           } else {
             setError("Payment could not be verified. If money was deducted, it will be refunded.");
@@ -200,21 +209,52 @@ export function CheckoutClient({
       {/* Order summary */}
       <aside className="h-fit rounded-2xl border border-line bg-white p-6">
         <h2 className="font-heading text-lg font-semibold">Order summary</h2>
-        <ul className="mt-4 space-y-2 text-sm">
-          {selectedItems.map((it) => (
-            <li key={it.id} className="flex justify-between gap-2">
-              <span className="text-muted">
-                {it.name}
-                {it.size ? ` · ${it.size}` : ""} × {it.quantity}
+        {isBuyNow && (
+          <p className="mt-1 text-xs font-medium text-storm">Buy now — this item only</p>
+        )}
+
+        <ul className="mt-4 space-y-3">
+          {purchaseItems.map((it) => (
+            <li key={it.id} className="flex items-center gap-3">
+              <div className="flex h-14 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-line bg-mist text-storm/40">
+                {it.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={it.image} alt={it.name} className="h-full w-full object-cover" />
+                ) : (
+                  <UmbrellaMark className="h-5 w-5" />
+                )}
+              </div>
+              <div className="min-w-0 flex-1 text-sm">
+                <p className="truncate font-medium">{it.name}</p>
+                <p className="text-xs text-muted">
+                  {[it.size, it.color].filter(Boolean).join(" · ")}
+                  {(it.size || it.color) ? " · " : ""}Qty {it.quantity}
+                </p>
+              </div>
+              <span className="whitespace-nowrap text-sm font-medium">
+                {inr(it.price * it.quantity)}
               </span>
-              <span>{inr(it.price * it.quantity)}</span>
             </li>
           ))}
         </ul>
+
+        {/* deliver-to recap */}
+        {selectedAddress && (
+          <div className="mt-4 rounded-xl border border-line bg-paper/50 p-3 text-xs">
+            <p className="font-medium text-ink">Deliver to</p>
+            <p className="mt-0.5 text-muted">
+              <span className="text-ink">{selectedAddress.full_name}</span> — {selectedAddress.line1}
+              {selectedAddress.line2 ? `, ${selectedAddress.line2}` : ""}, {selectedAddress.city},{" "}
+              {selectedAddress.state} {selectedAddress.pincode}
+            </p>
+            <p className="mt-0.5 text-muted">Phone: {selectedAddress.phone}</p>
+          </div>
+        )}
+
         <div className="mt-4 space-y-2 border-t border-line pt-4 text-sm">
           <div className="flex justify-between">
             <span className="text-muted">Subtotal</span>
-            <span>{inr(selectedSubtotal)}</span>
+            <span>{inr(purchaseSubtotal)}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted">Shipping</span>

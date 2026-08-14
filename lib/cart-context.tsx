@@ -30,6 +30,7 @@ type CartContextType = {
   selectedItems: CartItem[];
   selectedCount: number;
   selectedSubtotal: number;
+  buyNowItem: CartItem | null;
   isOpen: boolean;
   hydrated: boolean;
   openCart: () => void;
@@ -41,11 +42,14 @@ type CartContextType = {
   toggleSelected: (id: string) => void;
   setAllSelected: (selected: boolean) => void;
   selectOnly: (id: string) => void;
+  setBuyNow: (item: Omit<CartItem, "id" | "selected">) => void;
+  clearBuyNow: () => void;
   clearCart: () => void;
 };
 
 const CartContext = createContext<CartContextType | null>(null);
 const STORAGE_KEY = "nimbus-cart";
+const BUYNOW_KEY = "nimbus-buynow";
 
 function lineId(productId: string, size: string | null, color: string | null) {
   return [productId, size ?? "", color ?? ""].join("__");
@@ -57,6 +61,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [hydrated, setHydrated] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [supabase] = useState(() => createClient());
+  // A "Buy now" purchase lives OUTSIDE the cart, so it never lingers there.
+  const [buyNowItem, setBuyNowItem] = useState<CartItem | null>(null);
 
   // Load the saved cart from the browser once, on first mount.
   useEffect(() => {
@@ -70,7 +76,34 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     } catch {
       /* ignore malformed storage */
     }
+    // Restore any in-progress "Buy now" item (survives the hop to checkout).
+    try {
+      const raw = sessionStorage.getItem(BUYNOW_KEY);
+      if (raw) setBuyNowItem(JSON.parse(raw) as CartItem);
+    } catch {
+      /* ignore */
+    }
     setHydrated(true);
+  }, []);
+
+  // Buy now: keep the item in its own slot (session-scoped), NOT in the cart.
+  const setBuyNow = useCallback<CartContextType["setBuyNow"]>((item) => {
+    const full: CartItem = { ...item, id: lineId(item.productId, item.size, item.color), selected: true };
+    setBuyNowItem(full);
+    try {
+      sessionStorage.setItem(BUYNOW_KEY, JSON.stringify(full));
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const clearBuyNow = useCallback(() => {
+    setBuyNowItem(null);
+    try {
+      sessionStorage.removeItem(BUYNOW_KEY);
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   // Track who is logged in (so we can sync the cart to their account).
@@ -190,6 +223,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         selectedItems,
         selectedCount,
         selectedSubtotal,
+        buyNowItem,
         isOpen,
         hydrated,
         openCart,
@@ -201,6 +235,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         toggleSelected,
         setAllSelected,
         selectOnly,
+        setBuyNow,
+        clearBuyNow,
         clearCart,
       }}
     >
