@@ -7,6 +7,7 @@ import { getFeaturedProducts } from "@/lib/products";
 import { getCategories } from "@/lib/categories";
 import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/Reveal";
+import { HeroBackdrop } from "@/components/HeroBackdrop";
 import { OffbeatMark } from "@/components/icons";
 import { createClient } from "@/lib/supabase/server";
 import { getSettings } from "@/lib/settings";
@@ -31,17 +32,8 @@ export default async function Home() {
     <div className="flex flex-1 flex-col font-body text-chalk">
       {/* ===================== HERO ===================== */}
       <section className="relative flex min-h-[640px] items-center overflow-hidden md:min-h-[720px]">
-        {/* electric glow + grid backdrop */}
-        <div className="pointer-events-none absolute left-1/2 top-[-14%] h-[520px] w-[720px] -translate-x-1/2 rounded-full bg-volt/12 blur-[150px]" />
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.06]"
-          style={{
-            backgroundImage:
-              "linear-gradient(var(--color-chalk) 1px, transparent 1px), linear-gradient(90deg, var(--color-chalk) 1px, transparent 1px)",
-            backgroundSize: "64px 64px",
-            maskImage: "radial-gradient(100% 70% at 50% 0%, #000 40%, transparent 100%)",
-          }}
-        />
+        {/* living aurora + cursor spotlight backdrop */}
+        <HeroBackdrop />
 
         <div className="relative mx-auto grid w-full max-w-6xl items-center gap-12 px-5 py-24 md:grid-cols-[1.1fr_0.9fr]">
           <div className="reveal">
@@ -54,13 +46,13 @@ export default async function Home() {
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-volt" />
               New this week
             </span>
-            <h1 className="mt-6 font-heading text-[3.4rem] font-black leading-[0.94] tracking-[-0.02em] md:text-[5.4rem]">
+            <h1 className="mt-6 font-heading text-[3.4rem] font-extrabold leading-[0.94] tracking-[-0.03em] md:text-[5.4rem]">
               Stuff you didn&rsquo;t
               <br />
               know you{" "}
-              <span className="relative whitespace-nowrap italic font-semibold text-volt">
+              <span className="relative whitespace-nowrap text-volt">
                 needed
-                <span className="absolute -bottom-1.5 left-0 h-px w-full bg-volt/50" />
+                <span className="absolute -bottom-1.5 left-0 h-[3px] w-full rounded-full bg-volt/60" />
               </span>
               .
             </h1>

@@ -25,8 +25,11 @@
   --color-volt-dim: #b4e61a;    /* hover / pressed */
   --color-volt-deep: #181f07;   /* dark lime wash for chips/backgrounds */
 
+  /* Secondary ambient — electric violet, for a premium duotone glow */
+  --color-iris: #7b5cff;
+
   /* Fonts (wired to next/font in layout.tsx) */
-  --font-heading: var(--font-fraunces);
+  --font-heading: var(--font-bricolage);
   --font-body: var(--font-hanken);
   --font-mono: var(--font-mono);
 
@@ -54,8 +57,8 @@ body {
   /* Layered ambient light — a cool lime bleed top-right, a warm bronze bleed
      bottom-left, over deep obsidian. Gives real depth vs. a flat black. */
   background:
-    radial-gradient(90% 55% at 88% -8%, rgba(204, 255, 46, 0.06), transparent 60%),
-    radial-gradient(80% 55% at 4% 108%, rgba(196, 150, 96, 0.05), transparent 60%),
+    radial-gradient(70% 50% at 82% -6%, rgba(204, 255, 46, 0.05), transparent 60%),
+    radial-gradient(70% 55% at 10% 106%, rgba(123, 92, 255, 0.07), transparent 60%),
     var(--color-void);
   background-attachment: fixed;
   color: var(--color-chalk);
@@ -111,6 +114,56 @@ textarea:focus-visible,
   pointer-events: none;
   opacity: 0.045;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/*
+  Aurora blobs — big, soft, slowly drifting colour clouds behind the hero.
+  This is the "alive" premium background (replaces the flat grid).
+*/
+.aurora {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  will-change: transform;
+}
+.aurora-1 {
+  width: 40rem;
+  height: 40rem;
+  top: -14rem;
+  right: -6rem;
+  background: radial-gradient(circle, rgba(204, 255, 46, 0.22), transparent 68%);
+  animation: drift-a 20s ease-in-out infinite;
+}
+.aurora-2 {
+  width: 34rem;
+  height: 34rem;
+  top: 4rem;
+  left: -10rem;
+  background: radial-gradient(circle, rgba(123, 92, 255, 0.24), transparent 68%);
+  animation: drift-b 26s ease-in-out infinite;
+}
+.aurora-3 {
+  width: 26rem;
+  height: 26rem;
+  bottom: -12rem;
+  left: 38%;
+  background: radial-gradient(circle, rgba(196, 150, 96, 0.14), transparent 70%);
+  animation: drift-c 32s ease-in-out infinite;
+}
+@keyframes drift-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-3rem, 2.5rem) scale(1.08); }
+}
+@keyframes drift-b {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(3.5rem, -2rem) scale(1.12); }
+}
+@keyframes drift-c {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-2.5rem, -2.5rem) scale(1.1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aurora { animation: none !important; }
 }
 
 /* Infinite horizontal marquee (announcement ticker + statement band). */

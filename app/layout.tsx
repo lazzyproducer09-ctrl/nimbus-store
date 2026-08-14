@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Hanken_Grotesk, Space_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Hanken_Grotesk, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { Header } from "@/components/Header";
@@ -10,13 +10,12 @@ import { CartDrawer } from "@/components/CartDrawer";
 import { createClient } from "@/lib/supabase/server";
 import { isAdmin } from "@/lib/admin";
 
-// Display font: a high-contrast optical serif with real character — the
-// premium, slightly-offbeat OFFBEAT signature. Italics used for accent words.
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+// Display font: a modern, high-character grotesque used by design-forward
+// premium brands — confident headlines without feeling like a default sans.
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "900"],
-  style: ["normal", "italic"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 // Body font: a refined, warm grotesk — cleaner & more premium than default sans.
@@ -47,7 +46,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${hanken.variable} ${spaceMono.variable} h-full antialiased`}
+      className={`${bricolage.variable} ${hanken.variable} ${spaceMono.variable} h-full antialiased`}
     >
       <body className="grain min-h-full flex flex-col overflow-x-hidden bg-void text-chalk">
         <CartProvider>
