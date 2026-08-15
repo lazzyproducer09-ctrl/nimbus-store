@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import type { Product } from "@/lib/products";
 import { inr } from "@/lib/format";
 import { useCart } from "@/lib/cart-context";
-import { OffbeatMark } from "./icons";
+import { YoinkMark } from "./icons";
 import { WishlistButton } from "./WishlistButton";
 
 // One product card. Image + name link to the product page; an "Add to cart"
@@ -102,7 +102,7 @@ export function ProductCard({ product: p }: { product: Product }) {
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center text-ash-dim transition-transform duration-500 group-hover:scale-105 group-hover:text-volt">
-              <OffbeatMark className="h-12 w-12" />
+              <YoinkMark className="h-12 w-12" />
             </div>
           )}
         </div>

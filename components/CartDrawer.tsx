@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/lib/cart-context";
 import { inr } from "@/lib/format";
-import { OffbeatMark } from "./icons";
+import { YoinkMark } from "./icons";
 import { ConfirmDialog } from "./ConfirmDialog";
 
 // The slide-out cart panel. Always mounted; it slides in/out based on `isOpen`.
@@ -61,7 +61,7 @@ export function CartDrawer() {
 
         {items.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-3 px-5 text-center">
-            <OffbeatMark className="h-12 w-12 text-volt/50" />
+            <YoinkMark className="h-12 w-12 text-volt/50" />
             <p className="text-sm text-ash">Nothing here yet. Go find something weird.</p>
             <button
               onClick={closeCart}
@@ -93,7 +93,7 @@ export function CartDrawer() {
                         <img src={it.image} alt={it.name} className="h-full w-full object-cover" />
                       ) : (
                         <span className="flex h-full items-center justify-center text-volt/40">
-                          <OffbeatMark className="h-6 w-6" />
+                          <YoinkMark className="h-6 w-6" />
                         </span>
                       )}
                     </Link>

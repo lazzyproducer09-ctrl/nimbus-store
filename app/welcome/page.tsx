@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { WelcomeForm } from "@/components/WelcomeForm";
 
-export const metadata: Metadata = { title: "Welcome — OFFBEAT" };
+export const metadata: Metadata = { title: "Welcome — YOINK" };
 
 export default async function WelcomePage() {
   const supabase = await createClient();
@@ -22,7 +22,7 @@ export default async function WelcomePage() {
   return (
     <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-5 py-16">
       <h1 className="font-heading text-2xl font-semibold tracking-tight">
-        Welcome to OFFBEAT ⚡
+        Welcome to YOINK ⚡
       </h1>
       <p className="mt-1 text-sm text-muted">
         One quick thing before you shop — what should we call you?

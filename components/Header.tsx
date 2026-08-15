@@ -2,19 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { OffbeatMark, SearchIcon, UserIcon } from "./icons";
+import { YoinkMark, SearchIcon, UserIcon } from "./icons";
 import { CartButton } from "./CartButton";
 import { WishlistHeaderButton } from "./WishlistHeaderButton";
 
 // Pages that get a stripped-down header (just the logo) — like real stores' auth pages.
 const MINIMAL_ROUTES = ["/login", "/signup", "/welcome", "/forgot-password", "/reset-password", "/verify-email"];
 
-// The OFFBEAT wordmark — reused by the minimal + full headers.
+// The YOINK wordmark — reused by the minimal + full headers.
 function Wordmark() {
   return (
     <Link href="/" className="flex items-center gap-2">
-      <OffbeatMark className="h-5 w-5 text-volt" />
-      <span className="font-heading text-xl font-black tracking-[0.3em] text-chalk">OFFBEAT</span>
+      <YoinkMark className="h-5 w-5 text-volt" />
+      <span className="font-heading text-xl font-black tracking-[0.3em] text-chalk">YOINK</span>
     </Link>
   );
 }

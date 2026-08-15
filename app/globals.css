@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /*
-  OFFBEAT design system — "Dark Luxe Drop".
+  YOINK design system — "Dark Luxe Drop".
   These CSS variables are the single source of truth for the brand look.
   Change a value here once, and it updates everywhere on the site.
 
@@ -9,7 +9,7 @@
   pages not yet migrated to the dark theme still render until they're converted.
 */
 @theme inline {
-  /* ---- OFFBEAT core (Dark Tech Drop) ---- */
+  /* ---- YOINK core (Dark Tech Drop) ---- */
   --color-void: #08090c;        /* base — deep cool near-black */
   --color-coal: #0f1116;        /* cards / panels */
   --color-surface: #151922;     /* raised surfaces / inputs */

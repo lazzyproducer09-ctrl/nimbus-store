@@ -47,7 +47,7 @@ export default async function ShopPage({
       {/* heading */}
       <div className="mb-6">
         <p className="font-mono text-xs uppercase tracking-[0.2em] text-volt">
-          {category ? "Category" : "Everything offbeat"}
+          {category ? "Category" : "Everything weird"}
         </p>
         <h1 className="mt-2 font-heading text-3xl font-bold tracking-tight md:text-4xl">
           {category || "Shop all"}

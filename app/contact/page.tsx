@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { PolicyPage } from "@/components/PolicyPage";
 
-export const metadata: Metadata = { title: "Contact us — OFFBEAT" };
+export const metadata: Metadata = { title: "Contact us — YOINK" };
 
 export default function ContactPage() {
   return (
@@ -13,7 +13,7 @@ export default function ContactPage() {
 
       <h2>Email</h2>
       <p>
-        <a href="mailto:support@offbeat.store">support@offbeat.store</a>
+        <a href="mailto:support@yoink.store">support@yoink.store</a>
         <br />
         We reply within 24 hours, Monday to Saturday.
       </p>
@@ -27,7 +27,7 @@ export default function ContactPage() {
 
       <h2>Business</h2>
       <p>
-        OFFBEAT — offbeat, unexpected things for people who refuse boring.
+        YOINK — unexpected, wonderfully weird things for people who refuse boring.
       </p>
     </PolicyPage>
   );

@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getMyAddresses } from "@/lib/addresses";
 import { CheckoutClient } from "@/components/CheckoutClient";
 
-export const metadata: Metadata = { title: "Checkout — OFFBEAT" };
+export const metadata: Metadata = { title: "Checkout — YOINK" };
 
 export default async function CheckoutPage() {
   const supabase = await createClient();

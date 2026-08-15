@@ -1,5 +1,5 @@
 // ============================================================================
-// OFFBEAT — Homepage. "Dark Luxe Drop". Featured products + categories come
+// YOINK — Homepage. "Dark Luxe Drop". Featured products + categories come
 // from Supabase. Header & footer live in app/layout.tsx (shared everywhere).
 // ============================================================================
 import Link from "next/link";
@@ -8,7 +8,7 @@ import { getCategories } from "@/lib/categories";
 import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/Reveal";
 import { HeroBackdrop } from "@/components/HeroBackdrop";
-import { OffbeatMark } from "@/components/icons";
+import { YoinkMark } from "@/components/icons";
 import { createClient } from "@/lib/supabase/server";
 import { getSettings } from "@/lib/settings";
 
@@ -53,7 +53,7 @@ export default async function Home() {
               <span className="text-gradient whitespace-nowrap">needed</span>.
             </h1>
             <p className="mt-7 max-w-md text-lg leading-8 text-ash">
-              Offbeat gadgets, weird lights and gag-worthy gifts — curated for
+              Weird gadgets, glowing lights and gag-worthy gifts — curated for
               people who scroll right past ordinary. Shipped across India.
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
@@ -104,12 +104,12 @@ export default async function Home() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={heroImage}
-                  alt="OFFBEAT hero product"
+                  alt="YOINK hero product"
                   className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
               ) : (
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-ash-dim">
-                  <OffbeatMark className="h-16 w-16 text-volt" />
+                  <YoinkMark className="h-16 w-16 text-volt" />
                   <span className="font-mono text-[11px] uppercase tracking-widest">hero product</span>
                 </div>
               )}
@@ -187,7 +187,7 @@ export default async function Home() {
               {Array.from({ length: 6 }).map((_, i) => (
                 <span key={i} className="flex items-center whitespace-nowrap font-heading text-xl font-bold uppercase tracking-tight md:text-2xl">
                   Stuff that starts conversations
-                  <OffbeatMark className="mx-6 h-5 w-5 text-volt" />
+                  <YoinkMark className="mx-6 h-5 w-5 text-volt" />
                 </span>
               ))}
             </div>
@@ -213,7 +213,7 @@ export default async function Home() {
                 <span className="pointer-events-none absolute -right-6 -top-8 font-heading text-[6rem] font-black leading-none text-surface transition-colors duration-300 group-hover:text-volt/15">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <OffbeatMark className="absolute right-4 top-4 h-6 w-6 text-ash-dim transition-all duration-500 group-hover:rotate-90 group-hover:text-volt" />
+                <YoinkMark className="absolute right-4 top-4 h-6 w-6 text-ash-dim transition-all duration-500 group-hover:rotate-90 group-hover:text-volt" />
                 <span className="relative font-heading text-xl font-bold transition-colors group-hover:text-volt">
                   {c.name}
                 </span>

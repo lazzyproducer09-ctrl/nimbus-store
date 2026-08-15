@@ -6,7 +6,7 @@ import { getMyOrders, ORDER_STATUS_LABEL } from "@/lib/orders";
 import { inr } from "@/lib/format";
 import { UmbrellaMark } from "@/components/icons";
 
-export const metadata: Metadata = { title: "Your orders — OFFBEAT" };
+export const metadata: Metadata = { title: "Your orders — YOINK" };
 
 const STATUS_STYLES: Record<string, string> = {
   paid: "bg-green-100 text-green-700",

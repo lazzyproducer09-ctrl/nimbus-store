@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { OffbeatMark } from "./icons";
+import { YoinkMark } from "./icons";
 
 // Product image gallery: big main image + clickable thumbnails.
 // Hovering a thumbnail previews it (temporary); clicking sets it (permanent).
@@ -39,7 +39,7 @@ export function ProductGallery({ images, name }: { images: string[]; name: strin
           </>
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-ash-dim">
-            <OffbeatMark className="h-20 w-20 text-volt" />
+            <YoinkMark className="h-20 w-20 text-volt" />
             <span className="font-mono text-[11px] uppercase tracking-widest text-ash">product photo</span>
           </div>
         )}

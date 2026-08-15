@@ -11,7 +11,7 @@ import { RequestReturnButton } from "@/components/RequestReturnButton";
 import { OrderConfirmedCheck } from "@/components/OrderConfirmedCheck";
 import type { ChimeType } from "@/lib/chime";
 
-export const metadata: Metadata = { title: "Order — OFFBEAT" };
+export const metadata: Metadata = { title: "Order — YOINK" };
 
 const HEAD: Record<string, { icon: string; bg: string; title: string; sub: string }> = {
   paid: {

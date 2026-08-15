@@ -10,7 +10,7 @@ import { getMyAddresses } from "@/lib/addresses";
 import { getMyOrders, ORDER_STATUS_LABEL } from "@/lib/orders";
 import { inr } from "@/lib/format";
 
-export const metadata: Metadata = { title: "My account — OFFBEAT" };
+export const metadata: Metadata = { title: "My account — YOINK" };
 
 export default async function AccountPage() {
   const supabase = await createClient();

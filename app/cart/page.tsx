@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "@/lib/cart-context";
 import { inr } from "@/lib/format";
-import { OffbeatMark } from "@/components/icons";
+import { YoinkMark } from "@/components/icons";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 
 export default function CartPage() {
@@ -26,7 +26,7 @@ export default function CartPage() {
   if (items.length === 0) {
     return (
       <div className="mx-auto w-full max-w-6xl px-5 py-24 text-center">
-        <OffbeatMark className="mx-auto h-14 w-14 text-volt/50" />
+        <YoinkMark className="mx-auto h-14 w-14 text-volt/50" />
         <h1 className="mt-4 font-heading text-2xl font-bold">Your cart is empty</h1>
         <p className="mt-2 text-sm text-ash">
           Nothing weird in here yet. Let&rsquo;s fix that.
@@ -86,7 +86,7 @@ export default function CartPage() {
                   <img src={it.image} alt={it.name} className="h-full w-full object-cover" />
                 ) : (
                   <span className="flex h-full items-center justify-center text-volt/40">
-                    <OffbeatMark className="h-8 w-8" />
+                    <YoinkMark className="h-8 w-8" />
                   </span>
                 )}
               </Link>

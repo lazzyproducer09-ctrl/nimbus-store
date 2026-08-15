@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { OffbeatMark } from "./icons";
+import { YoinkMark } from "./icons";
 
 // The site-wide footer. Hidden on the minimal login / signup pages.
 export function Footer() {
@@ -15,11 +15,11 @@ export function Footer() {
         <div className="grid gap-10 md:grid-cols-4">
           <div className="md:col-span-1">
             <div className="flex items-center gap-2">
-              <OffbeatMark className="h-5 w-5 text-volt" />
-              <span className="font-heading text-xl font-black tracking-[0.3em]">OFFBEAT</span>
+              <YoinkMark className="h-5 w-5 text-volt" />
+              <span className="font-heading text-xl font-black tracking-[0.3em]">YOINK</span>
             </div>
             <p className="mt-4 max-w-xs text-sm text-ash">
-              Offbeat, unexpected, impossibly cool things — for people who refuse
+              Unexpected, impossibly cool things — for people who refuse
               boring. Curated & shipped across India.
             </p>
           </div>
@@ -78,7 +78,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-edge pt-6 text-xs text-ash-dim md:flex-row">
-          <span>© 2026 OFFBEAT. All rights reserved.</span>
+          <span>© 2026 YOINK. All rights reserved.</span>
           <span className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-volt" />
             Secure checkout — payments secured by Razorpay

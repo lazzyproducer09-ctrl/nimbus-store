@@ -20,7 +20,7 @@ export default async function AdminLayout({
     <div className="mx-auto w-full max-w-6xl px-5 py-8">
       <div className="flex items-center justify-between">
         <h1 className="font-heading text-2xl font-semibold tracking-tight">
-          OFFBEAT Admin
+          YOINK Admin
         </h1>
         <span className="text-xs text-muted">{user?.email}</span>
       </div>

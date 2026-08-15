@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCart } from "@/lib/cart-context";
 import { inr } from "@/lib/format";
-import { OffbeatMark } from "./icons";
+import { YoinkMark } from "./icons";
 import type { Address } from "@/lib/addresses";
 import { AddressForm } from "./AddressForm";
 
@@ -97,8 +97,8 @@ export function CheckoutClient({
         key: data.keyId,
         amount: data.amount,
         currency: "INR",
-        name: "OFFBEAT",
-        description: "Rainwear order",
+        name: "YOINK",
+        description: "YOINK order",
         order_id: data.razorpayOrderId,
         prefill: {
           name: selectedAddress!.full_name,
@@ -221,7 +221,7 @@ export function CheckoutClient({
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={it.image} alt={it.name} className="h-full w-full object-cover" />
                 ) : (
-                  <OffbeatMark className="h-5 w-5" />
+                  <YoinkMark className="h-5 w-5" />
                 )}
               </div>
               <div className="min-w-0 flex-1 text-sm">

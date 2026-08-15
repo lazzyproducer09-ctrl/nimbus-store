@@ -31,9 +31,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "OFFBEAT — Stuff you didn't know you needed",
+  title: "YOINK — Stuff you didn't know you needed",
   description:
-    "Offbeat, unexpected, impossibly cool things for people who refuse boring. Curated oddities, gadgets and statement pieces — shipped across India.",
+    "Unexpected, impossibly cool things for people who refuse boring. Curated oddities, gadgets and statement pieces — shipped across India.",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {

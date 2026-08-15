@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { PolicyPage } from "@/components/PolicyPage";
 
-export const metadata: Metadata = { title: "Terms of Service — OFFBEAT" };
+export const metadata: Metadata = { title: "Terms of Service — YOINK" };
 
 export default function TermsPage() {
   return (
     <PolicyPage title="Terms of Service">
       <p>
-        Welcome to OFFBEAT. By using our website and placing an order, you agree to the
+        Welcome to YOINK. By using our website and placing an order, you agree to the
         following terms.
       </p>
 
@@ -30,13 +30,13 @@ export default function TermsPage() {
       <h2>Use of the site</h2>
       <p>
         You agree to provide accurate information and not to misuse the website. The
-        OFFBEAT name, logo and content belong to us and may not be copied without
+        YOINK name, logo and content belong to us and may not be copied without
         permission.
       </p>
 
       <h2>Limitation of liability</h2>
       <p>
-        To the extent permitted by law, OFFBEAT is not liable for indirect or
+        To the extent permitted by law, YOINK is not liable for indirect or
         consequential losses arising from the use of our products or website.
       </p>
 
@@ -48,7 +48,7 @@ export default function TermsPage() {
 
       <h2>Contact</h2>
       <p>
-        Questions? Email <a href="mailto:support@offbeat.store">support@offbeat.store</a>.
+        Questions? Email <a href="mailto:support@yoink.store">support@yoink.store</a>.
       </p>
     </PolicyPage>
   );

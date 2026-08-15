@@ -7,7 +7,7 @@ export type Category = {
   blurb: string;
 };
 
-// Sensible starter set for an offbeat store — used until the admin saves their own.
+// Sensible starter set for a quirky store — used until the admin saves their own.
 export const DEFAULT_CATEGORIES: Category[] = [
   { name: "Desk Toys", blurb: "Fidget, spin, levitate" },
   { name: "Weird Lights", blurb: "Glow up your space" },

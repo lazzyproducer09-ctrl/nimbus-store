@@ -1,7 +1,7 @@
 // Shared inline icons (no external icon library needed).
 
-// OFFBEAT brand mark — a bold four-point spark/asterisk. Off-centre on purpose.
-export function OffbeatMark({ className = "" }: { className?: string }) {
+// YOINK brand mark — a bold four-point spark/asterisk. Off-centre on purpose.
+export function YoinkMark({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
       <path
