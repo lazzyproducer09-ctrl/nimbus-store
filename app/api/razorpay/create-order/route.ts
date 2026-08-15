@@ -70,7 +70,7 @@ export async function POST(request: Request) {
     rzpOrder = await razorpay.orders.create({
       amount: total * 100,
       currency: "INR",
-      receipt: `nimbus_${Date.now()}`,
+      receipt: `offbeat_${Date.now()}`,
     });
   } catch (e) {
     console.error("Razorpay order create failed:", e);

@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { PolicyPage } from "@/components/PolicyPage";
 
-export const metadata: Metadata = { title: "Privacy Policy — NIMBUS" };
+export const metadata: Metadata = { title: "Privacy Policy — OFFBEAT" };
 
 export default function PrivacyPolicy() {
   return (
     <PolicyPage title="Privacy Policy">
       <p>
-        At NIMBUS, we respect your privacy. This policy explains what information we
+        At OFFBEAT, we respect your privacy. This policy explains what information we
         collect, why we collect it, and how we keep it safe.
       </p>
 
@@ -40,13 +40,13 @@ export default function PrivacyPolicy() {
       <p>
         You can view and update your saved details anytime from your account. To
         request deletion of your account or data, contact us at{" "}
-        <a href="mailto:support@nimbus.store">support@nimbus.store</a>.
+        <a href="mailto:support@offbeat.store">support@offbeat.store</a>.
       </p>
 
       <h2>Contact</h2>
       <p>
         Questions about your privacy? Email{" "}
-        <a href="mailto:support@nimbus.store">support@nimbus.store</a>.
+        <a href="mailto:support@offbeat.store">support@offbeat.store</a>.
       </p>
     </PolicyPage>
   );

@@ -97,7 +97,7 @@ export function CheckoutClient({
         key: data.keyId,
         amount: data.amount,
         currency: "INR",
-        name: "NIMBUS",
+        name: "OFFBEAT",
         description: "Rainwear order",
         order_id: data.razorpayOrderId,
         prefill: {

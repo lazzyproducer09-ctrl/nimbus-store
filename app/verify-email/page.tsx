@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { VerifyEmailForm } from "@/components/VerifyEmailForm";
 
-export const metadata: Metadata = { title: "Verify your email — NIMBUS" };
+export const metadata: Metadata = { title: "Verify your email — OFFBEAT" };
 
 export default async function VerifyEmailPage({
   searchParams,

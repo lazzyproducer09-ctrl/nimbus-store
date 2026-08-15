@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { ForgotPasswordForm } from "@/components/ForgotPasswordForm";
 
-export const metadata: Metadata = { title: "Reset password — NIMBUS" };
+export const metadata: Metadata = { title: "Reset password — OFFBEAT" };
 
 export default function ForgotPasswordPage() {
   return (

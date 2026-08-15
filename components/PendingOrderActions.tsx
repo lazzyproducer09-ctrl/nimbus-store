@@ -55,7 +55,7 @@ export function PendingOrderActions({
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
       amount,
       currency: "INR",
-      name: "NIMBUS",
+      name: "OFFBEAT",
       description: "Rainwear order",
       order_id: razorpayOrderId,
       prefill: { name: customerName, contact: customerPhone },

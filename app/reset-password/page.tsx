@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ResetPasswordForm } from "@/components/ResetPasswordForm";
 
-export const metadata: Metadata = { title: "Set new password — NIMBUS" };
+export const metadata: Metadata = { title: "Set new password — OFFBEAT" };
 
 export default function ResetPasswordPage() {
   return (

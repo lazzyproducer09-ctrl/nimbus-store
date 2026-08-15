@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { PolicyPage } from "@/components/PolicyPage";
 
-export const metadata: Metadata = { title: "Returns & Refunds — NIMBUS" };
+export const metadata: Metadata = { title: "Returns & Refunds — OFFBEAT" };
 
 export default function RefundPage() {
   return (
     <PolicyPage title="Returns & Refund Policy">
       <p>
-        We want you to love your NIMBUS rainwear. If something isn’t right, here’s how
+        We want you to love your OFFBEAT finds. If something isn’t right, here’s how
         returns and refunds work.
       </p>
 
@@ -22,7 +22,7 @@ export default function RefundPage() {
       <ul>
         <li>Go to your order and choose <strong>Request cancellation</strong>, or</li>
         <li>
-          Email <a href="mailto:support@nimbus.store">support@nimbus.store</a> with your
+          Email <a href="mailto:support@offbeat.store">support@offbeat.store</a> with your
           order ID and reason.
         </li>
       </ul>
@@ -44,7 +44,7 @@ export default function RefundPage() {
 
       <h2>Contact</h2>
       <p>
-        Need help? Email <a href="mailto:support@nimbus.store">support@nimbus.store</a>.
+        Need help? Email <a href="mailto:support@offbeat.store">support@offbeat.store</a>.
       </p>
     </PolicyPage>
   );
