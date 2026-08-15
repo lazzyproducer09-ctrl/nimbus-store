@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { UmbrellaMark } from "./icons";
+import { OffbeatMark } from "./icons";
 
 // Product image gallery: big main image + clickable thumbnails.
 // Hovering a thumbnail previews it (temporary); clicking sets it (permanent).
@@ -22,7 +22,7 @@ export function ProductGallery({ images, name }: { images: string[]; name: strin
         type="button"
         onClick={() => main && setZoomOpen(true)}
         aria-label={main ? "Zoom image" : undefined}
-        className="group relative block aspect-square w-full overflow-hidden rounded-3xl border border-line bg-mist"
+        className="group relative block aspect-square w-full overflow-hidden rounded-3xl border border-edge bg-surface"
         style={{ cursor: main ? "zoom-in" : "default" }}
       >
         {main ? (
@@ -38,9 +38,9 @@ export function ProductGallery({ images, name }: { images: string[]; name: strin
             </span>
           </>
         ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-storm/50">
-            <UmbrellaMark className="h-20 w-20" />
-            <span className="text-xs text-muted">product photo</span>
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-ash-dim">
+            <OffbeatMark className="h-20 w-20 text-volt" />
+            <span className="font-mono text-[11px] uppercase tracking-widest text-ash">product photo</span>
           </div>
         )}
       </button>
@@ -57,7 +57,7 @@ export function ProductGallery({ images, name }: { images: string[]; name: strin
               onMouseLeave={() => setHovered(null)}
               aria-label={`View image ${i + 1}`}
               className={`relative aspect-square overflow-hidden rounded-xl border-2 transition-all ${
-                i === shownIndex ? "border-storm" : "border-line hover:border-ink/30"
+                i === shownIndex ? "border-volt" : "border-edge hover:border-volt/40"
               }`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}

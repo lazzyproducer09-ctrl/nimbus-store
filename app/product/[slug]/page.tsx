@@ -34,19 +34,19 @@ export default async function ProductPage({
   return (
     <div className="mx-auto w-full max-w-6xl px-5 py-10">
       {/* breadcrumb */}
-      <nav className="mb-6 flex flex-wrap items-center gap-2 text-xs text-muted">
-        <Link href="/" className="hover:text-ink">Home</Link>
-        <span>/</span>
-        <Link href="/shop" className="hover:text-ink">Shop</Link>
-        <span>/</span>
+      <nav className="mb-6 flex flex-wrap items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-ash">
+        <Link href="/" className="hover:text-volt">Home</Link>
+        <span className="text-ash-dim">/</span>
+        <Link href="/shop" className="hover:text-volt">Shop</Link>
+        <span className="text-ash-dim">/</span>
         <Link
           href={`/shop?category=${encodeURIComponent(product.category)}`}
-          className="hover:text-ink"
+          className="hover:text-volt"
         >
           {product.category}
         </Link>
-        <span>/</span>
-        <span className="text-ink">{product.name}</span>
+        <span className="text-ash-dim">/</span>
+        <span className="text-chalk">{product.name}</span>
       </nav>
 
       <div className="grid gap-10 md:grid-cols-2">
@@ -57,12 +57,12 @@ export default async function ProductPage({
           {/* product video, if the admin uploaded one */}
           {product.video_url && (
             <div className="mt-4">
-              <p className="mb-2 text-sm font-medium">Product video</p>
+              <p className="mb-2 font-mono text-[11px] uppercase tracking-wider text-ash">Product video</p>
               <video
                 src={product.video_url}
                 controls
                 playsInline
-                className="w-full rounded-2xl border border-line bg-mist"
+                className="w-full rounded-2xl border border-edge bg-surface"
               />
             </div>
           )}
@@ -70,25 +70,25 @@ export default async function ProductPage({
 
         {/* ---- info ---- */}
         <div>
-          <p className="text-sm font-medium text-storm">{product.category}</p>
-          <h1 className="mt-1 font-heading text-3xl font-semibold tracking-tight md:text-4xl">
+          <p className="font-mono text-xs uppercase tracking-[0.18em] text-volt">{product.category}</p>
+          <h1 className="mt-2 font-heading text-3xl font-bold tracking-tight text-chalk md:text-4xl">
             {product.name}
           </h1>
 
-          <div className="mt-3 flex items-center gap-2 text-sm text-muted">
-            <span className="text-storm">★</span>
-            <span className="text-ink">{product.rating}</span>
+          <div className="mt-3 flex items-center gap-2 text-sm text-ash">
+            <span className="text-volt">★</span>
+            <span className="text-chalk">{product.rating}</span>
             <span>({product.review_count} reviews)</span>
           </div>
 
           <div className="mt-5 flex items-center gap-3">
-            <span className="text-2xl font-semibold">{inr(product.price)}</span>
+            <span className="text-2xl font-bold text-chalk">{inr(product.price)}</span>
             {product.compare_at_price && (
               <>
-                <span className="text-lg text-muted line-through">
+                <span className="text-lg text-ash-dim line-through">
                   {inr(product.compare_at_price)}
                 </span>
-                <span className="rounded-full bg-storm-tint px-2 py-0.5 text-xs font-medium text-storm">
+                <span className="rounded-full bg-volt-deep px-2 py-0.5 text-xs font-medium text-volt">
                   {discount}% off
                 </span>
               </>
@@ -96,26 +96,26 @@ export default async function ProductPage({
           </div>
 
           {savings > 0 && (
-            <p className="mt-2 text-sm font-medium text-green-700">
-              You save {inr(savings)} on this order 🎉
+            <p className="mt-2 text-sm font-medium text-emerald-400">
+              You save {inr(savings)} — and you get to keep the stares 😎
             </p>
           )}
-          <p className="mt-1 text-xs text-muted">Inclusive of all taxes · Free shipping over ₹999</p>
+          <p className="mt-1 text-xs text-ash">Inclusive of all taxes · Free shipping over ₹999</p>
 
           <p className="mt-4 text-sm">
             {product.stock <= 0 ? (
-              <span className="font-medium text-red-600">Currently out of stock</span>
+              <span className="font-medium text-red-400">Currently out of stock</span>
             ) : lowStock ? (
-              <span className="font-medium text-red-600">
-                🔥 Selling fast — only {product.stock} left in stock
+              <span className="font-medium text-red-400">
+                🔥 Going fast — only {product.stock} left
               </span>
             ) : (
-              <span className="text-green-700">✓ In stock — ready to ship</span>
+              <span className="text-emerald-400">✓ In stock — ready to ship</span>
             )}
           </p>
 
           {/* delivery & assurance strip — right where buying decisions happen */}
-          <div className="mt-5 grid grid-cols-2 gap-3 rounded-2xl border border-line bg-white p-4 text-xs sm:grid-cols-4">
+          <div className="mt-5 grid grid-cols-2 gap-3 rounded-2xl border border-edge bg-coal p-4 text-xs text-chalk sm:grid-cols-4">
             <div className="flex flex-col items-center gap-1 text-center">
               <span className="text-lg">🚚</span>
               <span className="font-medium">Delivery in 3–6 days</span>
@@ -154,17 +154,17 @@ export default async function ProductPage({
           </div>
 
           {/* trust badges */}
-          <div className="mt-8 grid grid-cols-3 gap-3 border-t border-line pt-6 text-center text-xs text-muted">
+          <div className="mt-8 grid grid-cols-3 gap-3 border-t border-edge pt-6 text-center text-xs text-ash">
             <div>
-              <p className="font-medium text-ink">Secure payment</p>
+              <p className="font-medium text-chalk">Secure payment</p>
               <p>via Razorpay</p>
             </div>
             <div>
-              <p className="font-medium text-ink">7-day returns</p>
+              <p className="font-medium text-chalk">7-day returns</p>
               <p>easy &amp; free</p>
             </div>
             <div>
-              <p className="font-medium text-ink">Genuine product</p>
+              <p className="font-medium text-chalk">Genuine product</p>
               <p>quality assured</p>
             </div>
           </div>
@@ -173,13 +173,13 @@ export default async function ProductPage({
 
       {/* ---- product details (long description + stacked detail images) ---- */}
       {(product.description || product.description_images.length > 0) && (
-        <section className="mt-16 border-t border-line pt-12">
-          <h2 className="text-center font-heading text-2xl font-semibold tracking-tight">
-            Product details
+        <section className="mt-16 border-t border-edge pt-12">
+          <h2 className="text-center font-heading text-2xl font-bold tracking-tight text-chalk">
+            The full story
           </h2>
 
           {product.description && (
-            <p className="mx-auto mt-5 max-w-2xl text-center leading-relaxed text-muted">
+            <p className="mx-auto mt-5 max-w-2xl text-center leading-relaxed text-ash">
               {product.description}
             </p>
           )}
@@ -192,7 +192,7 @@ export default async function ProductPage({
                   key={i}
                   src={url}
                   alt={`${product.name} detail ${i + 1}`}
-                  className="w-full rounded-2xl border border-line"
+                  className="w-full rounded-2xl border border-edge"
                 />
               ))}
             </div>
@@ -203,8 +203,8 @@ export default async function ProductPage({
       {/* ---- similar products ---- */}
       {similar.length > 0 && (
         <section className="mt-16">
-          <h2 className="font-heading text-2xl font-semibold tracking-tight">
-            You may also like
+          <h2 className="font-heading text-2xl font-bold tracking-tight text-chalk">
+            More things you didn&rsquo;t know you needed
           </h2>
           <div className="mt-6 grid grid-cols-2 gap-5 md:grid-cols-4">
             {similar.map((p) => (

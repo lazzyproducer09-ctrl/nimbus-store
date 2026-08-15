@@ -20,18 +20,18 @@ export function ConfirmDialog({
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/40" onClick={onCancel} aria-hidden />
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onCancel} aria-hidden />
       <div
         role="dialog"
         aria-label={title}
-        className="relative w-full max-w-sm rounded-2xl bg-paper p-6 shadow-2xl"
+        className="relative w-full max-w-sm rounded-2xl border border-edge bg-coal p-6 text-chalk shadow-2xl"
       >
-        <h3 className="font-heading text-lg font-semibold">{title}</h3>
-        <p className="mt-2 text-sm text-muted">{message}</p>
+        <h3 className="font-heading text-lg font-bold">{title}</h3>
+        <p className="mt-2 text-sm text-ash">{message}</p>
         <div className="mt-6 flex gap-3">
           <button
             onClick={onCancel}
-            className="h-10 flex-1 rounded-full border border-ink/15 text-sm font-medium transition-colors hover:border-ink/40"
+            className="h-10 flex-1 rounded-full border border-edge text-sm font-medium text-chalk transition-colors hover:border-volt/50 hover:text-volt"
           >
             Cancel
           </button>

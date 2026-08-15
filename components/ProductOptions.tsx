@@ -54,7 +54,7 @@ export function ProductOptions({ product }: { product: Product }) {
     <div className="mt-8 space-y-6">
       {product.sizes.length > 0 && (
         <div>
-          <p className="text-sm font-medium">Size</p>
+          <p className="text-sm font-medium text-chalk">Size</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {product.sizes.map((s) => (
               <button
@@ -62,8 +62,8 @@ export function ProductOptions({ product }: { product: Product }) {
                 onClick={() => setSize(s)}
                 className={`h-10 min-w-10 rounded-lg border px-3 text-sm transition-colors ${
                   size === s
-                    ? "border-storm bg-storm text-white"
-                    : "border-line hover:border-ink/40"
+                    ? "border-volt bg-volt text-void font-medium"
+                    : "border-edge text-ash hover:border-volt/50 hover:text-chalk"
                 }`}
               >
                 {s}
@@ -75,7 +75,7 @@ export function ProductOptions({ product }: { product: Product }) {
 
       {product.colors.length > 0 && (
         <div>
-          <p className="text-sm font-medium">Colour</p>
+          <p className="text-sm font-medium text-chalk">Colour</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {product.colors.map((c) => (
               <button
@@ -83,8 +83,8 @@ export function ProductOptions({ product }: { product: Product }) {
                 onClick={() => setColor(c)}
                 className={`h-10 rounded-lg border px-4 text-sm transition-colors ${
                   color === c
-                    ? "border-storm bg-storm text-white"
-                    : "border-line hover:border-ink/40"
+                    ? "border-volt bg-volt text-void font-medium"
+                    : "border-edge text-ash hover:border-volt/50 hover:text-chalk"
                 }`}
               >
                 {c}
@@ -98,11 +98,11 @@ export function ProductOptions({ product }: { product: Product }) {
           Once it's in the cart, you adjust the quantity in the cart itself. */}
       {!cartLine && (
         <div>
-          <p className="text-sm font-medium">Quantity</p>
-          <div className="mt-2 inline-flex items-center rounded-lg border border-line">
+          <p className="text-sm font-medium text-chalk">Quantity</p>
+          <div className="mt-2 inline-flex items-center rounded-lg border border-edge text-chalk">
             <button
               onClick={() => setQty((q) => Math.max(1, q - 1))}
-              className="h-10 w-10 text-lg transition-colors hover:bg-mist"
+              className="h-10 w-10 text-lg transition-colors hover:bg-surface"
               aria-label="Decrease quantity"
             >
               −
@@ -110,7 +110,7 @@ export function ProductOptions({ product }: { product: Product }) {
             <span className="w-10 text-center text-sm">{qty}</span>
             <button
               onClick={() => setQty((q) => q + 1)}
-              className="h-10 w-10 text-lg transition-colors hover:bg-mist"
+              className="h-10 w-10 text-lg transition-colors hover:bg-surface"
               aria-label="Increase quantity"
             >
               +
@@ -122,20 +122,20 @@ export function ProductOptions({ product }: { product: Product }) {
       {cartLine ? (
         // Already in cart → adjust quantity or remove it right here.
         <div className="space-y-3">
-          <div className="flex items-center justify-between rounded-full border border-storm bg-storm-tint px-2 py-1.5">
+          <div className="flex items-center justify-between rounded-full border border-volt/60 bg-volt-deep px-2 py-1.5">
             <button
               onClick={() => updateQuantity(cartLine.id, cartLine.quantity - 1)}
-              className="flex h-9 w-11 items-center justify-center rounded-full text-xl text-storm transition-colors hover:bg-white"
+              className="flex h-9 w-11 items-center justify-center rounded-full text-xl text-volt transition-colors hover:bg-surface"
               aria-label="Decrease quantity"
             >
               −
             </button>
-            <span className="text-sm font-medium text-storm">
+            <span className="text-sm font-medium text-volt">
               {cartLine.quantity} in cart
             </span>
             <button
               onClick={() => updateQuantity(cartLine.id, cartLine.quantity + 1)}
-              className="flex h-9 w-11 items-center justify-center rounded-full text-xl text-storm transition-colors hover:bg-white"
+              className="flex h-9 w-11 items-center justify-center rounded-full text-xl text-volt transition-colors hover:bg-surface"
               aria-label="Increase quantity"
             >
               +
@@ -144,13 +144,13 @@ export function ProductOptions({ product }: { product: Product }) {
           <div className="flex flex-col gap-3 sm:flex-row">
             <button
               onClick={openCart}
-              className="h-12 flex-1 rounded-full bg-ink text-sm font-medium text-white transition-all hover:-translate-y-0.5 hover:bg-storm active:translate-y-0"
+              className="h-12 flex-1 rounded-full bg-volt text-sm font-semibold text-void shadow-[0_0_30px_-10px_var(--color-volt)] transition-all hover:-translate-y-0.5 hover:bg-volt-dim active:translate-y-0"
             >
               View cart
             </button>
             <button
               onClick={() => removeItem(cartLine.id)}
-              className="h-12 flex-1 rounded-full border border-ink/15 text-sm font-medium text-muted transition-all hover:-translate-y-0.5 hover:border-red-300 hover:text-red-600 active:translate-y-0"
+              className="h-12 flex-1 rounded-full border border-edge text-sm font-medium text-ash transition-all hover:-translate-y-0.5 hover:border-red-400/60 hover:text-red-400 active:translate-y-0"
             >
               Remove
             </button>
@@ -161,14 +161,14 @@ export function ProductOptions({ product }: { product: Product }) {
           <button
             onClick={add}
             disabled={outOfStock}
-            className="h-12 flex-1 rounded-full bg-ink text-sm font-medium text-white transition-all hover:-translate-y-0.5 hover:bg-storm active:translate-y-0 disabled:opacity-40 disabled:hover:translate-y-0"
+            className="h-12 flex-1 rounded-full bg-volt text-sm font-semibold text-void shadow-[0_0_30px_-10px_var(--color-volt)] transition-all hover:-translate-y-0.5 hover:bg-volt-dim active:translate-y-0 disabled:opacity-40 disabled:shadow-none disabled:hover:translate-y-0"
           >
             {outOfStock ? "Out of stock" : "Add to cart"}
           </button>
           <button
             onClick={buyNow}
             disabled={outOfStock}
-            className="h-12 flex-1 rounded-full border border-ink/15 text-sm font-medium transition-all hover:-translate-y-0.5 hover:border-ink/40 active:translate-y-0 disabled:opacity-40"
+            className="h-12 flex-1 rounded-full border border-edge text-sm font-medium text-chalk transition-all hover:-translate-y-0.5 hover:border-volt/50 hover:text-volt active:translate-y-0 disabled:opacity-40"
           >
             Buy now
           </button>

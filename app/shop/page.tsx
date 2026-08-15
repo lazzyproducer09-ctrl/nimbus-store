@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getProducts, CATEGORIES, type SortOption } from "@/lib/products";
+import { getProducts, type SortOption } from "@/lib/products";
+import { getCategories } from "@/lib/categories";
 import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/Reveal";
 import { SearchIcon } from "@/components/icons";
@@ -23,11 +24,10 @@ export default async function ShopPage({
   const sort = (sp.sort as SortOption) ?? "newest";
   const q = sp.q ?? "";
 
-  const products = await getProducts({
-    category: category || undefined,
-    sort,
-    q: q || undefined,
-  });
+  const [products, categories] = await Promise.all([
+    getProducts({ category: category || undefined, sort, q: q || undefined }),
+    getCategories(),
+  ]);
 
   // Build a /shop URL, keeping current filters unless overridden.
   function hrefFor(next: { category?: string; sort?: SortOption; q?: string }) {
@@ -43,15 +43,18 @@ export default async function ShopPage({
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-5 py-10">
+    <div className="mx-auto w-full max-w-6xl px-5 py-12">
       {/* heading */}
       <div className="mb-6">
-        <h1 className="font-heading text-3xl font-semibold tracking-tight md:text-4xl">
+        <p className="font-mono text-xs uppercase tracking-[0.2em] text-volt">
+          {category ? "Category" : "Everything offbeat"}
+        </p>
+        <h1 className="mt-2 font-heading text-3xl font-bold tracking-tight md:text-4xl">
           {category || "Shop all"}
         </h1>
-        <p className="mt-1 text-sm text-muted">
-          {products.length} product{products.length === 1 ? "" : "s"}
-          {q ? ` for “${q}”` : ""}
+        <p className="mt-1 text-sm text-ash">
+          {products.length} thing{products.length === 1 ? "" : "s"} you won&rsquo;t find everywhere
+          {q ? ` · “${q}”` : ""}
         </p>
       </div>
 
@@ -59,58 +62,58 @@ export default async function ShopPage({
       <form action="/shop" method="get" className="mb-6">
         {category && <input type="hidden" name="category" value={category} />}
         {sort !== "newest" && <input type="hidden" name="sort" value={sort} />}
-        <div className="flex items-center gap-2 rounded-full border border-line bg-white px-4 py-2.5">
-          <SearchIcon className="h-4 w-4 text-muted" />
+        <div className="flex items-center gap-2 rounded-full border border-edge bg-surface px-4 py-2.5 transition-colors focus-within:border-volt/50">
+          <SearchIcon className="h-4 w-4 text-ash" />
           <input
             name="q"
             defaultValue={q}
-            placeholder="Search rainwear…"
-            className="w-full bg-transparent text-sm outline-none placeholder:text-muted"
+            placeholder="Search the weird…"
+            className="w-full bg-transparent text-sm text-chalk outline-none placeholder:text-ash-dim"
           />
-          <button type="submit" className="text-sm font-medium text-storm hover:underline">
+          <button type="submit" className="font-mono text-xs uppercase tracking-wider text-volt hover:underline">
             Search
           </button>
         </div>
       </form>
 
       {/* filters + sort */}
-      <div className="mb-8 flex flex-col gap-4 border-b border-line pb-5 md:flex-row md:items-center md:justify-between">
+      <div className="mb-8 flex flex-col gap-4 border-b border-edge pb-5 md:flex-row md:items-center md:justify-between">
         {/* category chips */}
         <div className="flex flex-wrap gap-2">
           <Link
             href={hrefFor({ category: "" })}
             className={`rounded-full border px-3.5 py-1.5 text-sm transition-colors ${
               category === ""
-                ? "border-storm bg-storm text-white"
-                : "border-line hover:border-ink/40"
+                ? "border-volt bg-volt text-void font-medium"
+                : "border-edge text-ash hover:border-volt/50 hover:text-chalk"
             }`}
           >
             All
           </Link>
-          {CATEGORIES.map((c) => (
+          {categories.map((c) => (
             <Link
-              key={c}
-              href={hrefFor({ category: c })}
+              key={c.name}
+              href={hrefFor({ category: c.name })}
               className={`rounded-full border px-3.5 py-1.5 text-sm transition-colors ${
-                category === c
-                  ? "border-storm bg-storm text-white"
-                  : "border-line hover:border-ink/40"
+                category === c.name
+                  ? "border-volt bg-volt text-void font-medium"
+                  : "border-edge text-ash hover:border-volt/50 hover:text-chalk"
               }`}
             >
-              {c}
+              {c.name}
             </Link>
           ))}
         </div>
 
         {/* sort links */}
         <div className="flex flex-wrap items-center gap-2 text-sm">
-          <span className="text-muted">Sort:</span>
+          <span className="font-mono text-xs uppercase tracking-wider text-ash-dim">Sort:</span>
           {SORTS.map((s) => (
             <Link
               key={s.value}
               href={hrefFor({ sort: s.value })}
               className={`rounded-full px-2.5 py-1 transition-colors ${
-                sort === s.value ? "bg-mist font-medium text-ink" : "text-muted hover:text-ink"
+                sort === s.value ? "bg-surface font-medium text-chalk" : "text-ash hover:text-chalk"
               }`}
             >
               {s.label}
@@ -122,9 +125,9 @@ export default async function ShopPage({
       {/* product grid */}
       {products.length === 0 ? (
         <div className="py-20 text-center">
-          <p className="text-sm text-muted">No products match your filters.</p>
-          <Link href="/shop" className="mt-3 inline-block text-sm font-medium text-storm hover:underline">
-            Clear filters
+          <p className="text-sm text-ash">Nothing here (yet). Try clearing the filters.</p>
+          <Link href="/shop" className="mt-3 inline-block font-mono text-xs uppercase tracking-wider text-volt hover:underline">
+            Clear filters →
           </Link>
         </div>
       ) : (
