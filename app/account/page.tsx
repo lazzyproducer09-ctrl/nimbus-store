@@ -37,7 +37,7 @@ export default async function AccountPage() {
         />
       </div>
 
-      <div className="rounded-2xl border border-line bg-white p-6">
+      <div className="rounded-2xl border border-edge bg-coal p-6">
         <div className="flex items-center justify-between">
           <h2 className="font-heading text-lg font-semibold">Personal information</h2>
           <LogoutButton />
@@ -47,9 +47,9 @@ export default async function AccountPage() {
         </div>
       </div>
 
-      <div className="mt-6 rounded-2xl border border-line bg-white p-6">
+      <div className="mt-6 rounded-2xl border border-edge bg-coal p-6">
         <h2 className="font-heading text-lg font-semibold">Saved addresses</h2>
-        <p className="mt-1 text-sm text-muted">
+        <p className="mt-1 text-sm text-ash">
           Manage where your orders get delivered.
         </p>
         <div className="mt-4">
@@ -57,10 +57,10 @@ export default async function AccountPage() {
         </div>
       </div>
 
-      <div className="mt-6 rounded-2xl border border-line bg-white p-6">
+      <div className="mt-6 rounded-2xl border border-edge bg-coal p-6">
         <h2 className="font-heading text-lg font-semibold">Order history</h2>
         {orders.length === 0 ? (
-          <p className="mt-2 text-sm text-muted">
+          <p className="mt-2 text-sm text-ash">
             You haven&rsquo;t placed any orders yet.
           </p>
         ) : (
@@ -69,14 +69,14 @@ export default async function AccountPage() {
               <li key={o.id}>
                 <Link
                   href={`/order/${o.id}`}
-                  className="flex items-center justify-between gap-3 rounded-xl border border-line p-4 text-sm transition-colors hover:border-ink/40"
+                  className="flex items-center justify-between gap-3 rounded-xl border border-edge p-4 text-sm transition-colors hover:border-edge"
                 >
                   <span>
                     <span className="font-medium">{inr(o.total)}</span>
-                    <span className="ml-2 text-muted">
+                    <span className="ml-2 text-ash">
                       {o.items.length} item{o.items.length === 1 ? "" : "s"}
                     </span>
-                    <span className="mt-0.5 block text-xs text-muted">
+                    <span className="mt-0.5 block text-xs text-ash">
                       {new Date(o.created_at).toLocaleDateString("en-IN", {
                         day: "numeric",
                         month: "short",
@@ -87,7 +87,7 @@ export default async function AccountPage() {
                   <span
                     className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${
                       o.status === "paid" || o.status === "delivered"
-                        ? "bg-green-100 text-green-700"
+                        ? "bg-green-100 text-emerald-400"
                         : o.status === "created"
                           ? "bg-amber-100 text-amber-700"
                           : o.status === "shipped"
@@ -96,7 +96,7 @@ export default async function AccountPage() {
                               ? "bg-orange-100 text-orange-700"
                               : o.status === "cancelled"
                                 ? "bg-red-100 text-red-700"
-                                : "bg-mist text-muted"
+                                : "bg-surface text-ash"
                     }`}
                   >
                     {ORDER_STATUS_LABEL[o.status] ?? o.status}

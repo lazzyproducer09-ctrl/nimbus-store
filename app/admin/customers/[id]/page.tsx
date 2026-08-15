@@ -77,57 +77,57 @@ export default async function CustomerDetailPage({
 
   return (
     <div>
-      <Link href="/admin/customers" className="text-sm font-medium text-storm hover:underline">
+      <Link href="/admin/customers" className="text-sm font-medium text-volt hover:underline">
         ← All customers
       </Link>
 
       {/* profile card */}
-      <div className="mt-4 rounded-2xl border border-line bg-white p-6">
+      <div className="mt-4 rounded-2xl border border-edge bg-coal p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h2 className="font-heading text-xl font-semibold">{profile?.name || "Customer"}</h2>
-            <p className="mt-0.5 text-sm text-muted">{profile?.email}</p>
-            {phone && <p className="text-sm text-muted">📞 {phone}</p>}
+            <p className="mt-0.5 text-sm text-ash">{profile?.email}</p>
+            {phone && <p className="text-sm text-ash">📞 {phone}</p>}
             {profile?.joined_at && (
-              <p className="mt-1 text-xs text-muted">Joined {fmt(profile.joined_at)}</p>
+              <p className="mt-1 text-xs text-ash">Joined {fmt(profile.joined_at)}</p>
             )}
           </div>
           <div className="flex gap-5 text-center">
             <div>
               <p className="font-heading text-lg font-semibold">{inr(totalSpent)}</p>
-              <p className="text-[11px] text-muted">spent</p>
+              <p className="text-[11px] text-ash">spent</p>
             </div>
             <div>
               <p className="font-heading text-lg font-semibold">{paid.length}</p>
-              <p className="text-[11px] text-muted">paid orders</p>
+              <p className="text-[11px] text-ash">paid orders</p>
             </div>
             <div>
               <p className="font-heading text-lg font-semibold">{attempts}</p>
-              <p className="text-[11px] text-muted">payment tries</p>
+              <p className="text-[11px] text-ash">payment tries</p>
             </div>
           </div>
         </div>
 
         {/* saved addresses */}
         {profile?.addresses && profile.addresses.length > 0 && (
-          <div className="mt-5 border-t border-line pt-4">
-            <p className="text-xs font-medium text-muted">Saved addresses</p>
+          <div className="mt-5 border-t border-edge pt-4">
+            <p className="text-xs font-medium text-ash">Saved addresses</p>
             <div className="mt-2 grid gap-3 sm:grid-cols-2">
               {profile.addresses.map((a, i) => (
-                <div key={i} className="rounded-xl border border-line p-3 text-sm">
+                <div key={i} className="rounded-xl border border-edge p-3 text-sm">
                   <p className="font-medium">
                     {a.full_name}
                     {a.is_default && (
-                      <span className="ml-2 rounded-full bg-storm-tint px-2 py-0.5 text-[10px] font-medium text-storm">
+                      <span className="ml-2 rounded-full bg-volt-deep px-2 py-0.5 text-[10px] font-medium text-volt">
                         Default
                       </span>
                     )}
                   </p>
-                  <p className="mt-0.5 text-xs text-muted">
+                  <p className="mt-0.5 text-xs text-ash">
                     {a.line1}
                     {a.line2 ? `, ${a.line2}` : ""}, {a.city}, {a.state} {a.pincode}
                   </p>
-                  <p className="text-xs text-muted">📞 {a.phone}</p>
+                  <p className="text-xs text-ash">📞 {a.phone}</p>
                 </div>
               ))}
             </div>
@@ -137,21 +137,21 @@ export default async function CustomerDetailPage({
       </div>
 
       {/* live cart */}
-      <div className="mt-6 rounded-2xl border border-line bg-white p-6">
+      <div className="mt-6 rounded-2xl border border-edge bg-coal p-6">
         <div className="flex items-center justify-between">
           <h3 className="font-heading text-lg font-semibold">Current cart</h3>
           {cartRow?.updated_at && (
-            <span className="text-[11px] text-muted">updated {fmt(cartRow.updated_at)}</span>
+            <span className="text-[11px] text-ash">updated {fmt(cartRow.updated_at)}</span>
           )}
         </div>
         {cart.length === 0 ? (
-          <p className="mt-2 text-sm text-muted">Their cart is empty right now.</p>
+          <p className="mt-2 text-sm text-ash">Their cart is empty right now.</p>
         ) : (
           <>
-            <ul className="mt-3 divide-y divide-line">
+            <ul className="mt-3 divide-y divide-edge">
               {cart.map((c, i) => (
                 <li key={i} className="flex items-center gap-3 py-2.5">
-                  <div className="flex h-11 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-line bg-mist text-storm/40">
+                  <div className="flex h-11 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-edge bg-surface text-volt/40">
                     {c.image ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={c.image} alt="" className="h-full w-full object-cover" />
@@ -162,10 +162,10 @@ export default async function CustomerDetailPage({
                   <div className="min-w-0 flex-1 text-sm">
                     <p className="truncate font-medium">{c.name}</p>
                     {(c.size || c.color) && (
-                      <p className="text-xs text-muted">{[c.size, c.color].filter(Boolean).join(" · ")}</p>
+                      <p className="text-xs text-ash">{[c.size, c.color].filter(Boolean).join(" · ")}</p>
                     )}
                   </div>
-                  <span className="whitespace-nowrap text-sm text-muted">
+                  <span className="whitespace-nowrap text-sm text-ash">
                     {inr(c.price)} × {c.quantity}
                   </span>
                   <span className="w-20 whitespace-nowrap text-right text-sm font-medium">
@@ -174,13 +174,13 @@ export default async function CustomerDetailPage({
                 </li>
               ))}
             </ul>
-            <div className="mt-3 flex justify-between border-t border-line pt-3 text-sm font-semibold">
+            <div className="mt-3 flex justify-between border-t border-edge pt-3 text-sm font-semibold">
               <span>{cartCount} item{cartCount === 1 ? "" : "s"} in cart</span>
               <span>{inr(cartTotal)}</span>
             </div>
           </>
         )}
-        <p className="mt-3 text-[11px] text-muted">
+        <p className="mt-3 text-[11px] text-ash">
           This is the cart saved to the customer&rsquo;s account (updated live while they shop when
           logged in). Guests who aren&rsquo;t signed in keep their cart only in their own browser.
         </p>
@@ -189,22 +189,22 @@ export default async function CustomerDetailPage({
       {/* activity / order history */}
       <h3 className="mt-6 font-heading text-lg font-semibold">Activity</h3>
       {orders.length === 0 ? (
-        <p className="mt-2 text-sm text-muted">No orders yet.</p>
+        <p className="mt-2 text-sm text-ash">No orders yet.</p>
       ) : (
         <div className="mt-3 space-y-4">
           {orders.map((o) => {
             const events = eventsFor(o);
             const itemCount = o.items.reduce((n, it) => n + it.quantity, 0);
             return (
-              <div key={o.id} className="rounded-2xl border border-line bg-white p-5">
+              <div key={o.id} className="rounded-2xl border border-edge bg-coal p-5">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs text-ink">#{o.id.slice(0, 8).toUpperCase()}</span>
-                    <span className="rounded-full bg-mist px-2.5 py-0.5 text-[11px] font-medium">
+                    <span className="font-mono text-xs text-chalk">#{o.id.slice(0, 8).toUpperCase()}</span>
+                    <span className="rounded-full bg-surface px-2.5 py-0.5 text-[11px] font-medium">
                       {ORDER_STATUS_LABEL[o.status] ?? o.status}
                     </span>
                     {o.payment_attempts > 0 && (
-                      <span className="text-[11px] text-muted">
+                      <span className="text-[11px] text-ash">
                         {o.payment_attempts} payment {o.payment_attempts === 1 ? "try" : "tries"}
                       </span>
                     )}
@@ -212,25 +212,25 @@ export default async function CustomerDetailPage({
                   <span className="font-semibold">{inr(o.total)}</span>
                 </div>
 
-                <p className="mt-1 text-xs text-muted">
+                <p className="mt-1 text-xs text-ash">
                   {o.items.map((it) => `${it.name} ×${it.quantity}`).join(", ")} · {itemCount} item
                   {itemCount === 1 ? "" : "s"}
                 </p>
 
                 {/* event timeline */}
-                <ol className="mt-3 space-y-1.5 border-l border-line pl-4">
+                <ol className="mt-3 space-y-1.5 border-l border-edge pl-4">
                   {events.map((e, i) => (
                     <li key={i} className="relative text-xs">
-                      <span className="absolute -left-[21px] top-1 h-2 w-2 rounded-full bg-storm" />
-                      <span className="text-ink">{e.label}</span>
-                      <span className="ml-2 text-muted">{fmt(e.at)}</span>
+                      <span className="absolute -left-[21px] top-1 h-2 w-2 rounded-full bg-volt" />
+                      <span className="text-chalk">{e.label}</span>
+                      <span className="ml-2 text-ash">{fmt(e.at)}</span>
                     </li>
                   ))}
                 </ol>
 
                 <Link
                   href={`/order/${o.id}`}
-                  className="mt-3 inline-block text-xs font-medium text-storm hover:underline"
+                  className="mt-3 inline-block text-xs font-medium text-volt hover:underline"
                 >
                   View order →
                 </Link>

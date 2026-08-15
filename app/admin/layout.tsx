@@ -22,7 +22,7 @@ export default async function AdminLayout({
         <h1 className="font-heading text-2xl font-semibold tracking-tight">
           YOINK Admin
         </h1>
-        <span className="text-xs text-muted">{user?.email}</span>
+        <span className="text-xs text-ash">{user?.email}</span>
       </div>
       <AdminTabs />
       <div className="mt-6">{children}</div>

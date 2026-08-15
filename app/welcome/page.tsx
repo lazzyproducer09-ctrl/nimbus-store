@@ -24,7 +24,7 @@ export default async function WelcomePage() {
       <h1 className="font-heading text-2xl font-semibold tracking-tight">
         Welcome to YOINK ⚡
       </h1>
-      <p className="mt-1 text-sm text-muted">
+      <p className="mt-1 text-sm text-ash">
         One quick thing before you shop — what should we call you?
       </p>
       <WelcomeForm defaultName={suggestedName} />

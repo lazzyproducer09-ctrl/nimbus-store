@@ -41,19 +41,19 @@ export function PersonalInfo({
     <div className="space-y-4">
       {/* Name */}
       <div>
-        <p className="text-xs text-muted">Full name</p>
+        <p className="text-xs text-ash">Full name</p>
         {editing ? (
           <div className="mt-1 flex flex-wrap items-center gap-2">
             <input
               autoFocus
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="h-10 w-56 rounded-lg border border-line bg-white px-3 text-sm outline-none focus:border-storm"
+              className="h-10 w-56 rounded-lg border border-edge bg-coal px-3 text-sm outline-none focus:border-volt"
             />
             <button
               onClick={save}
               disabled={saving}
-              className="h-10 rounded-full bg-storm px-4 text-sm font-medium text-white hover:bg-storm-dark disabled:opacity-50"
+              className="h-10 rounded-full bg-volt px-4 text-sm font-medium text-void hover:bg-volt-dim disabled:opacity-50"
             >
               {saving ? "Saving…" : "Save"}
             </button>
@@ -63,7 +63,7 @@ export function PersonalInfo({
                 setName(initialName);
                 setError(null);
               }}
-              className="h-10 rounded-full border border-ink/15 px-4 text-sm font-medium hover:border-ink/40"
+              className="h-10 rounded-full border border-edge px-4 text-sm font-medium hover:border-edge"
             >
               Cancel
             </button>
@@ -73,22 +73,22 @@ export function PersonalInfo({
             <p className="text-lg font-medium">{initialName || "Not set"}</p>
             <button
               onClick={() => setEditing(true)}
-              className="text-xs font-medium text-storm hover:underline"
+              className="text-xs font-medium text-volt hover:underline"
             >
               Edit
             </button>
           </div>
         )}
-        {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-1 text-sm text-red-400">{error}</p>}
       </div>
 
       {/* Email */}
       <div>
-        <p className="text-xs text-muted">Email</p>
+        <p className="text-xs text-ash">Email</p>
         <div className="mt-0.5 flex flex-wrap items-center gap-2">
           <p className="font-medium">{email}</p>
           {verified && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700">
+            <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-emerald-400">
               ✓ Verified
             </span>
           )}

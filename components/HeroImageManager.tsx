@@ -74,9 +74,9 @@ export function HeroImageManager({
   }
 
   return (
-    <div className="rounded-2xl border border-line bg-white p-6">
+    <div className="rounded-2xl border border-edge bg-coal p-6">
       <h2 className="font-heading text-lg font-semibold">Homepage hero</h2>
-      <p className="mt-1 text-xs text-muted">
+      <p className="mt-1 text-xs text-ash">
         The big visual on your homepage banner. A <strong>video</strong> plays automatically
         (looped, muted) — if set, it&rsquo;s shown instead of the image.
       </p>
@@ -84,27 +84,27 @@ export function HeroImageManager({
       <div className="mt-5 grid gap-6 sm:grid-cols-2">
         {/* ---- image ---- */}
         <div>
-          <p className="mb-2 text-xs font-medium text-muted">Hero image</p>
+          <p className="mb-2 text-xs font-medium text-ash">Hero image</p>
           <div className="flex flex-wrap items-start gap-4">
-            <div className="relative h-40 w-32 flex-shrink-0 overflow-hidden rounded-xl border border-line bg-mist">
+            <div className="relative h-40 w-32 flex-shrink-0 overflow-hidden rounded-xl border border-edge bg-surface">
               {url ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={url} alt="hero" className="h-full w-full object-cover" />
               ) : (
-                <span className="flex h-full items-center justify-center text-xs text-muted">
+                <span className="flex h-full items-center justify-center text-xs text-ash">
                   No image
                 </span>
               )}
             </div>
             <div className="flex flex-col gap-2">
-              <label className="inline-flex h-10 cursor-pointer items-center justify-center rounded-full border border-ink/15 px-5 text-sm font-medium transition-colors hover:border-ink/40">
+              <label className="inline-flex h-10 cursor-pointer items-center justify-center rounded-full border border-edge px-5 text-sm font-medium transition-colors hover:border-edge">
                 {uploading ? "Uploading…" : "Choose image"}
                 <input type="file" accept="image/*" className="hidden" onChange={(e) => uploadImage(e.target.files?.[0])} />
               </label>
               {url && (
                 <button
                   onClick={() => setUrl(null)}
-                  className="h-9 rounded-full border border-ink/15 px-4 text-xs font-medium text-muted hover:border-red-300 hover:text-red-600"
+                  className="h-9 rounded-full border border-edge px-4 text-xs font-medium text-ash hover:border-red-300 hover:text-red-400"
                 >
                   Remove image
                 </button>
@@ -115,26 +115,26 @@ export function HeroImageManager({
 
         {/* ---- video ---- */}
         <div>
-          <p className="mb-2 text-xs font-medium text-muted">Hero video (optional)</p>
+          <p className="mb-2 text-xs font-medium text-ash">Hero video (optional)</p>
           <div className="flex flex-wrap items-start gap-4">
-            <div className="relative h-40 w-32 flex-shrink-0 overflow-hidden rounded-xl border border-line bg-mist">
+            <div className="relative h-40 w-32 flex-shrink-0 overflow-hidden rounded-xl border border-edge bg-surface">
               {videoUrl ? (
                 <video src={videoUrl} className="h-full w-full object-cover" muted autoPlay loop playsInline />
               ) : (
-                <span className="flex h-full items-center justify-center text-center text-xs text-muted">
+                <span className="flex h-full items-center justify-center text-center text-xs text-ash">
                   No video
                 </span>
               )}
             </div>
             <div className="flex flex-col gap-2">
-              <label className="inline-flex h-10 cursor-pointer items-center justify-center rounded-full border border-ink/15 px-5 text-sm font-medium transition-colors hover:border-ink/40">
+              <label className="inline-flex h-10 cursor-pointer items-center justify-center rounded-full border border-edge px-5 text-sm font-medium transition-colors hover:border-edge">
                 {uploadingVideo ? "Uploading…" : "Choose video"}
                 <input type="file" accept="video/*" className="hidden" onChange={(e) => uploadVideo(e.target.files?.[0])} />
               </label>
               {videoUrl && (
                 <button
                   onClick={() => setVideoUrl(null)}
-                  className="h-9 rounded-full border border-ink/15 px-4 text-xs font-medium text-muted hover:border-red-300 hover:text-red-600"
+                  className="h-9 rounded-full border border-edge px-4 text-xs font-medium text-ash hover:border-red-300 hover:text-red-400"
                 >
                   Remove video
                 </button>
@@ -148,12 +148,12 @@ export function HeroImageManager({
         <button
           onClick={save}
           disabled={saving || uploading || uploadingVideo}
-          className="h-10 rounded-full bg-storm px-6 text-sm font-medium text-white hover:bg-storm-dark disabled:opacity-50"
+          className="h-10 rounded-full bg-volt px-6 text-sm font-medium text-void hover:bg-volt-dim disabled:opacity-50"
         >
           {saving ? "Saving…" : "Save hero"}
         </button>
-        {saved && <p className="text-xs text-green-700">✓ Saved — check your homepage.</p>}
-        {error && <p className="text-xs text-red-600">{error}</p>}
+        {saved && <p className="text-xs text-emerald-400">✓ Saved — check your homepage.</p>}
+        {error && <p className="text-xs text-red-400">{error}</p>}
       </div>
     </div>
   );

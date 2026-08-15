@@ -64,13 +64,13 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       <button
         type="button"
         onClick={signInWithGoogle}
-        className="flex h-11 w-full items-center justify-center gap-2 rounded-full border border-line bg-white text-sm font-medium transition-colors hover:border-ink/40"
+        className="flex h-11 w-full items-center justify-center gap-2 rounded-full border border-edge bg-coal text-sm font-medium transition-colors hover:border-edge"
       >
         <GoogleIcon className="h-4 w-4" />
         Continue with Google
       </button>
 
-      <div className="flex items-center gap-3 text-xs text-muted">
+      <div className="flex items-center gap-3 text-xs text-ash">
         <div className="h-px flex-1 bg-line" />
         or
         <div className="h-px flex-1 bg-line" />
@@ -86,7 +86,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
-          className="mt-1.5 h-11 w-full rounded-lg border border-line bg-white px-3 text-sm outline-none focus:border-storm"
+          className="mt-1.5 h-11 w-full rounded-lg border border-edge bg-coal px-3 text-sm outline-none focus:border-volt"
         />
       </div>
 
@@ -94,7 +94,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         <div className="flex items-center justify-between">
           <label htmlFor="password" className="text-sm font-medium">Password</label>
           {!isSignup && (
-            <a href="/forgot-password" className="text-xs font-medium text-storm hover:underline">
+            <a href="/forgot-password" className="text-xs font-medium text-volt hover:underline">
               Forgot password?
             </a>
           )}
@@ -107,21 +107,21 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="At least 6 characters"
-          className="mt-1.5 h-11 w-full rounded-lg border border-line bg-white px-3 text-sm outline-none focus:border-storm"
+          className="mt-1.5 h-11 w-full rounded-lg border border-edge bg-coal px-3 text-sm outline-none focus:border-volt"
         />
       </div>
 
       {error && (
-        <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p>
+        <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-400">{error}</p>
       )}
       {message && (
-        <p className="rounded-lg bg-storm-tint px-4 py-3 text-sm text-storm">{message}</p>
+        <p className="rounded-lg bg-volt-deep px-4 py-3 text-sm text-volt">{message}</p>
       )}
 
       <button
         type="submit"
         disabled={loading}
-        className="h-11 w-full rounded-full bg-storm text-sm font-medium text-white transition-all hover:bg-storm-dark disabled:opacity-50"
+        className="h-11 w-full rounded-full bg-volt text-sm font-medium text-void transition-all hover:bg-volt-dim disabled:opacity-50"
       >
         {loading ? "Please wait…" : isSignup ? "Create account" : "Log in"}
       </button>

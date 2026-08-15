@@ -16,7 +16,7 @@ export const metadata: Metadata = { title: "Order — YOINK" };
 const HEAD: Record<string, { icon: string; bg: string; title: string; sub: string }> = {
   paid: {
     icon: "✓",
-    bg: "bg-green-100 text-green-600",
+    bg: "bg-green-100 text-emerald-400",
     title: "Order confirmed",
     sub: "Payment received. We’re preparing your order for dispatch.",
   },
@@ -46,7 +46,7 @@ const HEAD: Record<string, { icon: string; bg: string; title: string; sub: strin
   },
   cancelled: {
     icon: "✕",
-    bg: "bg-red-100 text-red-600",
+    bg: "bg-red-100 text-red-400",
     title: "Order cancelled",
     sub: "This order has been cancelled.",
   },
@@ -150,7 +150,7 @@ export default async function OrderPage({
 
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-12">
-      <div className="rounded-2xl border border-line bg-white p-8 text-center">
+      <div className="rounded-2xl border border-edge bg-coal p-8 text-center">
         {order.status === "paid" ? (
           <OrderConfirmedCheck soundEnabled={soundOn} volume={soundVolume} soundType={soundType} />
         ) : (
@@ -159,18 +159,18 @@ export default async function OrderPage({
           </div>
         )}
         <h1 className="mt-4 font-heading text-2xl font-semibold tracking-tight">{h.title}</h1>
-        <p className="mt-2 text-sm text-muted">{h.sub}</p>
-        <p className="mt-3 text-xs text-muted">
-          Order ID: <span className="font-mono text-ink">{order.id.slice(0, 8).toUpperCase()}</span>
+        <p className="mt-2 text-sm text-ash">{h.sub}</p>
+        <p className="mt-3 text-xs text-ash">
+          Order ID: <span className="font-mono text-chalk">{order.id.slice(0, 8).toUpperCase()}</span>
         </p>
         {order.paid_at && (
-          <p className="mt-1 text-xs text-muted">Confirmed on {fmt(order.paid_at)}</p>
+          <p className="mt-1 text-xs text-ash">Confirmed on {fmt(order.paid_at)}</p>
         )}
 
         {/* refund tracker — steps differ for cancellation vs return */}
         {inFlow && (
-          <div className="mx-auto mt-5 max-w-md rounded-xl border border-line bg-paper/60 p-5 text-left">
-            <p className="text-sm font-semibold text-ink">{flowLabel} &amp; refund</p>
+          <div className="mx-auto mt-5 max-w-md rounded-xl border border-edge bg-surface/60 p-5 text-left">
+            <p className="text-sm font-semibold text-chalk">{flowLabel} &amp; refund</p>
             <ol className="mt-3 space-y-3">
               {steps.map((st, i) => {
                 const isCurrent = i === currentStepIdx;
@@ -178,16 +178,16 @@ export default async function OrderPage({
                   <li key={i} className="flex gap-3">
                     <span
                       className={`mt-0.5 ${
-                        st.done ? "text-green-600" : isCurrent ? "text-amber-500" : "text-muted"
+                        st.done ? "text-emerald-400" : isCurrent ? "text-amber-500" : "text-ash"
                       }`}
                     >
                       {st.done ? "✓" : isCurrent ? "⏳" : "○"}
                     </span>
                     <span className="text-xs">
-                      <span className={`font-medium ${st.done || isCurrent ? "text-ink" : "text-muted"}`}>
+                      <span className={`font-medium ${st.done || isCurrent ? "text-chalk" : "text-ash"}`}>
                         {isCurrent && !st.done ? `${st.label} — in progress` : st.label}
                       </span>
-                      {st.at && <span className="mt-0.5 block text-muted">{fmt(st.at)}</span>}
+                      {st.at && <span className="mt-0.5 block text-ash">{fmt(st.at)}</span>}
                     </span>
                   </li>
                 );
@@ -195,14 +195,14 @@ export default async function OrderPage({
 
               {/* refund */}
               <li className="flex gap-3">
-                <span className={`mt-0.5 ${order.refund_status === "refunded" ? "text-green-600" : refundActive ? "text-storm" : "text-muted"}`}>
+                <span className={`mt-0.5 ${order.refund_status === "refunded" ? "text-emerald-400" : refundActive ? "text-volt" : "text-ash"}`}>
                   {order.refund_status === "refunded" ? "✓" : "💳"}
                 </span>
                 <span className="text-xs">
-                  <span className="font-medium text-ink">
+                  <span className="font-medium text-chalk">
                     {order.refund_status === "refunded" ? "Refund completed" : "Refund"}
                   </span>
-                  <span className="mt-0.5 block text-muted">
+                  <span className="mt-0.5 block text-ash">
                     {order.refund_status === "refunded"
                       ? `Refunded to your original payment method${order.refunded_at ? ` on ${fmt(order.refunded_at)}` : ""}${order.refund_reference ? ` · Ref: ${order.refund_reference}` : ""}.`
                       : order.refund_status === "pending"
@@ -253,12 +253,12 @@ export default async function OrderPage({
       </div>
 
       {/* Items */}
-      <div className="mt-6 rounded-2xl border border-line bg-white p-6">
+      <div className="mt-6 rounded-2xl border border-edge bg-coal p-6">
         <h2 className="font-heading text-lg font-semibold">Items</h2>
         <ul className="mt-4 space-y-3">
           {order.items.map((it, idx) => (
             <li key={idx} className="flex items-center gap-3">
-              <div className="flex h-14 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-line bg-mist text-storm/40">
+              <div className="flex h-14 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-edge bg-surface text-volt/40">
                 {it.image ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={it.image} alt={it.name} className="h-full w-full object-cover" />
@@ -268,7 +268,7 @@ export default async function OrderPage({
               </div>
               <div className="min-w-0 flex-1 text-sm">
                 <p className="truncate font-medium">{it.name}</p>
-                <p className="text-xs text-muted">
+                <p className="text-xs text-ash">
                   {[it.size, it.color].filter(Boolean).join(" · ")}
                   {(it.size || it.color) ? " · " : ""}Qty {it.quantity}
                 </p>
@@ -277,16 +277,16 @@ export default async function OrderPage({
             </li>
           ))}
         </ul>
-        <div className="mt-4 space-y-2 border-t border-line pt-4 text-sm">
+        <div className="mt-4 space-y-2 border-t border-edge pt-4 text-sm">
           <div className="flex justify-between">
-            <span className="text-muted">Subtotal</span>
+            <span className="text-ash">Subtotal</span>
             <span>{inr(order.subtotal)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted">Shipping</span>
+            <span className="text-ash">Shipping</span>
             <span>{order.shipping === 0 ? "Free" : inr(order.shipping)}</span>
           </div>
-          <div className="flex justify-between border-t border-line pt-2 text-base font-semibold">
+          <div className="flex justify-between border-t border-edge pt-2 text-base font-semibold">
             <span>{order.status === "paid" || order.status === "shipped" || order.status === "delivered" ? "Total paid" : "Total payable"}</span>
             <span>{inr(order.total)}</span>
           </div>
@@ -294,28 +294,28 @@ export default async function OrderPage({
       </div>
 
       {/* Delivery */}
-      <div className="mt-6 rounded-2xl border border-line bg-white p-6">
+      <div className="mt-6 rounded-2xl border border-edge bg-coal p-6">
         <h2 className="font-heading text-lg font-semibold">Delivering to</h2>
         <p className="mt-3 text-sm">
           <span className="font-medium">{a.full_name}</span>
-          <span className="mt-1 block text-muted">
+          <span className="mt-1 block text-ash">
             {a.line1}
             {a.line2 ? `, ${a.line2}` : ""}, {a.city}, {a.state} {a.pincode}
           </span>
-          <span className="mt-0.5 block text-muted">Phone: {a.phone}</span>
+          <span className="mt-0.5 block text-ash">Phone: {a.phone}</span>
         </p>
       </div>
 
       <div className="mt-8 flex justify-center gap-3">
         <Link
           href="/shop"
-          className="inline-flex h-11 items-center justify-center rounded-full bg-storm px-6 text-sm font-medium text-white transition-colors hover:bg-storm-dark"
+          className="inline-flex h-11 items-center justify-center rounded-full bg-volt px-6 text-sm font-medium text-void transition-colors hover:bg-volt-dim"
         >
           Continue shopping
         </Link>
         <Link
           href="/orders"
-          className="inline-flex h-11 items-center justify-center rounded-full border border-ink/15 px-6 text-sm font-medium transition-colors hover:border-ink/40"
+          className="inline-flex h-11 items-center justify-center rounded-full border border-edge px-6 text-sm font-medium transition-colors hover:border-edge"
         >
           View my orders
         </Link>
@@ -344,7 +344,7 @@ function DeclinedNotice({
       </p>
       <Link
         href="/contact"
-        className="mt-3 inline-flex h-10 items-center justify-center rounded-full bg-ink px-5 text-sm font-medium text-white transition-colors hover:bg-storm"
+        className="mt-3 inline-flex h-10 items-center justify-center rounded-full bg-volt px-5 text-sm font-medium text-void transition-colors hover:bg-volt-dim"
       >
         Talk to us
       </Link>

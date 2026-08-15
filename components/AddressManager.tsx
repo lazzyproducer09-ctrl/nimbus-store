@@ -50,35 +50,35 @@ export function AddressManager({
           {initialAddresses.map((a) => (
             <div
               key={a.id}
-              className="flex items-start justify-between gap-4 rounded-xl border border-line p-4"
+              className="flex items-start justify-between gap-4 rounded-xl border border-edge p-4"
             >
               <div className="text-sm">
                 <div className="flex items-center gap-2">
                   <span className="font-medium">{a.full_name}</span>
                   {a.is_default && (
-                    <span className="rounded-full bg-storm-tint px-2 py-0.5 text-[11px] font-medium text-storm">
+                    <span className="rounded-full bg-volt-deep px-2 py-0.5 text-[11px] font-medium text-volt">
                       Default
                     </span>
                   )}
                 </div>
-                <p className="mt-1 text-muted">
+                <p className="mt-1 text-ash">
                   {a.line1}
                   {a.line2 ? `, ${a.line2}` : ""}, {a.city}, {a.state} {a.pincode}
                 </p>
-                <p className="mt-0.5 text-muted">Phone: {a.phone}</p>
+                <p className="mt-0.5 text-ash">Phone: {a.phone}</p>
               </div>
               <div className="flex flex-shrink-0 flex-col items-end gap-1 text-xs">
                 {!a.is_default && (
-                  <button onClick={() => makeDefault(a.id)} className="text-storm hover:underline">
+                  <button onClick={() => makeDefault(a.id)} className="text-volt hover:underline">
                     Set default
                   </button>
                 )}
-                <button onClick={() => openEdit(a)} className="text-muted hover:text-ink">
+                <button onClick={() => openEdit(a)} className="text-ash hover:text-chalk">
                   Edit
                 </button>
                 <button
                   onClick={() => setPendingDelete(a.id)}
-                  className="text-muted hover:text-red-600"
+                  className="text-ash hover:text-red-400"
                 >
                   Delete
                 </button>
@@ -103,7 +103,7 @@ export function AddressManager({
       ) : (
         <button
           onClick={openAdd}
-          className="mt-4 h-10 rounded-full border border-ink/15 px-5 text-sm font-medium transition-colors hover:border-ink/40"
+          className="mt-4 h-10 rounded-full border border-edge px-5 text-sm font-medium transition-colors hover:border-edge"
         >
           + Add a new address
         </button>

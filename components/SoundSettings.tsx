@@ -41,9 +41,9 @@ export function SoundSettings({
   }
 
   return (
-    <div className="rounded-2xl border border-line bg-white p-6">
+    <div className="rounded-2xl border border-edge bg-coal p-6">
       <h2 className="font-heading text-lg font-semibold">Order success sound</h2>
-      <p className="mt-1 text-xs text-muted">
+      <p className="mt-1 text-xs text-ash">
         A short chime that plays for the customer when their payment succeeds.
       </p>
 
@@ -57,14 +57,14 @@ export function SoundSettings({
               setEnabled(e.target.checked);
               setSaved(false);
             }}
-            className="h-5 w-5 accent-storm"
+            className="h-5 w-5 accent-volt"
           />
           <span className="font-medium">Play a sound on successful payment</span>
         </label>
 
         {/* choose which sound */}
         <div className={enabled ? "" : "pointer-events-none opacity-40"}>
-          <label className="mb-1.5 block text-xs font-medium text-muted">
+          <label className="mb-1.5 block text-xs font-medium text-ash">
             Choose a sound (tap to hear it)
           </label>
           <div className="flex flex-wrap gap-2">
@@ -79,8 +79,8 @@ export function SoundSettings({
                 }}
                 className={`flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                   type === opt.value
-                    ? "border-storm bg-storm-tint text-storm"
-                    : "border-line hover:border-ink/40"
+                    ? "border-volt bg-volt-deep text-volt"
+                    : "border-edge hover:border-edge"
                 }`}
               >
                 🔊 {opt.label}
@@ -91,7 +91,7 @@ export function SoundSettings({
 
         {/* volume */}
         <div className={enabled ? "" : "pointer-events-none opacity-40"}>
-          <label className="mb-1 block text-xs font-medium text-muted">
+          <label className="mb-1 block text-xs font-medium text-ash">
             Volume: {Math.round(volume * 100)}%
           </label>
           <input
@@ -104,7 +104,7 @@ export function SoundSettings({
               setVolume(parseFloat(e.target.value));
               setSaved(false);
             }}
-            className="w-full max-w-xs accent-storm"
+            className="w-full max-w-xs accent-volt"
           />
         </div>
 
@@ -112,19 +112,19 @@ export function SoundSettings({
           <button
             type="button"
             onClick={() => playSuccessChime(volume, type)}
-            className="h-10 rounded-full border border-ink/15 px-5 text-sm font-medium transition-colors hover:border-storm hover:text-storm"
+            className="h-10 rounded-full border border-edge px-5 text-sm font-medium transition-colors hover:border-volt hover:text-volt"
           >
             🔊 Test selected
           </button>
           <button
             onClick={save}
             disabled={saving}
-            className="h-10 rounded-full bg-storm px-6 text-sm font-medium text-white hover:bg-storm-dark disabled:opacity-50"
+            className="h-10 rounded-full bg-volt px-6 text-sm font-medium text-void hover:bg-volt-dim disabled:opacity-50"
           >
             {saving ? "Saving…" : "Save"}
           </button>
-          {saved && <p className="text-xs text-green-700">✓ Saved.</p>}
-          {error && <p className="text-xs text-red-600">{error}</p>}
+          {saved && <p className="text-xs text-emerald-400">✓ Saved.</p>}
+          {error && <p className="text-xs text-red-400">{error}</p>}
         </div>
       </div>
     </div>

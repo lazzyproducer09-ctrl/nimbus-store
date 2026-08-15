@@ -45,8 +45,8 @@ const slugify = (s: string) =>
 const parseList = (s: string) => s.split(",").map((x) => x.trim()).filter(Boolean);
 
 const inputClass =
-  "h-10 w-full rounded-lg border border-line bg-white px-3 text-sm outline-none focus:border-storm";
-const labelClass = "mb-1 block text-xs font-medium text-muted";
+  "h-10 w-full rounded-lg border border-edge bg-coal px-3 text-sm outline-none focus:border-volt";
+const labelClass = "mb-1 block text-xs font-medium text-ash";
 
 export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }) {
   const router = useRouter();
@@ -223,11 +223,11 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
   return (
     <div>
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted">{initialProducts.length} products</p>
+        <p className="text-sm text-ash">{initialProducts.length} products</p>
         {!showForm && (
           <button
             onClick={openAdd}
-            className="h-10 rounded-full bg-storm px-5 text-sm font-medium text-white transition-colors hover:bg-storm-dark"
+            className="h-10 rounded-full bg-volt px-5 text-sm font-medium text-void transition-colors hover:bg-volt-dim"
           >
             + Add product
           </button>
@@ -235,7 +235,7 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
       </div>
 
       {showForm && (
-        <form onSubmit={save} className="mt-4 space-y-3 rounded-2xl border border-line bg-white p-5">
+        <form onSubmit={save} className="mt-4 space-y-3 rounded-2xl border border-edge bg-coal p-5">
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <label className={labelClass}>Name</label>
@@ -273,8 +273,8 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
             if (!isNaN(price) && !isNaN(compare) && compare > price) {
               const pct = Math.round((1 - price / compare) * 100);
               return (
-                <div className="flex items-center gap-2 rounded-lg bg-storm-tint px-3 py-2 text-xs text-storm">
-                  <span className="rounded-full bg-storm px-2 py-0.5 font-semibold text-white">{pct}% OFF</span>
+                <div className="flex items-center gap-2 rounded-lg bg-volt-deep px-3 py-2 text-xs text-volt">
+                  <span className="rounded-full bg-volt px-2 py-0.5 font-semibold text-void">{pct}% OFF</span>
                   <span>
                     Customers see this offer. Save ₹{compare - price} — set “Compare price” higher than “Price” to show a discount, leave it blank for no offer.
                   </span>
@@ -289,7 +289,7 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
               );
             }
             return (
-              <p className="text-xs text-muted">
+              <p className="text-xs text-ash">
                 Tip: set a “Compare price” higher than “Price” to show a “% OFF” offer badge.
               </p>
             );
@@ -298,7 +298,7 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
           <div>
             <label className={labelClass}>Description</label>
             <textarea
-              className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm outline-none focus:border-storm"
+              className="w-full rounded-lg border border-edge bg-coal px-3 py-2 text-sm outline-none focus:border-volt"
               rows={3}
               value={form.description}
               onChange={(e) => set("description", e.target.value)}
@@ -320,7 +320,7 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
             <label className={labelClass}>Photos</label>
             <div className="flex flex-wrap gap-2">
               {form.images.map((url, i) => (
-                <div key={i} className="relative h-16 w-14 overflow-hidden rounded-lg border border-line">
+                <div key={i} className="relative h-16 w-14 overflow-hidden rounded-lg border border-edge">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={url} alt="" className="h-full w-full object-cover" />
                   <button
@@ -332,7 +332,7 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
                   </button>
                 </div>
               ))}
-              <label className="flex h-16 w-14 cursor-pointer items-center justify-center rounded-lg border border-dashed border-line text-lg text-muted hover:border-storm">
+              <label className="flex h-16 w-14 cursor-pointer items-center justify-center rounded-lg border border-dashed border-edge text-lg text-ash hover:border-volt">
                 {uploading ? "…" : "+"}
                 <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleUpload(e.target.files)} />
               </label>
@@ -343,7 +343,7 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
             <label className={labelClass}>Description images (the long detail photos shown lower on the product page)</label>
             <div className="flex flex-wrap gap-2">
               {form.description_images.map((url, i) => (
-                <div key={i} className="relative h-24 w-20 overflow-hidden rounded-lg border border-line">
+                <div key={i} className="relative h-24 w-20 overflow-hidden rounded-lg border border-edge">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={url} alt="" className="h-full w-full object-cover" />
                   <button
@@ -355,13 +355,13 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
                   </button>
                 </div>
               ))}
-              <label className="flex h-24 w-20 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-line text-lg text-muted hover:border-storm">
+              <label className="flex h-24 w-20 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-edge text-lg text-ash hover:border-volt">
                 {uploadingDesc ? "…" : "+"}
                 <span className="text-[9px]">detail</span>
                 <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleDescUpload(e.target.files)} />
               </label>
             </div>
-            <p className="mt-1 text-[11px] text-muted">
+            <p className="mt-1 text-[11px] text-ash">
               These stack top-to-bottom in a &ldquo;Product details&rdquo; section. Upload the tall feature images your supplier gives you.
             </p>
           </div>
@@ -370,17 +370,17 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
             <label className={labelClass}>Product video (optional)</label>
             {form.video_url ? (
               <div className="flex items-center gap-3">
-                <video src={form.video_url} className="h-16 w-28 rounded-lg border border-line object-cover" muted />
+                <video src={form.video_url} className="h-16 w-28 rounded-lg border border-edge object-cover" muted />
                 <button
                   type="button"
                   onClick={() => set("video_url", null)}
-                  className="rounded-full border border-line px-3 py-1 text-xs font-medium text-muted transition-colors hover:border-red-300 hover:text-red-600"
+                  className="rounded-full border border-edge px-3 py-1 text-xs font-medium text-ash transition-colors hover:border-red-300 hover:text-red-400"
                 >
                   Remove video
                 </button>
               </div>
             ) : (
-              <label className="flex h-16 w-28 cursor-pointer items-center justify-center rounded-lg border border-dashed border-line text-xs text-muted hover:border-storm">
+              <label className="flex h-16 w-28 cursor-pointer items-center justify-center rounded-lg border border-dashed border-edge text-xs text-ash hover:border-volt">
                 {uploadingVideo ? "Uploading…" : "+ Add video"}
                 <input type="file" accept="video/*" className="hidden" onChange={(e) => handleVideoUpload(e.target.files)} />
               </label>
@@ -396,20 +396,20 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
             </label>
           </div>
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-red-400">{error}</p>}
 
           <div className="flex gap-3">
             <button
               type="submit"
               disabled={saving || uploading || uploadingVideo}
-              className="h-10 rounded-full bg-storm px-5 text-sm font-medium text-white transition-colors hover:bg-storm-dark disabled:opacity-50"
+              className="h-10 rounded-full bg-volt px-5 text-sm font-medium text-void transition-colors hover:bg-volt-dim disabled:opacity-50"
             >
               {saving ? "Saving…" : editingId ? "Save changes" : "Add product"}
             </button>
             <button
               type="button"
               onClick={() => setShowForm(false)}
-              className="h-10 rounded-full border border-ink/15 px-5 text-sm font-medium transition-colors hover:border-ink/40"
+              className="h-10 rounded-full border border-edge px-5 text-sm font-medium transition-colors hover:border-edge"
             >
               Cancel
             </button>
@@ -417,18 +417,18 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
         </form>
       )}
 
-      <p className="mt-4 text-xs text-muted">
+      <p className="mt-4 text-xs text-ash">
         Order below = order on the shop page &amp; homepage. Use ↑ / ↓ to reorder.
       </p>
       <div className="mt-2 space-y-2">
         {initialProducts.map((p, i) => (
-          <div key={p.id} className="flex items-center gap-3 rounded-xl border border-line bg-white p-3">
+          <div key={p.id} className="flex items-center gap-3 rounded-xl border border-edge bg-coal p-3">
             <div className="flex flex-shrink-0 flex-col">
               <button
                 type="button"
                 onClick={() => move(i, -1)}
                 disabled={i === 0 || reordering !== null}
-                className="flex h-6 w-6 items-center justify-center rounded text-muted transition-colors hover:bg-mist hover:text-ink disabled:opacity-25"
+                className="flex h-6 w-6 items-center justify-center rounded text-ash transition-colors hover:bg-surface hover:text-chalk disabled:opacity-25"
                 aria-label="Move up"
               >
                 ↑
@@ -437,18 +437,18 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
                 type="button"
                 onClick={() => move(i, 1)}
                 disabled={i === initialProducts.length - 1 || reordering !== null}
-                className="flex h-6 w-6 items-center justify-center rounded text-muted transition-colors hover:bg-mist hover:text-ink disabled:opacity-25"
+                className="flex h-6 w-6 items-center justify-center rounded text-ash transition-colors hover:bg-surface hover:text-chalk disabled:opacity-25"
                 aria-label="Move down"
               >
                 ↓
               </button>
             </div>
-            <div className="h-14 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-line bg-mist">
+            <div className="h-14 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-edge bg-surface">
               {p.images?.[0] ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={p.images[0]} alt="" className="h-full w-full object-cover" />
               ) : (
-                <span className="flex h-full items-center justify-center text-storm/30">
+                <span className="flex h-full items-center justify-center text-volt/30">
                   <UmbrellaMark className="h-5 w-5" />
                 </span>
               )}
@@ -457,37 +457,37 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
               <div className="flex flex-wrap items-center gap-2">
                 <p className="truncate text-sm font-medium">{p.name}</p>
                 {p.is_featured && (
-                  <span className="rounded-full bg-storm-tint px-2 py-0.5 text-[10px] font-medium text-storm">
+                  <span className="rounded-full bg-volt-deep px-2 py-0.5 text-[10px] font-medium text-volt">
                     Featured
                   </span>
                 )}
                 {!p.is_active && (
-                  <span className="rounded-full bg-mist px-2 py-0.5 text-[10px] font-medium text-muted">
+                  <span className="rounded-full bg-surface px-2 py-0.5 text-[10px] font-medium text-ash">
                     Hidden
                   </span>
                 )}
                 {p.compare_at_price && p.compare_at_price > p.price && (
-                  <span className="rounded-full bg-storm px-2 py-0.5 text-[10px] font-semibold text-white">
+                  <span className="rounded-full bg-volt px-2 py-0.5 text-[10px] font-semibold text-void">
                     {Math.round((1 - p.price / p.compare_at_price) * 100)}% OFF
                   </span>
                 )}
               </div>
-              <p className="mt-0.5 text-xs text-muted">
+              <p className="mt-0.5 text-xs text-ash">
                 {p.category} · {inr(p.price)} ·{" "}
-                <span className={p.stock === 0 ? "font-medium text-red-600" : p.stock < 10 ? "font-medium text-amber-600" : ""}>
+                <span className={p.stock === 0 ? "font-medium text-red-400" : p.stock < 10 ? "font-medium text-amber-600" : ""}>
                   {p.stock} in stock
                 </span>
               </p>
             </div>
             <button
               onClick={() => openEdit(p)}
-              className="rounded-full border border-line px-3 py-1 text-xs font-medium text-muted transition-colors hover:border-ink/40 hover:text-ink"
+              className="rounded-full border border-edge px-3 py-1 text-xs font-medium text-ash transition-colors hover:border-edge hover:text-chalk"
             >
               Edit
             </button>
             <button
               onClick={() => setPendingDelete(p)}
-              className="rounded-full border border-line px-3 py-1 text-xs font-medium text-muted transition-colors hover:border-red-300 hover:text-red-600"
+              className="rounded-full border border-edge px-3 py-1 text-xs font-medium text-ash transition-colors hover:border-red-300 hover:text-red-400"
             >
               Delete
             </button>

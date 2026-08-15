@@ -10,7 +10,7 @@ import { ConfirmDialog } from "./ConfirmDialog";
 
 const STATUS: Record<string, { label: string; cls: string; dot: string }> = {
   created: { label: "Payment pending", cls: "bg-amber-100 text-amber-700", dot: "bg-amber-500" },
-  paid: { label: "Confirmed", cls: "bg-green-100 text-green-700", dot: "bg-green-500" },
+  paid: { label: "Confirmed", cls: "bg-green-100 text-emerald-400", dot: "bg-green-500" },
   shipped: { label: "Shipped", cls: "bg-blue-100 text-blue-700", dot: "bg-blue-500" },
   delivered: { label: "Delivered", cls: "bg-emerald-100 text-emerald-700", dot: "bg-emerald-500" },
   cancel_requested: { label: "Cancellation requested", cls: "bg-orange-100 text-orange-700", dot: "bg-orange-500" },
@@ -133,7 +133,7 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
 
   if (initialOrders.length === 0) {
     return (
-      <div className="rounded-2xl border border-line bg-white p-10 text-center text-sm text-muted">
+      <div className="rounded-2xl border border-edge bg-coal p-10 text-center text-sm text-ash">
         No orders yet.
       </div>
     );
@@ -142,26 +142,26 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
   return (
     <div className="space-y-4">
       {initialOrders.map((o) => {
-        const s = STATUS[o.status] ?? { label: o.status, cls: "bg-mist text-muted", dot: "bg-muted" };
+        const s = STATUS[o.status] ?? { label: o.status, cls: "bg-surface text-ash", dot: "bg-muted" };
         const itemCount = o.items.reduce((n, it) => n + it.quantity, 0);
         const isRequest = o.status === "cancel_requested" || o.status === "return_requested";
         const isReturn = o.status === "return_requested";
         return (
           <div
             key={o.id}
-            className={`overflow-hidden rounded-2xl border bg-white ${
-              isRequest ? "border-orange-300 ring-1 ring-orange-200" : "border-line"
+            className={`overflow-hidden rounded-2xl border bg-coal ${
+              isRequest ? "border-orange-300 ring-1 ring-orange-200" : "border-edge"
             }`}
           >
             {/* top bar — status, id, prominent date/time, total */}
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-paper/40 px-5 py-3">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-edge bg-surface/40 px-5 py-3">
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${s.cls}`}>
                   <span className={`h-1.5 w-1.5 rounded-full ${s.dot}`} />
                   {s.label}
                 </span>
-                <span className="font-mono text-xs text-ink">#{o.id.slice(0, 8).toUpperCase()}</span>
-                <span className="text-xs font-medium text-ink">
+                <span className="font-mono text-xs text-chalk">#{o.id.slice(0, 8).toUpperCase()}</span>
+                <span className="text-xs font-medium text-chalk">
                   🗓 {fmtDateTime(o.created_at)}
                 </span>
               </div>
@@ -173,14 +173,14 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
               <div className="flex items-start justify-between gap-4">
                 <div className="text-sm">
                   <p className="font-medium">{o.address?.full_name}</p>
-                  <p className="text-muted">{o.address?.phone}</p>
-                  <p className="mt-1 max-w-md text-xs text-muted">
+                  <p className="text-ash">{o.address?.phone}</p>
+                  <p className="mt-1 max-w-md text-xs text-ash">
                     {o.address?.line1}
                     {o.address?.line2 ? `, ${o.address.line2}` : ""}, {o.address?.city},{" "}
                     {o.address?.state} {o.address?.pincode}
                   </p>
                 </div>
-                <span className="whitespace-nowrap text-xs text-muted">
+                <span className="whitespace-nowrap text-xs text-ash">
                   {itemCount} item{itemCount === 1 ? "" : "s"}
                 </span>
               </div>
@@ -192,13 +192,13 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
                 o.return_requested_at ||
                 o.returned_at ||
                 o.rejected_at) && (
-                <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 rounded-lg bg-mist/40 px-3 py-2 text-[11px] text-muted">
-                  {o.paid_at && <span>✓ Confirmed: <b className="text-ink">{fmtDateTime(o.paid_at)}</b></span>}
-                  {o.cancel_requested_at && <span>Cancel req: <b className="text-ink">{fmtDateTime(o.cancel_requested_at)}</b></span>}
-                  {o.cancelled_at && <span>Cancelled: <b className="text-ink">{fmtDateTime(o.cancelled_at)}</b></span>}
-                  {o.return_requested_at && <span>Return req: <b className="text-ink">{fmtDateTime(o.return_requested_at)}</b></span>}
-                  {o.returned_at && <span>Returned: <b className="text-ink">{fmtDateTime(o.returned_at)}</b></span>}
-                  {o.rejected_at && <span>Declined: <b className="text-ink">{fmtDateTime(o.rejected_at)}</b></span>}
+                <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 rounded-lg bg-surface/40 px-3 py-2 text-[11px] text-ash">
+                  {o.paid_at && <span>✓ Confirmed: <b className="text-chalk">{fmtDateTime(o.paid_at)}</b></span>}
+                  {o.cancel_requested_at && <span>Cancel req: <b className="text-chalk">{fmtDateTime(o.cancel_requested_at)}</b></span>}
+                  {o.cancelled_at && <span>Cancelled: <b className="text-chalk">{fmtDateTime(o.cancelled_at)}</b></span>}
+                  {o.return_requested_at && <span>Return req: <b className="text-chalk">{fmtDateTime(o.return_requested_at)}</b></span>}
+                  {o.returned_at && <span>Returned: <b className="text-chalk">{fmtDateTime(o.returned_at)}</b></span>}
+                  {o.rejected_at && <span>Declined: <b className="text-chalk">{fmtDateTime(o.rejected_at)}</b></span>}
                 </div>
               )}
 
@@ -207,9 +207,9 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
                 {o.items.map((it, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-2 rounded-lg border border-line bg-mist/40 py-1 pl-1 pr-3"
+                    className="flex items-center gap-2 rounded-lg border border-edge bg-surface/40 py-1 pl-1 pr-3"
                   >
-                    <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-md bg-mist text-storm/40">
+                    <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-md bg-surface text-volt/40">
                       {it.image ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={it.image} alt="" className="h-full w-full object-cover" />
@@ -252,7 +252,7 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
                           className={`rounded-full border px-3 py-1 text-xs transition-colors ${
                             reason === r
                               ? "border-orange-500 bg-orange-100 text-orange-800"
-                              : "border-orange-200 bg-white text-orange-700 hover:border-orange-400"
+                              : "border-orange-200 bg-coal text-orange-700 hover:border-orange-400"
                           }`}
                         >
                           {r}
@@ -264,7 +264,7 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
                       onChange={(e) => setReason(e.target.value)}
                       rows={2}
                       placeholder="…or type a custom reason here"
-                      className="w-full rounded-lg border border-orange-200 bg-white px-3 py-2 text-sm outline-none focus:border-orange-400"
+                      className="w-full rounded-lg border border-orange-200 bg-coal px-3 py-2 text-sm outline-none focus:border-orange-400"
                     />
                     <div className="mt-2 flex gap-2">
                       <button
@@ -279,7 +279,7 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
                           setRejectingId(null);
                           setReason("");
                         }}
-                        className="h-9 rounded-full border border-ink/15 px-4 text-sm font-medium transition-colors hover:border-ink/40"
+                        className="h-9 rounded-full border border-edge px-4 text-sm font-medium transition-colors hover:border-edge"
                       >
                         Back
                       </button>
@@ -300,7 +300,7 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
                         setReason("");
                       }}
                       disabled={updating === o.id}
-                      className="h-9 rounded-full border border-ink/15 px-4 text-sm font-medium transition-colors hover:border-ink/40 disabled:opacity-50"
+                      className="h-9 rounded-full border border-edge px-4 text-sm font-medium transition-colors hover:border-edge disabled:opacity-50"
                     >
                       Decline
                     </button>
@@ -329,7 +329,7 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
             {o.refund_status === "pending" && (
               <div className="border-t border-green-200 bg-green-50/60 px-5 py-3">
                 <p className="text-sm font-medium text-green-800">💳 Refund pending</p>
-                <p className="mt-0.5 text-xs text-green-700">
+                <p className="mt-0.5 text-xs text-emerald-400">
                   Refund the customer to their original payment method, then mark it done here.
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
@@ -337,7 +337,7 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
                     value={refundRef[o.id] ?? ""}
                     onChange={(e) => setRefundRef((m) => ({ ...m, [o.id]: e.target.value }))}
                     placeholder="Refund/UTR reference (optional)"
-                    className="h-9 flex-1 rounded-lg border border-green-200 bg-white px-3 text-sm outline-none focus:border-green-400"
+                    className="h-9 flex-1 rounded-lg border border-green-200 bg-coal px-3 text-sm outline-none focus:border-green-400"
                   />
                   <button
                     onClick={() => markRefunded(o)}
@@ -350,21 +350,21 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
               </div>
             )}
             {o.refund_status === "refunded" && (
-              <div className="border-t border-line bg-green-50/40 px-5 py-2.5 text-xs text-green-800">
+              <div className="border-t border-edge bg-green-50/40 px-5 py-2.5 text-xs text-green-800">
                 ✓ Refunded{o.refunded_at ? ` on ${fmtDateTime(o.refunded_at)}` : ""}
                 {o.refund_reference ? ` · Ref: ${o.refund_reference}` : ""}
               </div>
             )}
 
             {/* actions */}
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-5 py-3">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-edge px-5 py-3">
               <div className="flex items-center gap-2">
-                <span className="text-xs text-muted">Update status</span>
+                <span className="text-xs text-ash">Update status</span>
                 <select
                   value={STATUS_KEYS.includes(o.status) ? o.status : ""}
                   onChange={(e) => updateStatus(o, e.target.value)}
                   disabled={updating === o.id}
-                  className="h-9 rounded-lg border border-line bg-white px-2 text-sm outline-none focus:border-storm disabled:opacity-50"
+                  className="h-9 rounded-lg border border-edge bg-coal px-2 text-sm outline-none focus:border-volt disabled:opacity-50"
                 >
                   {!STATUS_KEYS.includes(o.status) && (
                     <option value="" disabled>
@@ -378,7 +378,7 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
               </div>
               <button
                 onClick={() => setPendingDelete(o)}
-                className="text-xs font-medium text-muted transition-colors hover:text-red-600"
+                className="text-xs font-medium text-ash transition-colors hover:text-red-400"
               >
                 Delete order
               </button>

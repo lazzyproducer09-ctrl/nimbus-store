@@ -44,11 +44,11 @@ export function CancelOrderButton({
     <>
       <button
         onClick={() => setOpen(true)}
-        className="text-sm font-medium text-muted underline-offset-4 transition-colors hover:text-red-600 hover:underline"
+        className="text-sm font-medium text-ash underline-offset-4 transition-colors hover:text-red-400 hover:underline"
       >
         Request cancellation
       </button>
-      {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
+      {error && <p className="mt-2 text-xs text-red-400">{error}</p>}
       <ConfirmDialog
         open={open}
         title="Request cancellation?"

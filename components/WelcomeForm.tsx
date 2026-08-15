@@ -45,16 +45,16 @@ export function WelcomeForm({ defaultName }: { defaultName: string }) {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g. Sahil Sharma"
-          className="mt-1.5 h-11 w-full rounded-lg border border-line bg-white px-3 text-sm outline-none focus:border-storm"
+          className="mt-1.5 h-11 w-full rounded-lg border border-edge bg-coal px-3 text-sm outline-none focus:border-volt"
         />
       </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-red-400">{error}</p>}
 
       <button
         type="submit"
         disabled={saving}
-        className="h-11 w-full rounded-full bg-storm text-sm font-medium text-white transition-colors hover:bg-storm-dark disabled:opacity-50"
+        className="h-11 w-full rounded-full bg-volt text-sm font-medium text-void transition-colors hover:bg-volt-dim disabled:opacity-50"
       >
         {saving ? "Saving…" : "Continue to shop"}
       </button>

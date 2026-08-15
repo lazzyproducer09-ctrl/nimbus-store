@@ -53,7 +53,7 @@ export function ResetPasswordForm() {
   }
 
   if (ready === null) {
-    return <p className="text-sm text-muted">Checking your reset link…</p>;
+    return <p className="text-sm text-ash">Checking your reset link…</p>;
   }
 
   if (!ready) {
@@ -80,7 +80,7 @@ export function ResetPasswordForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="At least 6 characters"
-          className="mt-1.5 h-11 w-full rounded-lg border border-line bg-white px-3 text-sm outline-none focus:border-storm"
+          className="mt-1.5 h-11 w-full rounded-lg border border-edge bg-coal px-3 text-sm outline-none focus:border-volt"
         />
       </div>
       <div>
@@ -92,16 +92,16 @@ export function ResetPasswordForm() {
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
           placeholder="Re-enter password"
-          className="mt-1.5 h-11 w-full rounded-lg border border-line bg-white px-3 text-sm outline-none focus:border-storm"
+          className="mt-1.5 h-11 w-full rounded-lg border border-edge bg-coal px-3 text-sm outline-none focus:border-volt"
         />
       </div>
       {error && (
-        <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p>
+        <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-400">{error}</p>
       )}
       <button
         type="submit"
         disabled={loading}
-        className="h-11 w-full rounded-full bg-storm text-sm font-medium text-white transition-all hover:bg-storm-dark disabled:opacity-50"
+        className="h-11 w-full rounded-full bg-volt text-sm font-medium text-void transition-all hover:bg-volt-dim disabled:opacity-50"
       >
         {loading ? "Saving…" : "Set new password"}
       </button>

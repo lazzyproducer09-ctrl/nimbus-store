@@ -10,7 +10,7 @@ export default function SignupPage() {
       <h1 className="font-heading text-2xl font-semibold tracking-tight">
         Create your account
       </h1>
-      <p className="mt-1 text-sm text-muted">
+      <p className="mt-1 text-sm text-ash">
         Join YOINK to check out faster and track your orders.
       </p>
 
@@ -18,9 +18,9 @@ export default function SignupPage() {
         <AuthForm mode="signup" />
       </div>
 
-      <p className="mt-6 text-sm text-muted">
+      <p className="mt-6 text-sm text-ash">
         Already have an account?{" "}
-        <Link href="/login" className="font-medium text-storm hover:underline">
+        <Link href="/login" className="font-medium text-volt hover:underline">
           Log in
         </Link>
       </p>

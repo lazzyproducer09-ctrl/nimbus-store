@@ -17,8 +17,8 @@ export default async function VerifyEmailPage({
       <h1 className="font-heading text-2xl font-semibold tracking-tight">
         Verify your email
       </h1>
-      <p className="mt-1 text-sm text-muted">
-        We sent a 6-digit code to <span className="font-medium text-ink">{email}</span>.
+      <p className="mt-1 text-sm text-ash">
+        We sent a 6-digit code to <span className="font-medium text-chalk">{email}</span>.
         Enter it below to activate your account.
       </p>
       <div className="mt-8">

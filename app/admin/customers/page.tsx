@@ -27,13 +27,13 @@ export default async function AdminCustomersPage() {
 
   return (
     <div>
-      <p className="text-sm text-muted">
+      <p className="text-sm text-ash">
         {customers.length} customer{customers.length === 1 ? "" : "s"} · everyone who has started
         checkout. Tap a customer to see their full activity.
       </p>
 
       {customers.length === 0 ? (
-        <div className="mt-4 rounded-2xl border border-line bg-white p-10 text-center text-sm text-muted">
+        <div className="mt-4 rounded-2xl border border-edge bg-coal p-10 text-center text-sm text-ash">
           No customer activity yet.
         </div>
       ) : (
@@ -42,27 +42,27 @@ export default async function AdminCustomersPage() {
             <Link
               key={c.user_id}
               href={`/admin/customers/${c.user_id}`}
-              className="block rounded-2xl border border-line bg-white p-5 transition-colors hover:border-ink/30"
+              className="block rounded-2xl border border-edge bg-coal p-5 transition-colors hover:border-edge"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="truncate font-medium">{c.name || "Customer"}</p>
-                  <p className="truncate text-xs text-muted">{c.email}</p>
-                  <p className="mt-1 text-xs text-muted">
+                  <p className="truncate text-xs text-ash">{c.email}</p>
+                  <p className="mt-1 text-xs text-ash">
                     First order {fmt(c.first_order_at)} · Last {fmt(c.last_order_at)}
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="font-heading text-lg font-semibold">{inr(c.total_spent)}</p>
-                  <p className="text-[11px] text-muted">spent</p>
+                  <p className="text-[11px] text-ash">spent</p>
                 </div>
               </div>
 
               <div className="mt-3 flex flex-wrap gap-2 text-[11px]">
-                <span className="rounded-full bg-mist px-2.5 py-0.5 font-medium">
+                <span className="rounded-full bg-surface px-2.5 py-0.5 font-medium">
                   {c.orders_count} order{c.orders_count === 1 ? "" : "s"}
                 </span>
-                <span className="rounded-full bg-green-100 px-2.5 py-0.5 font-medium text-green-700">
+                <span className="rounded-full bg-green-100 px-2.5 py-0.5 font-medium text-emerald-400">
                   {c.paid_count} paid
                 </span>
                 {c.pending_count > 0 && (
@@ -80,7 +80,7 @@ export default async function AdminCustomersPage() {
                     {c.returned_count} return
                   </span>
                 )}
-                <span className="rounded-full bg-mist px-2.5 py-0.5 font-medium text-muted">
+                <span className="rounded-full bg-surface px-2.5 py-0.5 font-medium text-ash">
                   {c.payment_attempts} payment {c.payment_attempts === 1 ? "try" : "tries"}
                 </span>
               </div>

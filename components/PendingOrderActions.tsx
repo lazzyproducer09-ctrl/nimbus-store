@@ -98,18 +98,18 @@ export function PendingOrderActions({
 
   return (
     <div className="mt-6">
-      {error && <p className="mb-3 text-sm text-red-600">{error}</p>}
+      {error && <p className="mb-3 text-sm text-red-400">{error}</p>}
       <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
         <button
           onClick={pay}
           disabled={paying}
-          className="inline-flex h-11 items-center justify-center rounded-full bg-storm px-6 text-sm font-medium text-white transition-colors hover:bg-storm-dark disabled:opacity-50"
+          className="inline-flex h-11 items-center justify-center rounded-full bg-volt px-6 text-sm font-medium text-void transition-colors hover:bg-volt-dim disabled:opacity-50"
         >
           {paying ? "Opening payment…" : "Complete payment"}
         </button>
         <button
           onClick={() => setConfirmCancel(true)}
-          className="inline-flex h-11 items-center justify-center rounded-full border border-ink/15 px-6 text-sm font-medium transition-colors hover:border-red-300 hover:text-red-600"
+          className="inline-flex h-11 items-center justify-center rounded-full border border-edge px-6 text-sm font-medium transition-colors hover:border-red-300 hover:text-red-400"
         >
           Cancel order
         </button>

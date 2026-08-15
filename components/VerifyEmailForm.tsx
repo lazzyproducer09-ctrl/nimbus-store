@@ -48,7 +48,7 @@ export function VerifyEmailForm({ email }: { email: string }) {
     return (
       <div className="rounded-lg bg-green-50 px-4 py-6 text-center">
         <p className="text-sm font-medium text-green-800">✅ Email verified successfully!</p>
-        <p className="mt-1 text-xs text-green-700">Taking you to the next step…</p>
+        <p className="mt-1 text-xs text-emerald-400">Taking you to the next step…</p>
       </div>
     );
   }
@@ -65,13 +65,13 @@ export function VerifyEmailForm({ email }: { email: string }) {
           value={code}
           onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
           placeholder="000000"
-          className="mt-1.5 h-14 w-full rounded-lg border border-line bg-white px-3 text-center text-2xl tracking-[0.4em] outline-none focus:border-storm"
+          className="mt-1.5 h-14 w-full rounded-lg border border-edge bg-coal px-3 text-center text-2xl tracking-[0.4em] outline-none focus:border-volt"
         />
       </div>
 
-      {error && <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p>}
+      {error && <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-400">{error}</p>}
       {resent && (
-        <p className="rounded-lg bg-storm-tint px-4 py-3 text-sm text-storm">
+        <p className="rounded-lg bg-volt-deep px-4 py-3 text-sm text-volt">
           New code sent — check your email.
         </p>
       )}
@@ -79,7 +79,7 @@ export function VerifyEmailForm({ email }: { email: string }) {
       <button
         type="submit"
         disabled={loading || code.length !== 6}
-        className="h-11 w-full rounded-full bg-storm text-sm font-medium text-white transition-all hover:bg-storm-dark disabled:opacity-50"
+        className="h-11 w-full rounded-full bg-volt text-sm font-medium text-void transition-all hover:bg-volt-dim disabled:opacity-50"
       >
         {loading ? "Verifying…" : "Verify & continue"}
       </button>
@@ -87,7 +87,7 @@ export function VerifyEmailForm({ email }: { email: string }) {
       <button
         type="button"
         onClick={resend}
-        className="w-full text-center text-sm font-medium text-storm hover:underline"
+        className="w-full text-center text-sm font-medium text-volt hover:underline"
       >
         Resend code
       </button>

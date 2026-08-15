@@ -30,7 +30,7 @@ export function AccountVerifyBanner({
         <p className="text-sm font-medium text-green-800">
           ✅ Email verified successfully!
         </p>
-        <p className="mt-0.5 text-xs text-green-700">
+        <p className="mt-0.5 text-xs text-emerald-400">
           Your account is now fully secured.
         </p>
       </div>
@@ -88,7 +88,7 @@ export function AccountVerifyBanner({
           <button
             onClick={sendCode}
             disabled={loading}
-            className="h-9 flex-shrink-0 rounded-full bg-amber-600 px-4 text-sm font-medium text-white transition-colors hover:bg-amber-700 disabled:opacity-50"
+            className="h-9 flex-shrink-0 rounded-full bg-amber-600 px-4 text-sm font-medium text-void transition-colors hover:bg-amber-700 disabled:opacity-50"
           >
             {loading ? "Sending…" : "Verify now"}
           </button>
@@ -105,12 +105,12 @@ export function AccountVerifyBanner({
             value={code}
             onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
             placeholder="6-digit code"
-            className="h-10 w-36 rounded-lg border border-amber-300 bg-white px-3 text-center text-sm tracking-widest outline-none focus:border-amber-600"
+            className="h-10 w-36 rounded-lg border border-amber-300 bg-coal px-3 text-center text-sm tracking-widest outline-none focus:border-amber-600"
           />
           <button
             type="submit"
             disabled={loading || code.length !== 6}
-            className="h-10 rounded-full bg-amber-600 px-4 text-sm font-medium text-white transition-colors hover:bg-amber-700 disabled:opacity-50"
+            className="h-10 rounded-full bg-amber-600 px-4 text-sm font-medium text-void transition-colors hover:bg-amber-700 disabled:opacity-50"
           >
             {loading ? "Verifying…" : "Confirm code"}
           </button>
@@ -124,7 +124,7 @@ export function AccountVerifyBanner({
         </form>
       )}
 
-      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
     </div>
   );
 }

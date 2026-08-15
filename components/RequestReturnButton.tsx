@@ -39,7 +39,7 @@ export function RequestReturnButton({ orderId }: { orderId: string }) {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="inline-flex h-11 items-center justify-center rounded-full border border-ink/15 px-6 text-sm font-medium transition-colors hover:border-ink/40"
+        className="inline-flex h-11 items-center justify-center rounded-full border border-edge px-6 text-sm font-medium transition-colors hover:border-edge"
       >
         Return an item
       </button>
@@ -47,9 +47,9 @@ export function RequestReturnButton({ orderId }: { orderId: string }) {
   }
 
   return (
-    <div className="mx-auto mt-2 max-w-md rounded-2xl border border-line bg-white p-5 text-left">
-      <p className="text-sm font-semibold text-ink">Request a return</p>
-      <p className="mt-1 text-xs text-muted">
+    <div className="mx-auto mt-2 max-w-md rounded-2xl border border-edge bg-coal p-5 text-left">
+      <p className="text-sm font-semibold text-chalk">Request a return</p>
+      <p className="mt-1 text-xs text-ash">
         Tell us why you&rsquo;d like to return this order (optional). Returns are accepted
         within 7 days of delivery.
       </p>
@@ -58,20 +58,20 @@ export function RequestReturnButton({ orderId }: { orderId: string }) {
         onChange={(e) => setReason(e.target.value)}
         rows={3}
         placeholder="e.g. Size didn't fit, received a different colour…"
-        className="mt-3 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm outline-none focus:border-storm"
+        className="mt-3 w-full rounded-lg border border-edge bg-coal px-3 py-2 text-sm outline-none focus:border-volt"
       />
-      {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
+      {error && <p className="mt-2 text-xs text-red-400">{error}</p>}
       <div className="mt-3 flex gap-2">
         <button
           onClick={submit}
           disabled={sending}
-          className="h-10 flex-1 rounded-full bg-storm text-sm font-medium text-white transition-colors hover:bg-storm-dark disabled:opacity-50"
+          className="h-10 flex-1 rounded-full bg-volt text-sm font-medium text-void transition-colors hover:bg-volt-dim disabled:opacity-50"
         >
           {sending ? "Submitting…" : "Submit return request"}
         </button>
         <button
           onClick={() => setOpen(false)}
-          className="h-10 rounded-full border border-ink/15 px-5 text-sm font-medium transition-colors hover:border-ink/40"
+          className="h-10 rounded-full border border-edge px-5 text-sm font-medium transition-colors hover:border-edge"
         >
           Cancel
         </button>

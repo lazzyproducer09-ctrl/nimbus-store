@@ -26,7 +26,7 @@ export function ForgotPasswordForm() {
 
   if (sent) {
     return (
-      <p className="rounded-lg bg-storm-tint px-4 py-3 text-sm text-storm">
+      <p className="rounded-lg bg-volt-deep px-4 py-3 text-sm text-volt">
         📧 Reset link sent! Check your email (and spam folder), then click the
         link to set a new password.
       </p>
@@ -44,16 +44,16 @@ export function ForgotPasswordForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
-          className="mt-1.5 h-11 w-full rounded-lg border border-line bg-white px-3 text-sm outline-none focus:border-storm"
+          className="mt-1.5 h-11 w-full rounded-lg border border-edge bg-coal px-3 text-sm outline-none focus:border-volt"
         />
       </div>
       {error && (
-        <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p>
+        <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-400">{error}</p>
       )}
       <button
         type="submit"
         disabled={loading}
-        className="h-11 w-full rounded-full bg-storm text-sm font-medium text-white transition-all hover:bg-storm-dark disabled:opacity-50"
+        className="h-11 w-full rounded-full bg-volt text-sm font-medium text-void transition-all hover:bg-volt-dim disabled:opacity-50"
       >
         {loading ? "Sending…" : "Send reset link"}
       </button>
