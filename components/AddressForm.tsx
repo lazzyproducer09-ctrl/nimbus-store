@@ -17,15 +17,15 @@ function Field({
 }) {
   return (
     <div>
-      <label className="mb-1 block text-xs font-medium text-muted">{label}</label>
+      <label className="mb-1 block text-xs font-medium text-ash">{label}</label>
       {children}
-      {hint && <p className="mt-1 text-xs text-red-500">{hint}</p>}
+      {hint && <p className="mt-1 text-xs text-red-400">{hint}</p>}
     </div>
   );
 }
 
 const inputClass =
-  "h-11 w-full rounded-lg border border-line bg-white px-3 text-sm outline-none transition-colors focus:border-storm placeholder:text-muted/60";
+  "h-11 w-full rounded-lg border border-edge bg-surface px-3 text-sm text-chalk outline-none transition-colors focus:border-volt placeholder:text-ash-dim";
 
 // A single, validated address form. Used on the account page AND at checkout.
 export function AddressForm({
@@ -130,7 +130,7 @@ export function AddressForm({
   }
 
   return (
-    <form onSubmit={save} className="space-y-3 rounded-xl border border-line p-4">
+    <form onSubmit={save} className="space-y-3 rounded-xl border border-edge bg-coal p-4">
       <div className="grid gap-3 sm:grid-cols-2">
         <Field label="Full name">
           <input
@@ -203,29 +203,30 @@ export function AddressForm({
         </Field>
       </div>
 
-      <label className="flex items-center gap-2 text-sm text-muted">
+      <label className="flex items-center gap-2 text-sm text-ash">
         <input
           type="checkbox"
           checked={form.is_default}
           onChange={(e) => set("is_default", e.target.checked)}
+          className="accent-volt"
         />
         Set as default delivery address
       </label>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-red-400">{error}</p>}
 
       <div className="flex gap-3 pt-1">
         <button
           type="submit"
           disabled={saving}
-          className="h-10 rounded-full bg-storm px-5 text-sm font-medium text-white transition-colors hover:bg-storm-dark disabled:opacity-50"
+          className="h-10 rounded-full bg-volt px-5 text-sm font-semibold text-void transition-colors hover:bg-volt-dim disabled:opacity-50"
         >
           {saving ? "Saving…" : existing ? "Save changes" : "Save address"}
         </button>
         <button
           type="button"
           onClick={onDone}
-          className="h-10 rounded-full border border-ink/15 px-5 text-sm font-medium transition-colors hover:border-ink/40"
+          className="h-10 rounded-full border border-edge px-5 text-sm font-medium text-chalk transition-colors hover:border-volt/50 hover:text-volt"
         >
           Cancel
         </button>

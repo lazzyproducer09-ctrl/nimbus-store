@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCart } from "@/lib/cart-context";
 import { inr } from "@/lib/format";
-import { UmbrellaMark } from "./icons";
+import { OffbeatMark } from "./icons";
 import type { Address } from "@/lib/addresses";
 import { AddressForm } from "./AddressForm";
 
@@ -63,10 +63,10 @@ export function CheckoutClient({
   // Nothing to buy → send them back to the cart.
   if (purchaseItems.length === 0) {
     return (
-      <div className="mt-8 rounded-2xl border border-line bg-white p-8 text-center">
-        <p className="text-sm text-muted">Nothing to check out.</p>
-        <Link href="/shop" className="mt-3 inline-block text-sm font-medium text-storm hover:underline">
-          Go shopping
+      <div className="mt-8 rounded-2xl border border-edge bg-coal p-8 text-center">
+        <p className="text-sm text-ash">Nothing to check out.</p>
+        <Link href="/shop" className="mt-3 inline-block font-mono text-xs uppercase tracking-wider text-volt hover:underline">
+          Go shopping →
         </Link>
       </div>
     );
@@ -146,7 +146,7 @@ export function CheckoutClient({
     <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_360px]">
       {/* Address selection */}
       <div>
-        <h2 className="font-heading text-lg font-semibold">Delivery address</h2>
+        <h2 className="font-heading text-lg font-bold">Delivery address</h2>
 
         {addresses.length > 0 && (
           <div className="mt-3 space-y-3">
@@ -154,7 +154,7 @@ export function CheckoutClient({
               <label
                 key={a.id}
                 className={`flex cursor-pointer gap-3 rounded-xl border p-4 text-sm transition-colors ${
-                  selectedId === a.id ? "border-storm bg-storm-tint" : "border-line hover:border-ink/40"
+                  selectedId === a.id ? "border-volt bg-volt-deep" : "border-edge hover:border-volt/40"
                 }`}
               >
                 <input
@@ -162,20 +162,20 @@ export function CheckoutClient({
                   name="address"
                   checked={selectedId === a.id}
                   onChange={() => setSelectedId(a.id)}
-                  className="mt-1"
+                  className="mt-1 accent-volt"
                 />
                 <span>
-                  <span className="font-medium">{a.full_name}</span>
+                  <span className="font-medium text-chalk">{a.full_name}</span>
                   {a.is_default && (
-                    <span className="ml-2 rounded-full bg-white px-2 py-0.5 text-[11px] font-medium text-storm">
+                    <span className="ml-2 rounded-full bg-volt-deep px-2 py-0.5 text-[11px] font-medium text-volt">
                       Default
                     </span>
                   )}
-                  <span className="mt-1 block text-muted">
+                  <span className="mt-1 block text-ash">
                     {a.line1}
                     {a.line2 ? `, ${a.line2}` : ""}, {a.city}, {a.state} {a.pincode}
                   </span>
-                  <span className="mt-0.5 block text-muted">Phone: {a.phone}</span>
+                  <span className="mt-0.5 block text-ash">Phone: {a.phone}</span>
                 </span>
               </label>
             ))}
@@ -186,7 +186,7 @@ export function CheckoutClient({
         {showAddForm ? (
           <div className="mt-3">
             {addresses.length === 0 && (
-              <p className="mb-2 text-sm text-muted">
+              <p className="mb-2 text-sm text-ash">
                 Add a delivery address to continue.
               </p>
             )}
@@ -199,7 +199,7 @@ export function CheckoutClient({
         ) : (
           <button
             onClick={() => setShowAddForm(true)}
-            className="mt-3 text-sm font-medium text-storm hover:underline"
+            className="mt-3 font-mono text-xs uppercase tracking-wider text-volt hover:underline"
           >
             + Add another address
           </button>
@@ -207,31 +207,31 @@ export function CheckoutClient({
       </div>
 
       {/* Order summary */}
-      <aside className="h-fit rounded-2xl border border-line bg-white p-6">
-        <h2 className="font-heading text-lg font-semibold">Order summary</h2>
+      <aside className="h-fit rounded-2xl border border-edge bg-coal p-6">
+        <h2 className="font-heading text-lg font-bold">Order summary</h2>
         {isBuyNow && (
-          <p className="mt-1 text-xs font-medium text-storm">Buy now — this item only</p>
+          <p className="mt-1 font-mono text-[11px] uppercase tracking-wider text-volt">Buy now — this item only</p>
         )}
 
         <ul className="mt-4 space-y-3">
           {purchaseItems.map((it) => (
             <li key={it.id} className="flex items-center gap-3">
-              <div className="flex h-14 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-line bg-mist text-storm/40">
+              <div className="flex h-14 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-edge bg-surface text-volt/40">
                 {it.image ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={it.image} alt={it.name} className="h-full w-full object-cover" />
                 ) : (
-                  <UmbrellaMark className="h-5 w-5" />
+                  <OffbeatMark className="h-5 w-5" />
                 )}
               </div>
               <div className="min-w-0 flex-1 text-sm">
-                <p className="truncate font-medium">{it.name}</p>
-                <p className="text-xs text-muted">
+                <p className="truncate font-medium text-chalk">{it.name}</p>
+                <p className="text-xs text-ash">
                   {[it.size, it.color].filter(Boolean).join(" · ")}
                   {(it.size || it.color) ? " · " : ""}Qty {it.quantity}
                 </p>
               </div>
-              <span className="whitespace-nowrap text-sm font-medium">
+              <span className="whitespace-nowrap text-sm font-medium text-chalk">
                 {inr(it.price * it.quantity)}
               </span>
             </li>
@@ -240,44 +240,44 @@ export function CheckoutClient({
 
         {/* deliver-to recap */}
         {selectedAddress && (
-          <div className="mt-4 rounded-xl border border-line bg-paper/50 p-3 text-xs">
-            <p className="font-medium text-ink">Deliver to</p>
-            <p className="mt-0.5 text-muted">
-              <span className="text-ink">{selectedAddress.full_name}</span> — {selectedAddress.line1}
+          <div className="mt-4 rounded-xl border border-edge bg-surface/50 p-3 text-xs">
+            <p className="font-medium text-chalk">Deliver to</p>
+            <p className="mt-0.5 text-ash">
+              <span className="text-chalk">{selectedAddress.full_name}</span> — {selectedAddress.line1}
               {selectedAddress.line2 ? `, ${selectedAddress.line2}` : ""}, {selectedAddress.city},{" "}
               {selectedAddress.state} {selectedAddress.pincode}
             </p>
-            <p className="mt-0.5 text-muted">Phone: {selectedAddress.phone}</p>
+            <p className="mt-0.5 text-ash">Phone: {selectedAddress.phone}</p>
           </div>
         )}
 
-        <div className="mt-4 space-y-2 border-t border-line pt-4 text-sm">
+        <div className="mt-4 space-y-2 border-t border-edge pt-4 text-sm">
           <div className="flex justify-between">
-            <span className="text-muted">Subtotal</span>
-            <span>{inr(purchaseSubtotal)}</span>
+            <span className="text-ash">Subtotal</span>
+            <span className="text-chalk">{inr(purchaseSubtotal)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted">Shipping</span>
-            <span>{shipping === 0 ? "Free" : inr(shipping)}</span>
+            <span className="text-ash">Shipping</span>
+            <span className="text-chalk">{shipping === 0 ? "Free" : inr(shipping)}</span>
           </div>
-          <div className="flex justify-between border-t border-line pt-2 text-base font-semibold">
+          <div className="flex justify-between border-t border-edge pt-2 text-base font-semibold">
             <span>Total</span>
-            <span>{inr(total)}</span>
+            <span className="text-chalk">{inr(total)}</span>
           </div>
         </div>
 
-        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
 
         <button
           onClick={pay}
           disabled={paying || !selectedAddress}
-          className="mt-5 flex h-12 w-full items-center justify-center rounded-full bg-storm text-sm font-medium text-white transition-all hover:-translate-y-0.5 hover:bg-storm-dark disabled:opacity-50 disabled:hover:translate-y-0"
+          className="mt-5 flex h-12 w-full items-center justify-center rounded-full bg-volt text-sm font-semibold text-void shadow-[0_0_30px_-10px_var(--color-volt)] transition-all hover:-translate-y-0.5 hover:bg-volt-dim disabled:opacity-50 disabled:shadow-none disabled:hover:translate-y-0"
         >
           {paying ? "Opening payment…" : !selectedAddress ? "Add an address to pay" : `Pay ${inr(total)}`}
         </button>
 
-        <p className="mt-3 flex items-center justify-center gap-2 text-xs text-muted">
-          <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+        <p className="mt-3 flex items-center justify-center gap-2 text-xs text-ash">
+          <span className="h-1.5 w-1.5 rounded-full bg-volt" />
           Secure payment · Razorpay (TEST mode)
         </p>
       </aside>

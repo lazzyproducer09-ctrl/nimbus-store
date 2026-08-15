@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getMyAddresses } from "@/lib/addresses";
 import { CheckoutClient } from "@/components/CheckoutClient";
 
-export const metadata: Metadata = { title: "Checkout — NIMBUS" };
+export const metadata: Metadata = { title: "Checkout — OFFBEAT" };
 
 export default async function CheckoutPage() {
   const supabase = await createClient();
@@ -18,8 +18,8 @@ export default async function CheckoutPage() {
 
   return (
     <div className="mx-auto w-full max-w-5xl px-5 py-10">
-      <h1 className="font-heading text-3xl font-semibold tracking-tight">Checkout</h1>
-      <Suspense fallback={<p className="mt-8 text-sm text-muted">Loading…</p>}>
+      <h1 className="font-heading text-3xl font-bold tracking-tight">Checkout</h1>
+      <Suspense fallback={<p className="mt-8 text-sm text-ash">Loading…</p>}>
         <CheckoutClient userId={user.id} addresses={addresses} />
       </Suspense>
     </div>
