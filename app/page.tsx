@@ -50,11 +50,7 @@ export default async function Home() {
               Stuff you didn&rsquo;t
               <br />
               know you{" "}
-              <span className="relative whitespace-nowrap text-volt">
-                needed
-                <span className="absolute -bottom-1.5 left-0 h-[3px] w-full rounded-full bg-volt/60" />
-              </span>
-              .
+              <span className="text-gradient whitespace-nowrap">needed</span>.
             </h1>
             <p className="mt-7 max-w-md text-lg leading-8 text-ash">
               Offbeat gadgets, weird lights and gag-worthy gifts — curated for
@@ -93,8 +89,8 @@ export default async function Home() {
 
           {/* product spotlight frame */}
           <div className="reveal relative mx-auto w-full max-w-sm">
-            <div className="pointer-events-none absolute -inset-6 rounded-[2rem] bg-volt/8 blur-2xl" />
-            <div className="group relative aspect-[4/5] w-full overflow-hidden rounded-[1.75rem] border border-edge bg-coal shadow-2xl">
+            <div className="pointer-events-none absolute -inset-6 rounded-[2rem] bg-gradient-to-br from-volt/12 to-iris/12 blur-2xl" />
+            <div className="group relative aspect-[4/5] w-full overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[0.04] shadow-2xl backdrop-blur-md">
               {heroVideo ? (
                 <video
                   src={heroVideo}
@@ -184,14 +180,14 @@ export default async function Home() {
       </section>
 
       {/* ===================== STATEMENT MARQUEE ===================== */}
-      <section className="overflow-hidden border-y border-volt/30 bg-volt py-4 text-void">
+      <section className="overflow-hidden border-y border-edge bg-coal py-5 text-chalk">
         <div className="marquee" style={{ "--marquee-speed": "24s" } as React.CSSProperties}>
           {[0, 1].map((dup) => (
             <div key={dup} className="flex shrink-0 items-center" aria-hidden={dup === 1}>
               {Array.from({ length: 6 }).map((_, i) => (
-                <span key={i} className="flex items-center whitespace-nowrap font-heading text-xl font-black uppercase tracking-tight md:text-2xl">
+                <span key={i} className="flex items-center whitespace-nowrap font-heading text-xl font-bold uppercase tracking-tight md:text-2xl">
                   Stuff that starts conversations
-                  <OffbeatMark className="mx-6 h-5 w-5" />
+                  <OffbeatMark className="mx-6 h-5 w-5 text-volt" />
                 </span>
               ))}
             </div>

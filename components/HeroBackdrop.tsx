@@ -39,7 +39,7 @@ export function HeroBackdrop() {
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(480px circle at var(--mx, 70%) var(--my, 28%), rgba(204,255,46,0.10), transparent 62%)",
+            "radial-gradient(480px circle at var(--mx, 70%) var(--my, 28%), rgba(53,230,255,0.12), transparent 62%)",
         }}
       />
     </div>

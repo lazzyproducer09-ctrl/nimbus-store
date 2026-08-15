@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Hanken_Grotesk, Space_Mono } from "next/font/google";
+import { Sora, Manrope, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { Header } from "@/components/Header";
@@ -10,22 +10,21 @@ import { CartDrawer } from "@/components/CartDrawer";
 import { createClient } from "@/lib/supabase/server";
 import { isAdmin } from "@/lib/admin";
 
-// Display font: a modern, high-character grotesque used by design-forward
-// premium brands — confident headlines without feeling like a default sans.
-const bricolage = Bricolage_Grotesque({
-  variable: "--font-bricolage",
+// Display font: geometric, techy and confident — the Dark-Tech-Drop headline.
+const sora = Sora({
+  variable: "--font-sora",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
 });
 
-// Body font: a refined, warm grotesk — cleaner & more premium than default sans.
-const hanken = Hanken_Grotesk({
-  variable: "--font-hanken",
+// Body font: clean, modern, highly readable — pairs well with a techy display.
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
 });
 
-// Mono font: for eyebrow labels, tags and price tickers (the "drop" feel).
-const spaceMono = Space_Mono({
+// Mono font: for eyebrow labels, tags and tickers (the "drop"/terminal feel).
+const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
   weight: ["400", "700"],
@@ -46,7 +45,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${bricolage.variable} ${hanken.variable} ${spaceMono.variable} h-full antialiased`}
+      className={`${sora.variable} ${manrope.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="grain min-h-full flex flex-col overflow-x-hidden bg-void text-chalk">
         <CartProvider>

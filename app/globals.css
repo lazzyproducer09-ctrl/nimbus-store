@@ -9,28 +9,26 @@
   pages not yet migrated to the dark theme still render until they're converted.
 */
 @theme inline {
-  /* ---- OFFBEAT core (dark luxe) ---- */
-  --color-void: #0b0b0e;        /* base — deep obsidian with a faint cool cast */
-  --color-coal: #121217;        /* cards / panels */
-  --color-surface: #17171e;     /* raised surfaces / inputs */
-  --color-edge: #2a2a33;        /* hairline borders on dark */
-  --color-edge-soft: #1e1e26;   /* fainter divider */
-  --color-chalk: #f3f1ea;       /* primary text — warm creamy off-white */
-  --color-bone: #e7e0d0;        /* warm secondary highlight (premium contrast) */
-  --color-ash: #9a9aa4;         /* muted / secondary text */
-  --color-ash-dim: #61616b;     /* faintest text */
+  /* ---- OFFBEAT core (Dark Tech Drop) ---- */
+  --color-void: #08090c;        /* base — deep cool near-black */
+  --color-coal: #0f1116;        /* cards / panels */
+  --color-surface: #151922;     /* raised surfaces / inputs */
+  --color-edge: #252b35;        /* hairline borders on dark */
+  --color-edge-soft: #1a1f27;   /* fainter divider */
+  --color-chalk: #eef1f4;       /* primary text — cool off-white */
+  --color-ash: #97a4b2;         /* muted / secondary text */
+  --color-ash-dim: #5c6672;     /* faintest text */
 
-  /* THE accent — electric acid lime (refined, a touch off pure neon) */
-  --color-volt: #ccff2e;
-  --color-volt-dim: #b4e61a;    /* hover / pressed */
-  --color-volt-deep: #181f07;   /* dark lime wash for chips/backgrounds */
-
-  /* Secondary ambient — electric violet, for a premium duotone glow */
-  --color-iris: #7b5cff;
+  /* THE accent — electric cyan (primary) + violet (secondary) = gradient duo */
+  --color-volt: #35e6ff;        /* primary accent (cyan) */
+  --color-volt-dim: #24c7e2;    /* hover / pressed */
+  --color-volt-deep: #06222b;   /* dark cyan wash for chips/backgrounds */
+  --color-iris: #7b5cff;        /* violet — the second half of the gradient */
+  --color-iris-deep: #16103a;   /* dark violet wash */
 
   /* Fonts (wired to next/font in layout.tsx) */
-  --font-heading: var(--font-bricolage);
-  --font-body: var(--font-hanken);
+  --font-heading: var(--font-sora);
+  --font-body: var(--font-manrope);
   --font-mono: var(--font-mono);
 
   /* ---- Legacy NIMBUS tokens (transitional — remove once all pages migrate) ---- */
@@ -57,8 +55,8 @@ body {
   /* Layered ambient light — a cool lime bleed top-right, a warm bronze bleed
      bottom-left, over deep obsidian. Gives real depth vs. a flat black. */
   background:
-    radial-gradient(70% 50% at 82% -6%, rgba(204, 255, 46, 0.05), transparent 60%),
-    radial-gradient(70% 55% at 10% 106%, rgba(123, 92, 255, 0.07), transparent 60%),
+    radial-gradient(70% 50% at 82% -6%, rgba(53, 230, 255, 0.06), transparent 60%),
+    radial-gradient(70% 55% at 10% 106%, rgba(123, 92, 255, 0.08), transparent 60%),
     var(--color-void);
   background-attachment: fixed;
   color: var(--color-chalk);
@@ -131,7 +129,7 @@ textarea:focus-visible,
   height: 40rem;
   top: -14rem;
   right: -6rem;
-  background: radial-gradient(circle, rgba(204, 255, 46, 0.22), transparent 68%);
+  background: radial-gradient(circle, rgba(53, 230, 255, 0.22), transparent 68%);
   animation: drift-a 20s ease-in-out infinite;
 }
 .aurora-2 {
@@ -139,7 +137,7 @@ textarea:focus-visible,
   height: 34rem;
   top: 4rem;
   left: -10rem;
-  background: radial-gradient(circle, rgba(123, 92, 255, 0.24), transparent 68%);
+  background: radial-gradient(circle, rgba(123, 92, 255, 0.26), transparent 68%);
   animation: drift-b 26s ease-in-out infinite;
 }
 .aurora-3 {
@@ -147,8 +145,16 @@ textarea:focus-visible,
   height: 26rem;
   bottom: -12rem;
   left: 38%;
-  background: radial-gradient(circle, rgba(196, 150, 96, 0.14), transparent 70%);
+  background: radial-gradient(circle, rgba(53, 230, 255, 0.12), transparent 70%);
   animation: drift-c 32s ease-in-out infinite;
+}
+
+/* Cyan→violet gradient text — the Style-3 accent treatment. */
+.text-gradient {
+  background: linear-gradient(90deg, var(--color-volt), var(--color-iris));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 @keyframes drift-a {
   0%, 100% { transform: translate(0, 0) scale(1); }
