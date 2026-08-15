@@ -2,12 +2,14 @@ import Link from "next/link";
 import { getAllOrders } from "@/lib/orders";
 import { getAllProducts } from "@/lib/products-admin";
 import { getSettings } from "@/lib/settings";
+import { getCategories } from "@/lib/categories";
 import { inr } from "@/lib/format";
 import { HeroImageManager } from "@/components/HeroImageManager";
+import { CategoryManager } from "@/components/CategoryManager";
 import { SoundSettings } from "@/components/SoundSettings";
 
 export default async function AdminDashboard() {
-  const [orders, products, settings] = await Promise.all([
+  const [orders, products, settings, categories] = await Promise.all([
     getAllOrders(),
     getAllProducts(),
     getSettings([
@@ -17,6 +19,7 @@ export default async function AdminDashboard() {
       "sound_volume",
       "sound_type",
     ]),
+    getCategories(),
   ]);
   const heroImage = settings["hero_image_url"];
   const heroVideo = settings["hero_video_url"];
@@ -80,6 +83,9 @@ export default async function AdminDashboard() {
 
       {/* homepage hero image / video */}
       <HeroImageManager currentUrl={heroImage} currentVideoUrl={heroVideo} />
+
+      {/* editable categories */}
+      <CategoryManager initial={categories} />
 
       {/* order success sound */}
       <SoundSettings

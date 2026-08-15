@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { CATEGORIES, type Product } from "@/lib/products";
+import { type Product } from "@/lib/products";
+import type { Category } from "@/lib/categories";
 import { inr } from "@/lib/format";
 import { ConfirmDialog } from "./ConfirmDialog";
-import { UmbrellaMark } from "./icons";
+import { YoinkMark } from "./icons";
 
 type FormState = {
   name: string;
@@ -28,7 +29,7 @@ const EMPTY: FormState = {
   name: "",
   price: "",
   compare_at_price: "",
-  category: CATEGORIES[0],
+  category: "",
   description: "",
   stock: "0",
   sizes: "",
@@ -48,7 +49,13 @@ const inputClass =
   "h-10 w-full rounded-lg border border-edge bg-coal px-3 text-sm outline-none focus:border-volt";
 const labelClass = "mb-1 block text-xs font-medium text-ash";
 
-export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }) {
+export function ProductAdmin({
+  initialProducts,
+  categories,
+}: {
+  initialProducts: Product[];
+  categories: Category[];
+}) {
   const router = useRouter();
   const supabase = createClient();
 
@@ -66,7 +73,7 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
     setForm((f) => ({ ...f, [k]: v }));
 
   function openAdd() {
-    setForm(EMPTY);
+    setForm({ ...EMPTY, category: categories[0]?.name ?? "" });
     setEditingId(null);
     setError(null);
     setShowForm(true);
@@ -244,8 +251,13 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
             <div>
               <label className={labelClass}>Category</label>
               <select className={inputClass} value={form.category} onChange={(e) => set("category", e.target.value)}>
-                {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>{c}</option>
+                {categories.length === 0 && <option value="">— add categories first —</option>}
+                {/* keep the product's existing category selectable even if renamed/removed */}
+                {form.category && !categories.some((c) => c.name === form.category) && (
+                  <option value={form.category}>{form.category}</option>
+                )}
+                {categories.map((c) => (
+                  <option key={c.name} value={c.name}>{c.name}</option>
                 ))}
               </select>
             </div>
@@ -449,7 +461,7 @@ export function ProductAdmin({ initialProducts }: { initialProducts: Product[] }
                 <img src={p.images[0]} alt="" className="h-full w-full object-cover" />
               ) : (
                 <span className="flex h-full items-center justify-center text-volt/30">
-                  <UmbrellaMark className="h-5 w-5" />
+                  <YoinkMark className="h-5 w-5" />
                 </span>
               )}
             </div>
