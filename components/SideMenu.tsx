@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import type { Category } from "@/lib/categories";
 import { useWishlist } from "@/lib/wishlist-context";
@@ -49,6 +50,9 @@ export function SideMenu({
   const pathname = usePathname();
   const { count: wishlistCount, hydrated } = useWishlist();
   const [open, setOpen] = useState(false);
+  // The panel is portalled to <body>, which only exists in the browser.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   // Close on navigation — otherwise the panel stays over the page you just
   // asked for.
@@ -73,18 +77,8 @@ export function SideMenu({
 
   if (MINIMAL_ROUTES.includes(pathname)) return null;
 
-  return (
+  const panel = (
     <>
-      <button
-        onClick={() => setOpen(true)}
-        aria-label="Open menu"
-        aria-expanded={open}
-        aria-controls="site-menu"
-        className="-ml-1.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-ash transition-colors hover:bg-surface hover:text-volt"
-      >
-        <MenuIcon className="h-5 w-5" />
-      </button>
-
       {/* dim backdrop */}
       <div
         onClick={() => setOpen(false)}
@@ -162,7 +156,10 @@ export function SideMenu({
               My orders
             </Link>
           )}
-          <Link href="/wishlist" className={`${linkClass} flex items-center justify-between gap-2`}>
+          <Link
+            href="/wishlist"
+            className={`${linkClass} flex items-center justify-between gap-2`}
+          >
             Wishlist
             {/* the saved count lived on a header icon before this moved in */}
             {hydrated && wishlistCount > 0 && (
@@ -172,10 +169,7 @@ export function SideMenu({
             )}
           </Link>
           {admin && (
-            <Link
-              href="/admin"
-              className={`${linkClass} font-medium text-volt hover:text-volt`}
-            >
+            <Link href="/admin" className={`${linkClass} font-medium text-volt hover:text-volt`}>
               Admin panel
             </Link>
           )}
@@ -192,6 +186,33 @@ export function SideMenu({
           </Link>
         </nav>
       </aside>
+    </>
+  );
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        aria-label="Open menu"
+        aria-expanded={open}
+        aria-controls="site-menu"
+        className="-ml-1.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-ash transition-colors hover:bg-surface hover:text-volt"
+      >
+        <MenuIcon className="h-5 w-5" />
+      </button>
+
+      {/*
+        The panel is portalled OUT to <body> instead of rendering where this
+        component sits.
+
+        The header carries `backdrop-blur-md`, and an ancestor with a
+        backdrop-filter becomes the containing block for `position: fixed`
+        descendants. Rendered inside the header, this panel's `h-full` resolved
+        against the header's 64px rather than the viewport, so it opened as a
+        64px sliver with every link scrolled out of sight. Portalling to <body>
+        puts it back under the real viewport.
+      */}
+      {mounted && createPortal(panel, document.body)}
     </>
   );
 }

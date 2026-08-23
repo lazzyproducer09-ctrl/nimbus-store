@@ -311,14 +311,14 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
 
             {/* approved return → mark as physically received (completes + refunds) */}
             {o.status === "return_approved" && (
-              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-indigo-200 bg-indigo-50 px-5 py-3">
-                <span className="text-sm font-medium text-indigo-800">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-iris/30 bg-iris-deep px-5 py-3">
+                <span className="text-sm font-medium text-iris">
                   📦 Return approved — mark it received once the item is back with you.
                 </span>
                 <button
                   onClick={() => markReceived(o)}
                   disabled={updating === o.id}
-                  className="h-9 rounded-full bg-indigo-600 px-4 text-sm font-medium text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
+                  className="h-9 rounded-full bg-iris px-4 text-sm font-medium text-void transition-colors hover:bg-iris/85 disabled:opacity-50"
                 >
                   Mark as received (complete return)
                 </button>

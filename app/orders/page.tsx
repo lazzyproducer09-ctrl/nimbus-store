@@ -16,7 +16,7 @@ const STATUS_STYLES: Record<string, string> = {
   cancel_requested: "bg-warn-deep text-warn",
   cancelled: "bg-bad-deep text-bad",
   return_requested: "bg-warn-deep text-warn",
-  return_approved: "bg-indigo-100 text-indigo-700",
+  return_approved: "bg-iris-deep text-iris",
   returned: "bg-iris-deep text-iris",
 };
 

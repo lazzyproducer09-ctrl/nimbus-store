@@ -58,7 +58,7 @@ const HEAD: Record<string, { icon: string; bg: string; title: string; sub: strin
   },
   return_approved: {
     icon: "📦",
-    bg: "bg-indigo-100 text-indigo-600",
+    bg: "bg-iris-deep text-iris",
     title: "Return approved",
     sub: "Your return is approved. Please send the item back — your refund is processed once we receive it.",
   },
