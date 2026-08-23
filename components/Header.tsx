@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { YoinkMark, SearchIcon, UserIcon } from "./icons";
+import { YoinkMark } from "./icons";
 import { CartButton } from "./CartButton";
 import { SideMenu } from "./SideMenu";
 import type { Category } from "@/lib/categories";
-import { WishlistHeaderButton } from "./WishlistHeaderButton";
 
 // Pages that get a stripped-down header (just the logo) — like real stores' auth pages.
 const MINIMAL_ROUTES = ["/login", "/signup", "/welcome", "/forgot-password", "/reset-password", "/verify-email"];
@@ -43,59 +42,29 @@ export function Header({
     );
   }
 
-  // Full site header everywhere else.
+  // -----------------------------------------------------------------------
+  // Three zones: menu hard against the left edge of the page, wordmark
+  // centred, cart hard against the right.
+  //
+  // Full width rather than the max-w-6xl the rest of the page uses, so the
+  // menu really sits at the page edge instead of being indented in line with
+  // the content. The 1fr / auto / 1fr grid keeps the wordmark optically
+  // centred however wide the two side items grow.
+  //
+  // Search, wishlist, account, orders and admin have all moved into the menu.
+  // The cart is the only thing that still earns a permanent spot up here —
+  // it's the one control a shopper reaches for mid-task.
+  // -----------------------------------------------------------------------
   return (
     <header className="sticky top-0 z-40 border-b border-edge bg-void/80 backdrop-blur-md">
-      <nav className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5">
-        {/* four-line menu, then the wordmark */}
-        <div className="flex items-center gap-2.5">
+      <nav className="grid h-16 w-full grid-cols-[1fr_auto_1fr] items-center px-3 sm:px-4">
+        <div className="flex justify-start">
           <SideMenu loggedIn={loggedIn} admin={admin} categories={categories} />
-          <Wordmark />
         </div>
 
-        <div className="hidden items-center gap-8 font-mono text-xs uppercase tracking-wider text-ash md:flex">
-          <Link className="transition-colors hover:text-volt" href="/shop">Shop all</Link>
-          <Link className="transition-colors hover:text-volt" href="/shop?sort=newest">New in</Link>
-          <Link className="transition-colors hover:text-volt" href="/#categories">Categories</Link>
-          <Link className="transition-colors hover:text-volt" href="/contact">About</Link>
-        </div>
+        <Wordmark />
 
-        <div className="flex items-center gap-4 text-chalk sm:gap-5">
-          {admin && (
-            <Link
-              href="/admin"
-              className="hidden rounded-full bg-volt-deep px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-volt transition-colors hover:bg-volt hover:text-void sm:block"
-            >
-              Admin
-            </Link>
-          )}
-          {loggedIn && (
-            <Link
-              href="/orders"
-              className="hidden font-mono text-xs uppercase tracking-wider text-ash transition-colors hover:text-chalk sm:block"
-            >
-              Orders
-            </Link>
-          )}
-          <Link
-            href="/shop"
-            aria-label="Search"
-            className="group flex flex-col items-center text-ash transition-all hover:scale-110 hover:text-chalk"
-          >
-            <SearchIcon className="h-5 w-5" />
-            <span className="mt-0.5 text-[10px]">Search</span>
-          </Link>
-          <WishlistHeaderButton />
-          <Link
-            href={loggedIn ? "/account" : "/login"}
-            aria-label={loggedIn ? "My account" : "Log in"}
-            className="group flex flex-col items-center text-ash transition-all hover:scale-110 hover:text-chalk"
-          >
-            <UserIcon className="h-5 w-5" />
-            <span className="mt-0.5 text-[10px]">
-              {loggedIn ? "Account" : "Login"}
-            </span>
-          </Link>
+        <div className="flex justify-end text-chalk">
           <CartButton />
         </div>
       </nav>

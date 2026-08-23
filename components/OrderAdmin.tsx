@@ -9,14 +9,14 @@ import { PackageIcon } from "./icons";
 import { ConfirmDialog } from "./ConfirmDialog";
 
 const STATUS: Record<string, { label: string; cls: string; dot: string }> = {
-  created: { label: "Payment pending", cls: "bg-warn-deep text-warn", dot: "bg-warn-deep0" },
-  paid: { label: "Confirmed", cls: "bg-good-deep text-good", dot: "bg-good-deep0" },
+  created: { label: "Payment pending", cls: "bg-warn-deep text-warn", dot: "bg-warn" },
+  paid: { label: "Confirmed", cls: "bg-good-deep text-good", dot: "bg-good" },
   shipped: { label: "Shipped", cls: "bg-info-deep text-info", dot: "bg-info" },
   delivered: { label: "Delivered", cls: "bg-good-deep text-good", dot: "bg-good" },
-  cancel_requested: { label: "Cancellation requested", cls: "bg-warn-deep text-warn", dot: "bg-warn-deep0" },
-  cancelled: { label: "Cancelled", cls: "bg-bad-deep text-bad", dot: "bg-bad-deep0" },
-  return_requested: { label: "Return requested", cls: "bg-warn-deep text-warn", dot: "bg-warn-deep0" },
-  return_approved: { label: "Return approved · awaiting item", cls: "bg-indigo-100 text-indigo-700", dot: "bg-indigo-500" },
+  cancel_requested: { label: "Cancellation requested", cls: "bg-warn-deep text-warn", dot: "bg-warn" },
+  cancelled: { label: "Cancelled", cls: "bg-bad-deep text-bad", dot: "bg-bad" },
+  return_requested: { label: "Return requested", cls: "bg-warn-deep text-warn", dot: "bg-warn" },
+  return_approved: { label: "Return approved · awaiting item", cls: "bg-iris-deep text-iris", dot: "bg-iris" },
   returned: { label: "Returned", cls: "bg-iris-deep text-iris", dot: "bg-iris" },
 };
 // Statuses the admin can set manually (request states are customer-driven).

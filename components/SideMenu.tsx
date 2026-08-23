@@ -4,16 +4,17 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import type { Category } from "@/lib/categories";
-import { MenuIcon, CloseIcon, YoinkMark } from "./icons";
+import { useWishlist } from "@/lib/wishlist-context";
+import { MenuIcon, CloseIcon, YoinkMark, SearchIcon } from "./icons";
 
 // ---------------------------------------------------------------------------
-// The left-hand menu: a four-line button in the header that slides a panel in
-// from the left.
+// The site menu: a four-line button at the left edge of the page that slides a
+// panel in from the left.
 //
-// It isn't only a mobile convenience. The header's inline links disappear below
-// `md`, so until now a phone had no navigation at all — and phones are where an
-// ad click lands. This also gives categories a home: the header never had room
-// to list them.
+// This is now the ONLY navigation. The header keeps just the wordmark and the
+// cart, so search, wishlist, account, orders and admin all live in here. The
+// header no longer changes shape between phone and desktop, and categories
+// finally have somewhere to be listed.
 // ---------------------------------------------------------------------------
 
 const MINIMAL_ROUTES = [
@@ -46,6 +47,7 @@ export function SideMenu({
   categories: Category[];
 }) {
   const pathname = usePathname();
+  const { count: wishlistCount, hydrated } = useWishlist();
   const [open, setOpen] = useState(false);
 
   // Close on navigation — otherwise the panel stays over the page you just
@@ -121,6 +123,10 @@ export function SideMenu({
         {/* `inert` keeps the links out of tab order while the panel is closed */}
         <nav className="flex-1 overflow-y-auto px-2 pb-6" inert={!open || undefined}>
           <GroupLabel>Shop</GroupLabel>
+          <Link href="/shop" className={`${linkClass} flex items-center gap-2.5`}>
+            <SearchIcon className="h-4 w-4 flex-shrink-0 text-ash-dim" />
+            Search products
+          </Link>
           <Link href="/shop" className={linkClass}>
             Shop all
           </Link>
@@ -156,8 +162,14 @@ export function SideMenu({
               My orders
             </Link>
           )}
-          <Link href="/wishlist" className={linkClass}>
+          <Link href="/wishlist" className={`${linkClass} flex items-center justify-between gap-2`}>
             Wishlist
+            {/* the saved count lived on a header icon before this moved in */}
+            {hydrated && wishlistCount > 0 && (
+              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-volt-deep px-1.5 text-[11px] font-semibold text-volt">
+                {wishlistCount}
+              </span>
+            )}
           </Link>
           {admin && (
             <Link
