@@ -188,6 +188,36 @@ export function StarIcon({ className = "" }: { className?: string }) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Icon registry.
+//
+// The admin panel lets you pick an icon for announcement messages and trust
+// points. Settings are stored as JSON, so what gets saved is the NAME below —
+// this map turns that name back into a component at render time. Add an icon
+// here and it immediately shows up in the admin dropdowns.
+// ---------------------------------------------------------------------------
+export const ICONS = {
+  truck: TruckIcon,
+  rupee: RupeeIcon,
+  return: ReturnIcon,
+  lock: LockIcon,
+  shield: ShieldIcon,
+  check: CheckIcon,
+  bolt: BoltIcon,
+  package: PackageIcon,
+  star: StarIcon,
+  spark: YoinkMark,
+} as const;
+
+export type IconName = keyof typeof ICONS;
+
+export const ICON_NAMES = Object.keys(ICONS) as IconName[];
+
+// Falls back to the brand spark if a saved name no longer exists.
+export function iconByName(name: string) {
+  return ICONS[name as IconName] ?? YoinkMark;
+}
+
 export function GoogleIcon({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} aria-hidden>

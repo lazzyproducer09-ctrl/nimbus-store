@@ -9,6 +9,7 @@ import { WishlistProvider } from "@/lib/wishlist-context";
 import { CartDrawer } from "@/components/CartDrawer";
 import { createClient } from "@/lib/supabase/server";
 import { isAdmin } from "@/lib/admin";
+import { getSiteContent } from "@/lib/site-content";
 
 // Display font: geometric, techy and confident — the Dark-Tech-Drop headline.
 const sora = Sora({
@@ -40,9 +41,11 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Auth and the editable copy are independent — fetch them together.
+  const [{ data: { user } }, content] = await Promise.all([
+    supabase.auth.getUser(),
+    getSiteContent(),
+  ]);
 
   return (
     <html
@@ -52,10 +55,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="grain min-h-full flex flex-col overflow-x-hidden bg-void text-chalk">
         <CartProvider>
           <WishlistProvider>
-            <AnnouncementBar />
+            <AnnouncementBar messages={content.announcements} />
             <Header loggedIn={!!user} admin={isAdmin(user?.email)} />
             <main className="flex flex-1 flex-col">{children}</main>
-            <Footer />
+            <Footer blurb={content.footerBlurb} />
             <CartDrawer />
           </WishlistProvider>
         </CartProvider>

@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 import { YoinkMark, TruckIcon, LockIcon, ShieldIcon } from "./icons";
 
 // The site-wide footer. Hidden on the minimal login / signup pages.
-export function Footer() {
+// `blurb` is the short line under the logo, edited in Admin → Storefront content.
+export function Footer({ blurb }: { blurb: string }) {
   const pathname = usePathname();
   if (["/login", "/signup", "/welcome", "/forgot-password", "/reset-password", "/verify-email"].includes(pathname)) return null;
 
@@ -18,10 +19,7 @@ export function Footer() {
               <YoinkMark className="h-5 w-5 text-volt" />
               <span className="font-heading text-xl font-black tracking-[0.3em]">YOINK</span>
             </div>
-            <p className="mt-4 max-w-xs text-sm text-ash">
-              Unexpected, impossibly cool things — for people who refuse
-              boring. Curated & shipped across India.
-            </p>
+            <p className="mt-4 max-w-xs text-sm text-ash">{blurb}</p>
           </div>
 
           <div>

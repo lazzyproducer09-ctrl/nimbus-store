@@ -8,34 +8,23 @@ import { getCategories } from "@/lib/categories";
 import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/Reveal";
 import { HeroBackdrop } from "@/components/HeroBackdrop";
-import {
-  YoinkMark,
-  TruckIcon,
-  ReturnIcon,
-  LockIcon,
-  RupeeIcon,
-} from "@/components/icons";
+import { YoinkMark, iconByName } from "@/components/icons";
 import { createClient } from "@/lib/supabase/server";
 import { getSettings } from "@/lib/settings";
-
-// The four delivery/payment promises, shown in the strip under the hero and
-// again in the closing CTA. One list so the two can never drift apart.
-const TRUST_POINTS = [
-  { Icon: TruckIcon, title: "Free shipping", sub: "on orders over ₹999" },
-  { Icon: ReturnIcon, title: "7-day returns", sub: "no awkward questions" },
-  { Icon: LockIcon, title: "Secure payments", sub: "protected by Razorpay" },
-  { Icon: RupeeIcon, title: "Cash on delivery", sub: "available across India" },
-];
+import { getSiteContent } from "@/lib/site-content";
 
 export default async function Home() {
   // Fetch everything the homepage needs AT THE SAME TIME (in parallel).
   const supabase = await createClient();
-  const [products, categories, settings, userRes] = await Promise.all([
+  const [products, categories, settings, userRes, content] = await Promise.all([
     getFeaturedProducts(),
     getCategories(),
     getSettings(["hero_image_url", "hero_video_url"]),
     supabase.auth.getUser(),
+    getSiteContent(),
   ]);
+  // Every string below comes from Admin → Storefront content.
+  const { hero, specs, trust, bestsellers, marquee, houseRules, closing } = content;
   const heroImage = settings["hero_image_url"];
   const heroVideo = settings["hero_video_url"];
   const user = userRes.data.user;
@@ -62,32 +51,29 @@ export default async function Home() {
                 page, and it promises "live" activity the site doesn't have. */}
             <div className="flex items-center gap-4">
               <span className="font-mono text-[11px] uppercase tracking-[0.28em] text-volt">
-                New this week
+                {hero.eyebrow}
               </span>
               <span className="h-px flex-1 max-w-24 bg-edge" />
             </div>
             <h1 className="mt-6 font-heading text-[3.4rem] font-extrabold leading-[0.94] tracking-[-0.03em] md:text-[5.4rem]">
-              Stuff you didn&rsquo;t
+              {hero.line1}
               <br />
-              know you <span className="mark">needed</span>.
+              {hero.line2} <span className="mark">{hero.accent}</span>.
             </h1>
-            <p className="mt-7 max-w-md text-lg leading-8 text-ash">
-              Weird gadgets, glowing lights and gag-worthy gifts — curated for
-              people who scroll right past ordinary. Shipped across India.
-            </p>
+            <p className="mt-7 max-w-md text-lg leading-8 text-ash">{hero.sub}</p>
             <div className="mt-9 flex flex-wrap gap-3">
               <Link
                 href="/shop"
                 className="group inline-flex h-12 items-center justify-center gap-2 rounded-full bg-volt px-8 text-sm font-semibold text-void shadow-[0_0_40px_-8px_var(--color-volt)] transition-all hover:-translate-y-0.5 hover:bg-volt-dim active:translate-y-0"
               >
-                Shop the drop
+                {hero.ctaPrimary}
                 <span className="transition-transform group-hover:translate-x-1">→</span>
               </Link>
               <a
                 href="#categories"
                 className="inline-flex h-12 items-center justify-center rounded-full border border-edge px-8 text-sm font-medium text-chalk transition-all hover:-translate-y-0.5 hover:border-volt/50 hover:text-volt active:translate-y-0"
               >
-                Browse the odd
+                {hero.ctaSecondary}
               </a>
             </div>
 
@@ -95,22 +81,20 @@ export default async function Home() {
               Spec strip. This used to show "4.8★ avg. rating" and
               "100% conversation starters" — both invented. Fabricated ratings
               on a live store are a real legal exposure in India, and shoppers
-              spot round made-up numbers instantly. These three are things the
-              store can actually stand behind.
+              spot round made-up numbers instantly. Editable in admin now, so
+              keep whatever goes here to things the store can stand behind.
             */}
             <dl className="mt-11 flex flex-wrap items-stretch gap-x-8 gap-y-5">
-              {[
-                ["48 hrs", "Order dispatch"],
-                ["7 days", "Return window"],
-                ["Pan-India", "Delivery network"],
-              ].map(([big, small], i) => (
+              {specs.map((s, i) => (
                 <div
-                  key={small}
+                  key={`${s.label}-${i}`}
                   className={i > 0 ? "border-l border-edge pl-8" : undefined}
                 >
-                  <dt className="font-heading text-xl font-bold tracking-tight text-chalk">{big}</dt>
+                  <dt className="font-heading text-xl font-bold tracking-tight text-chalk">
+                    {s.value}
+                  </dt>
                   <dd className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.18em] text-ash">
-                    {small}
+                    {s.label}
                   </dd>
                 </div>
               ))}
@@ -146,7 +130,7 @@ export default async function Home() {
               {/* Corner label. Was "✦ 1 of 1" — a claim the store can't back.
                   A dated drop label is honest and creates the same urgency. */}
               <span className="absolute left-4 top-4 font-mono text-[10px] uppercase tracking-[0.22em] text-chalk/70 mix-blend-difference">
-                This week&rsquo;s drop
+                {hero.frameBadge}
               </span>
             </div>
             {/*
@@ -155,7 +139,7 @@ export default async function Home() {
               A quiet caption under the frame does more for a premium read.
             */}
             <p className="mt-4 border-l border-volt/40 pl-3 font-mono text-[10px] uppercase leading-relaxed tracking-[0.16em] text-ash">
-              Hand-picked, one drop at a time
+              {hero.frameCaption}
             </p>
           </div>
         </div>
@@ -166,20 +150,23 @@ export default async function Home() {
           as filler; a real icon per promise carries actual meaning. */}
       <section className="border-y border-edge bg-coal">
         <div className="mx-auto grid w-full max-w-6xl grid-cols-2 px-5 md:grid-cols-4">
-          {TRUST_POINTS.map(({ Icon, title, sub }, i) => (
-            <div
-              key={title}
-              className={`flex items-start gap-3 py-6 md:px-6 ${
-                i > 0 ? "md:border-l md:border-edge-soft" : ""
-              }`}
-            >
-              <Icon className="mt-0.5 h-[18px] w-[18px] flex-shrink-0 text-volt" />
-              <div className="text-sm">
-                <span className="block font-medium text-chalk">{title}</span>
-                <span className="text-ash">{sub}</span>
+          {trust.map((t, i) => {
+            const Icon = iconByName(t.icon);
+            return (
+              <div
+                key={`${t.title}-${i}`}
+                className={`flex items-start gap-3 py-6 md:px-6 ${
+                  i > 0 ? "md:border-l md:border-edge-soft" : ""
+                }`}
+              >
+                <Icon className="mt-0.5 h-[18px] w-[18px] flex-shrink-0 text-volt" />
+                <div className="text-sm">
+                  <span className="block font-medium text-chalk">{t.title}</span>
+                  <span className="text-ash">{t.sub}</span>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
@@ -187,9 +174,11 @@ export default async function Home() {
       <section id="shop" className="mx-auto w-full max-w-6xl px-5 py-20">
         <div className="mb-10 flex items-end justify-between">
           <div>
-            <p className="font-mono text-xs uppercase tracking-[0.2em] text-volt">The hot drops</p>
+            <p className="font-mono text-xs uppercase tracking-[0.2em] text-volt">
+              {bestsellers.eyebrow}
+            </p>
             <h2 className="mt-2 font-heading text-3xl font-bold tracking-tight md:text-4xl">
-              Trending oddities
+              {bestsellers.title}
             </h2>
           </div>
           <Link
@@ -222,7 +211,7 @@ export default async function Home() {
             <div key={dup} className="flex shrink-0 items-center" aria-hidden={dup === 1}>
               {Array.from({ length: 6 }).map((_, i) => (
                 <span key={i} className="flex items-center whitespace-nowrap font-heading text-xl font-bold uppercase tracking-tight md:text-2xl">
-                  Stuff that starts conversations
+                  {marquee}
                   <YoinkMark className="mx-6 h-5 w-5 text-volt" />
                 </span>
               ))}
@@ -234,9 +223,11 @@ export default async function Home() {
       {/* ===================== CATEGORIES ===================== */}
       <section id="categories" className="mx-auto w-full max-w-6xl px-5 py-20">
         <div className="mb-10">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-volt">By mood</p>
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-volt">
+            {content.categories.eyebrow}
+          </p>
           <h2 className="mt-2 font-heading text-3xl font-bold tracking-tight md:text-4xl">
-            Pick your flavour of weird
+            {content.categories.title}
           </h2>
         </div>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
@@ -276,38 +267,28 @@ export default async function Home() {
             <div className="grid gap-12 md:grid-cols-[0.9fr_1.1fr]">
               <div>
                 <span className="font-mono text-[11px] uppercase tracking-[0.28em] text-volt">
-                  House rules
+                  {houseRules.eyebrow}
                 </span>
-                <h2 className="mt-4 font-heading text-3xl font-bold leading-tight tracking-tight md:text-4xl">
-                  We buy it first.
-                  <br />
-                  Then you get to.
+                {/* whitespace-pre-line so a plain Enter in the admin box
+                    becomes a real line break here */}
+                <h2 className="mt-4 whitespace-pre-line font-heading text-3xl font-bold leading-tight tracking-tight md:text-4xl">
+                  {houseRules.title}
                 </h2>
               </div>
               <ol className="space-y-7">
-                {[
-                  [
-                    "Nothing lands here by algorithm",
-                    "Every drop is picked by hand. If it doesn't make someone stop mid-sentence, it doesn't get listed.",
-                  ],
-                  [
-                    "Small drops, on purpose",
-                    "We'd rather sell out than stock a warehouse of things nobody remembers.",
-                  ],
-                  [
-                    "You can send it back",
-                    "Seven days, no interrogation. Odd things are meant to be a risk — just not your risk.",
-                  ],
-                ].map(([title, body], i) => (
-                  <li key={title} className="flex gap-5 border-t border-edge-soft pt-6 first:border-0 first:pt-0">
+                {houseRules.items.map((r, i) => (
+                  <li
+                    key={`${r.title}-${i}`}
+                    className="flex gap-5 border-t border-edge-soft pt-6 first:border-0 first:pt-0"
+                  >
                     <span className="font-mono text-xs leading-6 text-volt">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <div>
                       <h3 className="font-heading text-lg font-semibold tracking-tight text-chalk">
-                        {title}
+                        {r.title}
                       </h3>
-                      <p className="mt-1.5 text-sm leading-relaxed text-ash">{body}</p>
+                      <p className="mt-1.5 text-sm leading-relaxed text-ash">{r.body}</p>
                     </div>
                   </li>
                 ))}
@@ -323,12 +304,9 @@ export default async function Home() {
         <div className="relative mx-auto w-full max-w-4xl px-5 py-24 text-center">
           <Reveal>
             <h2 className="font-heading text-4xl font-black tracking-tight md:text-5xl">
-              Don&rsquo;t be basic.
+              {closing.title}
             </h2>
-            <p className="mx-auto mt-5 max-w-lg text-ash">
-              Free shipping over ₹999, easy 7-day returns and cash on delivery
-              across India. Find the thing everyone will ask you about.
-            </p>
+            <p className="mx-auto mt-5 max-w-lg text-ash">{closing.body}</p>
             <div className="mt-9 flex justify-center">
               <Link
                 href="/shop"
@@ -336,18 +314,21 @@ export default async function Home() {
                    dropped and this button never matched the hero CTA */
                 className="group inline-flex h-12 items-center justify-center gap-2 rounded-full bg-volt px-9 text-sm font-semibold text-void shadow-[0_0_40px_-8px_var(--color-volt)] transition-all hover:-translate-y-0.5 hover:bg-volt-dim active:translate-y-0"
               >
-                Shop the drop
+                {hero.ctaPrimary}
                 <span className="transition-transform group-hover:translate-x-1">→</span>
               </Link>
             </div>
-            {/* same four promises as the strip up top, driven by one list */}
+            {/* same trust points as the strip up top, driven by one list */}
             <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 font-mono text-[11px] uppercase tracking-[0.14em] text-ash">
-              {TRUST_POINTS.map(({ Icon, title }) => (
-                <span key={title} className="inline-flex items-center gap-2">
-                  <Icon className="h-4 w-4 text-volt" />
-                  {title}
-                </span>
-              ))}
+              {trust.map((t, i) => {
+                const Icon = iconByName(t.icon);
+                return (
+                  <span key={`${t.title}-${i}`} className="inline-flex items-center gap-2">
+                    <Icon className="h-4 w-4 text-volt" />
+                    {t.title}
+                  </span>
+                );
+              })}
             </div>
           </Reveal>
         </div>
