@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { getOrderById } from "@/lib/orders";
 import { getSettings } from "@/lib/settings";
 import { inr } from "@/lib/format";
-import { UmbrellaMark } from "@/components/icons";
+import { PackageIcon } from "@/components/icons";
 import { PendingOrderActions } from "@/components/PendingOrderActions";
 import { CancelOrderButton } from "@/components/CancelOrderButton";
 import { RequestReturnButton } from "@/components/RequestReturnButton";
@@ -16,43 +16,43 @@ export const metadata: Metadata = { title: "Order — YOINK" };
 const HEAD: Record<string, { icon: string; bg: string; title: string; sub: string }> = {
   paid: {
     icon: "✓",
-    bg: "bg-green-100 text-emerald-400",
+    bg: "bg-good-deep text-good",
     title: "Order confirmed",
     sub: "Payment received. We’re preparing your order for dispatch.",
   },
   shipped: {
     icon: "🚚",
-    bg: "bg-blue-100 text-blue-600",
+    bg: "bg-info-deep text-info",
     title: "Order shipped",
     sub: "Your order has been dispatched and is on its way.",
   },
   delivered: {
     icon: "✓",
-    bg: "bg-emerald-100 text-emerald-600",
+    bg: "bg-good-deep text-good",
     title: "Order delivered",
     sub: "Delivered. If something isn’t right, you can request a return within 7 days.",
   },
   created: {
     icon: "⏳",
-    bg: "bg-amber-100 text-amber-600",
+    bg: "bg-warn-deep text-warn",
     title: "Payment pending",
     sub: "Complete your payment below to confirm this order.",
   },
   cancel_requested: {
     icon: "⏳",
-    bg: "bg-amber-100 text-amber-600",
+    bg: "bg-warn-deep text-warn",
     title: "Cancellation under review",
     sub: "Your request is being reviewed. We’ll update this page once it’s processed.",
   },
   cancelled: {
     icon: "✕",
-    bg: "bg-red-100 text-red-400",
+    bg: "bg-bad-deep text-bad",
     title: "Order cancelled",
     sub: "This order has been cancelled.",
   },
   return_requested: {
     icon: "⏳",
-    bg: "bg-amber-100 text-amber-600",
+    bg: "bg-warn-deep text-warn",
     title: "Return under review",
     sub: "Your return request is being reviewed. We’ll update this page once it’s processed.",
   },
@@ -64,7 +64,7 @@ const HEAD: Record<string, { icon: string; bg: string; title: string; sub: strin
   },
   returned: {
     icon: "↩",
-    bg: "bg-emerald-100 text-emerald-600",
+    bg: "bg-good-deep text-good",
     title: "Return complete",
     sub: "We’ve received your item and your return is complete.",
   },
@@ -178,7 +178,7 @@ export default async function OrderPage({
                   <li key={i} className="flex gap-3">
                     <span
                       className={`mt-0.5 ${
-                        st.done ? "text-emerald-400" : isCurrent ? "text-amber-500" : "text-ash"
+                        st.done ? "text-good" : isCurrent ? "text-amber-500" : "text-ash"
                       }`}
                     >
                       {st.done ? "✓" : isCurrent ? "⏳" : "○"}
@@ -195,7 +195,7 @@ export default async function OrderPage({
 
               {/* refund */}
               <li className="flex gap-3">
-                <span className={`mt-0.5 ${order.refund_status === "refunded" ? "text-emerald-400" : refundActive ? "text-volt" : "text-ash"}`}>
+                <span className={`mt-0.5 ${order.refund_status === "refunded" ? "text-good" : refundActive ? "text-volt" : "text-ash"}`}>
                   {order.refund_status === "refunded" ? "✓" : "💳"}
                 </span>
                 <span className="text-xs">
@@ -263,7 +263,7 @@ export default async function OrderPage({
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={it.image} alt={it.name} className="h-full w-full object-cover" />
                 ) : (
-                  <UmbrellaMark className="h-5 w-5" />
+                  <PackageIcon className="h-5 w-5" />
                 )}
               </div>
               <div className="min-w-0 flex-1 text-sm">
@@ -334,12 +334,12 @@ function DeclinedNotice({
   kind: "cancellation" | "return";
 }) {
   return (
-    <div className="mx-auto max-w-md rounded-xl border border-red-200 bg-red-50 p-4 text-left">
-      <p className="text-sm font-semibold text-red-800">Your {kind} request was declined</p>
-      <p className="mt-1 text-xs text-red-700">
+    <div className="mx-auto max-w-md rounded-xl border border-bad/30 bg-bad-deep p-4 text-left">
+      <p className="text-sm font-semibold text-bad">Your {kind} request was declined</p>
+      <p className="mt-1 text-xs text-bad">
         {reason ?? `This order isn’t eligible for ${kind}.`}
       </p>
-      <p className="mt-2 text-xs text-red-700">
+      <p className="mt-2 text-xs text-bad">
         If you think this is a mistake, please get in touch — we’re happy to help.
       </p>
       <Link

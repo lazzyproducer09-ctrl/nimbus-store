@@ -295,7 +295,7 @@ export function ProductAdmin({
             }
             if (form.compare_at_price && !isNaN(compare) && compare <= price) {
               return (
-                <p className="text-xs text-amber-600">
+                <p className="text-xs text-warn">
                   Compare price must be higher than Price to show a discount.
                 </p>
               );
@@ -386,7 +386,7 @@ export function ProductAdmin({
                 <button
                   type="button"
                   onClick={() => set("video_url", null)}
-                  className="rounded-full border border-edge px-3 py-1 text-xs font-medium text-ash transition-colors hover:border-red-300 hover:text-red-400"
+                  className="rounded-full border border-edge px-3 py-1 text-xs font-medium text-ash transition-colors hover:border-bad/60 hover:text-bad"
                 >
                   Remove video
                 </button>
@@ -408,7 +408,7 @@ export function ProductAdmin({
             </label>
           </div>
 
-          {error && <p className="text-sm text-red-400">{error}</p>}
+          {error && <p className="text-sm text-bad">{error}</p>}
 
           <div className="flex gap-3">
             <button
@@ -486,7 +486,7 @@ export function ProductAdmin({
               </div>
               <p className="mt-0.5 text-xs text-ash">
                 {p.category} · {inr(p.price)} ·{" "}
-                <span className={p.stock === 0 ? "font-medium text-red-400" : p.stock < 10 ? "font-medium text-amber-600" : ""}>
+                <span className={p.stock === 0 ? "font-medium text-bad" : p.stock < 10 ? "font-medium text-warn" : ""}>
                   {p.stock} in stock
                 </span>
               </p>
@@ -499,7 +499,7 @@ export function ProductAdmin({
             </button>
             <button
               onClick={() => setPendingDelete(p)}
-              className="rounded-full border border-edge px-3 py-1 text-xs font-medium text-ash transition-colors hover:border-red-300 hover:text-red-400"
+              className="rounded-full border border-edge px-3 py-1 text-xs font-medium text-ash transition-colors hover:border-bad/60 hover:text-bad"
             >
               Delete
             </button>

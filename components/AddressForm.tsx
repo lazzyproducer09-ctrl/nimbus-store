@@ -19,7 +19,7 @@ function Field({
     <div>
       <label className="mb-1 block text-xs font-medium text-ash">{label}</label>
       {children}
-      {hint && <p className="mt-1 text-xs text-red-400">{hint}</p>}
+      {hint && <p className="mt-1 text-xs text-bad">{hint}</p>}
     </div>
   );
 }
@@ -213,7 +213,7 @@ export function AddressForm({
         Set as default delivery address
       </label>
 
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && <p className="text-sm text-bad">{error}</p>}
 
       <div className="flex gap-3 pt-1">
         <button

@@ -6,6 +6,15 @@ import { ProductOptions } from "@/components/ProductOptions";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductGallery } from "@/components/ProductGallery";
 import { WishlistButton } from "@/components/WishlistButton";
+import {
+  TruckIcon,
+  RupeeIcon,
+  ReturnIcon,
+  LockIcon,
+  BoltIcon,
+  CheckIcon,
+  StarIcon,
+} from "@/components/icons";
 
 export const revalidate = 60;
 
@@ -76,7 +85,7 @@ export default async function ProductPage({
           </h1>
 
           <div className="mt-3 flex items-center gap-2 text-sm text-ash">
-            <span className="text-volt">★</span>
+            <StarIcon className="h-4 w-4 text-volt" />
             <span className="text-chalk">{product.rating}</span>
             <span>({product.review_count} reviews)</span>
           </div>
@@ -96,42 +105,42 @@ export default async function ProductPage({
           </div>
 
           {savings > 0 && (
-            <p className="mt-2 text-sm font-medium text-emerald-400">
-              You save {inr(savings)} — and you get to keep the stares 😎
+            <p className="mt-2 text-sm font-medium text-good">
+              You save {inr(savings)} — and you get to keep the stares.
             </p>
           )}
           <p className="mt-1 text-xs text-ash">Inclusive of all taxes · Free shipping over ₹999</p>
 
           <p className="mt-4 text-sm">
             {product.stock <= 0 ? (
-              <span className="font-medium text-red-400">Currently out of stock</span>
+              <span className="font-medium text-bad">Currently out of stock</span>
             ) : lowStock ? (
-              <span className="font-medium text-red-400">
-                🔥 Going fast — only {product.stock} left
+              <span className="inline-flex items-center gap-1.5 font-medium text-warn">
+                <BoltIcon className="h-4 w-4" />
+                Going fast — only {product.stock} left
               </span>
             ) : (
-              <span className="text-emerald-400">✓ In stock — ready to ship</span>
+              <span className="inline-flex items-center gap-1.5 text-good">
+                <CheckIcon className="h-4 w-4" />
+                In stock — ready to ship
+              </span>
             )}
           </p>
 
-          {/* delivery & assurance strip — right where buying decisions happen */}
-          <div className="mt-5 grid grid-cols-2 gap-3 rounded-2xl border border-edge bg-coal p-4 text-xs text-chalk sm:grid-cols-4">
-            <div className="flex flex-col items-center gap-1 text-center">
-              <span className="text-lg">🚚</span>
-              <span className="font-medium">Delivery in 3–6 days</span>
-            </div>
-            <div className="flex flex-col items-center gap-1 text-center">
-              <span className="text-lg">💵</span>
-              <span className="font-medium">Cash on delivery</span>
-            </div>
-            <div className="flex flex-col items-center gap-1 text-center">
-              <span className="text-lg">↩️</span>
-              <span className="font-medium">7-day easy returns</span>
-            </div>
-            <div className="flex flex-col items-center gap-1 text-center">
-              <span className="text-lg">🔒</span>
-              <span className="font-medium">Secure payment</span>
-            </div>
+          {/* Delivery & assurance strip — right where buying decisions happen.
+              Emoji (🚚 💵 ↩️ 🔒) replaced with the house icon set. */}
+          <div className="mt-5 grid grid-cols-2 divide-edge-soft rounded-2xl border border-edge bg-coal text-xs text-chalk sm:grid-cols-4 sm:divide-x">
+            {[
+              { Icon: TruckIcon, label: "Delivery in 3–6 days" },
+              { Icon: RupeeIcon, label: "Cash on delivery" },
+              { Icon: ReturnIcon, label: "7-day easy returns" },
+              { Icon: LockIcon, label: "Secure payment" },
+            ].map(({ Icon, label }) => (
+              <div key={label} className="flex flex-col items-center gap-2 px-2 py-4 text-center">
+                <Icon className="h-5 w-5 text-volt" />
+                <span className="font-medium leading-tight">{label}</span>
+              </div>
+            ))}
           </div>
 
           {/* size / colour / quantity + add to cart */}

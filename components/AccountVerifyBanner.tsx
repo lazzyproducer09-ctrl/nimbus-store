@@ -26,11 +26,11 @@ export function AccountVerifyBanner({
   // page refreshes and this banner disappears for good.
   if (justVerified) {
     return (
-      <div className="mb-6 rounded-2xl border border-green-200 bg-green-50 p-5">
-        <p className="text-sm font-medium text-green-800">
+      <div className="mb-6 rounded-2xl border border-good/30 bg-good-deep p-5">
+        <p className="text-sm font-medium text-good">
           ✅ Email verified successfully!
         </p>
-        <p className="mt-0.5 text-xs text-emerald-400">
+        <p className="mt-0.5 text-xs text-good">
           Your account is now fully secured.
         </p>
       </div>
@@ -74,13 +74,13 @@ export function AccountVerifyBanner({
   }
 
   return (
-    <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-5">
+    <div className="mb-6 rounded-2xl border border-warn/30 bg-warn-deep p-5">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-sm font-medium text-amber-800">
+          <p className="text-sm font-medium text-warn">
             ⚠️ Email verification pending
           </p>
-          <p className="mt-0.5 text-xs text-amber-700">
+          <p className="mt-0.5 text-xs text-warn">
             Verify your email with a one-time code to fully secure your account.
           </p>
         </div>
@@ -105,7 +105,7 @@ export function AccountVerifyBanner({
             value={code}
             onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
             placeholder="6-digit code"
-            className="h-10 w-36 rounded-lg border border-amber-300 bg-coal px-3 text-center text-sm tracking-widest outline-none focus:border-amber-600"
+            className="h-10 w-36 rounded-lg border border-warn/40 bg-coal px-3 text-center text-sm tracking-widest outline-none focus:border-warn"
           />
           <button
             type="submit"
@@ -117,14 +117,14 @@ export function AccountVerifyBanner({
           <button
             type="button"
             onClick={sendCode}
-            className="text-sm font-medium text-amber-700 hover:underline"
+            className="text-sm font-medium text-warn hover:underline"
           >
             Resend
           </button>
         </form>
       )}
 
-      {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
+      {error && <p className="mt-2 text-sm text-bad">{error}</p>}
     </div>
   );
 }

@@ -123,8 +123,8 @@ export function SoundSettings({
           >
             {saving ? "Saving…" : "Save"}
           </button>
-          {saved && <p className="text-xs text-emerald-400">✓ Saved.</p>}
-          {error && <p className="text-xs text-red-400">{error}</p>}
+          {saved && <p className="text-xs text-good">✓ Saved.</p>}
+          {error && <p className="text-xs text-bad">{error}</p>}
         </div>
       </div>
     </div>

@@ -25,7 +25,9 @@ const manrope = Manrope({
 
 // Mono font: for eyebrow labels, tags and tickers (the "drop"/terminal feel).
 const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-mono",
+  // Must NOT be "--font-mono" — that collides with Tailwind's own theme key
+  // and makes the variable reference itself (see globals.css).
+  variable: "--font-jetbrains",
   subsets: ["latin"],
   weight: ["400", "700"],
 });

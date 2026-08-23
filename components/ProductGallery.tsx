@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { YoinkMark } from "./icons";
+import { YoinkMark, SearchIcon, CloseIcon } from "./icons";
 
 // Product image gallery: big main image + clickable thumbnails.
 // Hovering a thumbnail previews it (temporary); clicking sets it (permanent).
@@ -33,8 +33,9 @@ export function ProductGallery({ images, name }: { images: string[]; name: strin
               alt={name}
               className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
-            <span className="pointer-events-none absolute bottom-3 right-3 rounded-full bg-black/55 px-3 py-1 text-[11px] font-medium text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
-              🔍 Click to zoom
+            <span className="pointer-events-none absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-void/70 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-chalk opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
+              <SearchIcon className="h-3.5 w-3.5" />
+              Click to zoom
             </span>
           </>
         ) : (
@@ -118,9 +119,9 @@ function ZoomModal({
       <button
         onClick={onClose}
         aria-label="Close"
-        className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-xl text-white transition-colors hover:bg-white/20"
+        className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/10 text-chalk transition-colors hover:bg-white/20"
       >
-        ✕
+        <CloseIcon className="h-5 w-5" />
       </button>
 
       <div

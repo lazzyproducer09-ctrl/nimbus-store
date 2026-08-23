@@ -26,21 +26,24 @@
   --color-iris: #7b5cff;        /* violet — the second half of the gradient */
   --color-iris-deep: #16103a;   /* dark violet wash */
 
-  /* Fonts (wired to next/font in layout.tsx) */
+  /* Status colours — readable ON the dark surfaces (never light-on-light). */
+  --color-good: #34d399;        /* success / paid / in-stock */
+  --color-good-deep: #06251c;
+  --color-warn: #fbbf24;        /* pending / low stock */
+  --color-warn-deep: #2a1f05;
+  --color-bad: #fb7185;         /* error / cancelled */
+  --color-bad-deep: #2b0d14;
+  --color-info: #60a5fa;        /* shipped / neutral info */
+  --color-info-deep: #0a1a2f;
+
+  /* Fonts (wired to next/font in layout.tsx).
+     NOTE: the source vars are deliberately named --font-<family>, never
+     --font-mono. `--font-mono: var(--font-mono)` is a self-reference on the
+     same element, which CSS throws away — it silently killed every mono
+     label on the site. Keep these names distinct. */
   --font-heading: var(--font-sora);
   --font-body: var(--font-manrope);
-  --font-mono: var(--font-mono);
-
-  /* ---- Legacy NIMBUS tokens (transitional — remove once all pages migrate) ---- */
-  --color-paper: #f7f7f4;
-  --color-ink: #14161a;
-  --color-mist: #ececea;
-  --color-line: #e4e4df;
-  --color-muted: #6d7178;
-  --color-storm: #2a5a7c;
-  --color-storm-dark: #1e415b;
-  --color-storm-light: #7fb0d0;
-  --color-storm-tint: #eef3f6;
+  --font-mono: var(--font-jetbrains);
 }
 
 :root {
@@ -115,46 +118,66 @@ textarea:focus-visible,
 }
 
 /*
-  Aurora blobs — big, soft, slowly drifting colour clouds behind the hero.
-  This is the "alive" premium background (replaces the flat grid).
+  Ambient light behind the hero.
+
+  Deliberately restrained: two big soft washes at LOW opacity, no purple blob.
+  Saturated blurred colour clouds are the single most recognisable
+  "AI-generated landing page" signature — this reads as room light instead.
 */
 .aurora {
   position: absolute;
   border-radius: 9999px;
-  filter: blur(90px);
+  filter: blur(110px);
   will-change: transform;
 }
 .aurora-1 {
-  width: 40rem;
-  height: 40rem;
-  top: -14rem;
-  right: -6rem;
-  background: radial-gradient(circle, rgba(53, 230, 255, 0.22), transparent 68%);
-  animation: drift-a 20s ease-in-out infinite;
+  width: 42rem;
+  height: 42rem;
+  top: -16rem;
+  right: -8rem;
+  background: radial-gradient(circle, rgba(53, 230, 255, 0.1), transparent 70%);
+  animation: drift-a 26s ease-in-out infinite;
 }
 .aurora-2 {
-  width: 34rem;
-  height: 34rem;
-  top: 4rem;
-  left: -10rem;
-  background: radial-gradient(circle, rgba(123, 92, 255, 0.26), transparent 68%);
-  animation: drift-b 26s ease-in-out infinite;
+  width: 32rem;
+  height: 32rem;
+  top: 6rem;
+  left: -12rem;
+  background: radial-gradient(circle, rgba(123, 92, 255, 0.07), transparent 72%);
+  animation: drift-b 34s ease-in-out infinite;
 }
 .aurora-3 {
-  width: 26rem;
-  height: 26rem;
-  bottom: -12rem;
-  left: 38%;
-  background: radial-gradient(circle, rgba(53, 230, 255, 0.12), transparent 70%);
-  animation: drift-c 32s ease-in-out infinite;
+  display: none; /* third blob removed — it was pure decoration */
 }
 
-/* Cyan→violet gradient text — the Style-3 accent treatment. */
-.text-gradient {
-  background: linear-gradient(90deg, var(--color-volt), var(--color-iris));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+/*
+  Marker underline for the one accent word in a headline.
+
+  Replaces the old cyan→violet gradient-clipped text. Gradient text is a
+  dead giveaway of a templated/AI page; a hand-inked marker stroke that sits
+  BEHIND the word reads as an editorial, art-directed choice.
+*/
+.mark {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+  /* own stacking context, so the z-index:-1 stroke sits behind the letters
+     but still in front of whatever is behind the heading */
+  isolation: isolate;
+}
+.mark::after {
+  content: "";
+  position: absolute;
+  left: -0.06em;
+  right: -0.06em;
+  bottom: 0.1em;
+  height: 0.3em;
+  z-index: -1;
+  background: var(--color-volt);
+  opacity: 0.9;
+  transform: rotate(-0.9deg);
+  /* uneven, brush-like ends rather than a perfect rectangle */
+  clip-path: polygon(0.6% 22%, 100% 0%, 99.4% 82%, 0% 100%);
 }
 @keyframes drift-a {
   0%, 100% { transform: translate(0, 0) scale(1); }

@@ -112,7 +112,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       </div>
 
       {error && (
-        <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-400">{error}</p>
+        <p className="rounded-lg bg-bad-deep px-4 py-3 text-sm text-bad">{error}</p>
       )}
       {message && (
         <p className="rounded-lg bg-volt-deep px-4 py-3 text-sm text-volt">{message}</p>

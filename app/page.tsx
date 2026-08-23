@@ -8,9 +8,24 @@ import { getCategories } from "@/lib/categories";
 import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/Reveal";
 import { HeroBackdrop } from "@/components/HeroBackdrop";
-import { YoinkMark } from "@/components/icons";
+import {
+  YoinkMark,
+  TruckIcon,
+  ReturnIcon,
+  LockIcon,
+  RupeeIcon,
+} from "@/components/icons";
 import { createClient } from "@/lib/supabase/server";
 import { getSettings } from "@/lib/settings";
+
+// The four delivery/payment promises, shown in the strip under the hero and
+// again in the closing CTA. One list so the two can never drift apart.
+const TRUST_POINTS = [
+  { Icon: TruckIcon, title: "Free shipping", sub: "on orders over ₹999" },
+  { Icon: ReturnIcon, title: "7-day returns", sub: "no awkward questions" },
+  { Icon: LockIcon, title: "Secure payments", sub: "protected by Razorpay" },
+  { Icon: RupeeIcon, title: "Cash on delivery", sub: "available across India" },
+];
 
 export default async function Home() {
   // Fetch everything the homepage needs AT THE SAME TIME (in parallel).
@@ -42,15 +57,19 @@ export default async function Home() {
                 back again, <span className="text-volt">{firstName}</span> — good taste.
               </p>
             )}
-            <span className="inline-flex items-center gap-2 rounded-full border border-edge bg-surface/60 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.18em] text-ash backdrop-blur-sm">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-volt" />
-              New this week
-            </span>
+            {/* Editorial index label + rule. Replaces the rounded pill with a
+                pulsing dot — that badge is on roughly every AI-built landing
+                page, and it promises "live" activity the site doesn't have. */}
+            <div className="flex items-center gap-4">
+              <span className="font-mono text-[11px] uppercase tracking-[0.28em] text-volt">
+                New this week
+              </span>
+              <span className="h-px flex-1 max-w-24 bg-edge" />
+            </div>
             <h1 className="mt-6 font-heading text-[3.4rem] font-extrabold leading-[0.94] tracking-[-0.03em] md:text-[5.4rem]">
               Stuff you didn&rsquo;t
               <br />
-              know you{" "}
-              <span className="text-gradient whitespace-nowrap">needed</span>.
+              know you <span className="mark">needed</span>.
             </h1>
             <p className="mt-7 max-w-md text-lg leading-8 text-ash">
               Weird gadgets, glowing lights and gag-worthy gifts — curated for
@@ -72,19 +91,30 @@ export default async function Home() {
               </a>
             </div>
 
-            {/* mini stat row */}
-            <div className="mt-11 flex flex-wrap gap-x-9 gap-y-4">
+            {/*
+              Spec strip. This used to show "4.8★ avg. rating" and
+              "100% conversation starters" — both invented. Fabricated ratings
+              on a live store are a real legal exposure in India, and shoppers
+              spot round made-up numbers instantly. These three are things the
+              store can actually stand behind.
+            */}
+            <dl className="mt-11 flex flex-wrap items-stretch gap-x-8 gap-y-5">
               {[
-                ["4.8★", "avg. rating"],
-                ["48hr", "dispatch"],
-                ["100%", "conversation starters"],
-              ].map(([big, small]) => (
-                <div key={small}>
-                  <p className="font-heading text-2xl font-bold">{big}</p>
-                  <p className="font-mono text-[11px] uppercase tracking-wider text-ash">{small}</p>
+                ["48 hrs", "Order dispatch"],
+                ["7 days", "Return window"],
+                ["Pan-India", "Delivery network"],
+              ].map(([big, small], i) => (
+                <div
+                  key={small}
+                  className={i > 0 ? "border-l border-edge pl-8" : undefined}
+                >
+                  <dt className="font-heading text-xl font-bold tracking-tight text-chalk">{big}</dt>
+                  <dd className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.18em] text-ash">
+                    {small}
+                  </dd>
                 </div>
               ))}
-            </div>
+            </dl>
           </div>
 
           {/* product spotlight frame */}
@@ -113,31 +143,37 @@ export default async function Home() {
                   <span className="font-mono text-[11px] uppercase tracking-widest">hero product</span>
                 </div>
               )}
-              {/* corner badge */}
-              <span className="absolute left-4 top-4 rounded-full bg-void/70 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-volt backdrop-blur-sm">
-                ✦ 1 of 1
+              {/* Corner label. Was "✦ 1 of 1" — a claim the store can't back.
+                  A dated drop label is honest and creates the same urgency. */}
+              <span className="absolute left-4 top-4 font-mono text-[10px] uppercase tracking-[0.22em] text-chalk/70 mix-blend-difference">
+                This week&rsquo;s drop
               </span>
             </div>
-            {/* floating chip */}
-            <div className="absolute -bottom-4 -left-4 rotate-[-4deg] rounded-xl border border-edge bg-surface px-4 py-2 shadow-xl">
-              <p className="font-mono text-[10px] uppercase tracking-wider text-ash">as seen everywhere</p>
-              <p className="font-heading text-sm font-bold text-chalk">the internet&rsquo;s favourite</p>
-            </div>
+            {/*
+              The tilted "as seen everywhere / the internet's favourite" chip
+              that sat here was both invented and a stock template device.
+              A quiet caption under the frame does more for a premium read.
+            */}
+            <p className="mt-4 border-l border-volt/40 pl-3 font-mono text-[10px] uppercase leading-relaxed tracking-[0.16em] text-ash">
+              Hand-picked, one drop at a time
+            </p>
           </div>
         </div>
       </section>
 
       {/* ===================== TRUST STRIP ===================== */}
+      {/* Each row used to lead with a plain cyan dot. Four identical dots read
+          as filler; a real icon per promise carries actual meaning. */}
       <section className="border-y border-edge bg-coal">
-        <div className="mx-auto grid w-full max-w-6xl grid-cols-2 gap-6 px-5 py-6 md:grid-cols-4">
-          {[
-            ["Free shipping", "on orders over ₹999"],
-            ["7-day returns", "no awkward questions"],
-            ["Secure payments", "protected by Razorpay"],
-            ["Cash on delivery", "available across India"],
-          ].map(([title, sub]) => (
-            <div key={title} className="flex items-start gap-2.5">
-              <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-volt" />
+        <div className="mx-auto grid w-full max-w-6xl grid-cols-2 px-5 md:grid-cols-4">
+          {TRUST_POINTS.map(({ Icon, title, sub }, i) => (
+            <div
+              key={title}
+              className={`flex items-start gap-3 py-6 md:px-6 ${
+                i > 0 ? "md:border-l md:border-edge-soft" : ""
+              }`}
+            >
+              <Icon className="mt-0.5 h-[18px] w-[18px] flex-shrink-0 text-volt" />
               <div className="text-sm">
                 <span className="block font-medium text-chalk">{title}</span>
                 <span className="text-ash">{sub}</span>
@@ -227,18 +263,56 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ===================== REVIEW QUOTE ===================== */}
+      {/* ===================== HOUSE RULES =====================
+          This slot held a five-star quote from "Aarav M. — verified buyer,
+          Mumbai". Nobody wrote it. Publishing an invented review with a fake
+          name and a "verified" label is exactly what India's consumer-review
+          rules prohibit, and it is the first thing a sceptical shopper checks.
+          A stated point of view earns the same trust and is entirely ours.
+          Swap this back to real quotes once actual customers send them. */}
       <section className="border-y border-edge bg-coal">
-        <div className="mx-auto w-full max-w-3xl px-5 py-24 text-center">
+        <div className="mx-auto w-full max-w-5xl px-5 py-24">
           <Reveal>
-            <div className="mb-4 font-mono text-volt">★★★★★</div>
-            <blockquote className="font-heading text-2xl font-bold leading-relaxed tracking-tight md:text-3xl">
-              &ldquo;Bought it as a joke. Now three of my friends have ordered
-              one too. Everyone who walks in asks about it.&rdquo;
-            </blockquote>
-            <p className="mt-6 font-mono text-xs uppercase tracking-wider text-ash">
-              Aarav M. — verified buyer, Mumbai
-            </p>
+            <div className="grid gap-12 md:grid-cols-[0.9fr_1.1fr]">
+              <div>
+                <span className="font-mono text-[11px] uppercase tracking-[0.28em] text-volt">
+                  House rules
+                </span>
+                <h2 className="mt-4 font-heading text-3xl font-bold leading-tight tracking-tight md:text-4xl">
+                  We buy it first.
+                  <br />
+                  Then you get to.
+                </h2>
+              </div>
+              <ol className="space-y-7">
+                {[
+                  [
+                    "Nothing lands here by algorithm",
+                    "Every drop is picked by hand. If it doesn't make someone stop mid-sentence, it doesn't get listed.",
+                  ],
+                  [
+                    "Small drops, on purpose",
+                    "We'd rather sell out than stock a warehouse of things nobody remembers.",
+                  ],
+                  [
+                    "You can send it back",
+                    "Seven days, no interrogation. Odd things are meant to be a risk — just not your risk.",
+                  ],
+                ].map(([title, body], i) => (
+                  <li key={title} className="flex gap-5 border-t border-edge-soft pt-6 first:border-0 first:pt-0">
+                    <span className="font-mono text-xs leading-6 text-volt">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <div>
+                      <h3 className="font-heading text-lg font-semibold tracking-tight text-chalk">
+                        {title}
+                      </h3>
+                      <p className="mt-1.5 text-sm leading-relaxed text-ash">{body}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
           </Reveal>
         </div>
       </section>
@@ -258,17 +332,22 @@ export default async function Home() {
             <div className="mt-9 flex justify-center">
               <Link
                 href="/shop"
-                className="group inline-flex h-13 items-center justify-center gap-2 rounded-full bg-volt px-9 py-3.5 text-sm font-semibold text-void shadow-[0_0_40px_-8px_var(--color-volt)] transition-all hover:-translate-y-0.5 hover:bg-volt-dim active:translate-y-0"
+                /* was `h-13` — not a real Tailwind size, so it was silently
+                   dropped and this button never matched the hero CTA */
+                className="group inline-flex h-12 items-center justify-center gap-2 rounded-full bg-volt px-9 text-sm font-semibold text-void shadow-[0_0_40px_-8px_var(--color-volt)] transition-all hover:-translate-y-0.5 hover:bg-volt-dim active:translate-y-0"
               >
                 Shop the drop
                 <span className="transition-transform group-hover:translate-x-1">→</span>
               </Link>
             </div>
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 font-mono text-[11px] uppercase tracking-wider text-ash">
-              <span>🚚 Free shipping over ₹999</span>
-              <span>↩️ 7-day returns</span>
-              <span>🔒 Secure payments</span>
-              <span>💵 Cash on delivery</span>
+            {/* same four promises as the strip up top, driven by one list */}
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 font-mono text-[11px] uppercase tracking-[0.14em] text-ash">
+              {TRUST_POINTS.map(({ Icon, title }) => (
+                <span key={title} className="inline-flex items-center gap-2">
+                  <Icon className="h-4 w-4 text-volt" />
+                  {title}
+                </span>
+              ))}
             </div>
           </Reveal>
         </div>

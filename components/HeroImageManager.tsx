@@ -104,7 +104,7 @@ export function HeroImageManager({
               {url && (
                 <button
                   onClick={() => setUrl(null)}
-                  className="h-9 rounded-full border border-edge px-4 text-xs font-medium text-ash hover:border-red-300 hover:text-red-400"
+                  className="h-9 rounded-full border border-edge px-4 text-xs font-medium text-ash hover:border-bad/60 hover:text-bad"
                 >
                   Remove image
                 </button>
@@ -134,7 +134,7 @@ export function HeroImageManager({
               {videoUrl && (
                 <button
                   onClick={() => setVideoUrl(null)}
-                  className="h-9 rounded-full border border-edge px-4 text-xs font-medium text-ash hover:border-red-300 hover:text-red-400"
+                  className="h-9 rounded-full border border-edge px-4 text-xs font-medium text-ash hover:border-bad/60 hover:text-bad"
                 >
                   Remove video
                 </button>
@@ -152,8 +152,8 @@ export function HeroImageManager({
         >
           {saving ? "Saving…" : "Save hero"}
         </button>
-        {saved && <p className="text-xs text-emerald-400">✓ Saved — check your homepage.</p>}
-        {error && <p className="text-xs text-red-400">{error}</p>}
+        {saved && <p className="text-xs text-good">✓ Saved — check your homepage.</p>}
+        {error && <p className="text-xs text-bad">{error}</p>}
       </div>
     </div>
   );

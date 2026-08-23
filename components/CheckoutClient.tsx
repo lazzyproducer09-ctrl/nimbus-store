@@ -266,7 +266,7 @@ export function CheckoutClient({
           </div>
         </div>
 
-        {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
+        {error && <p className="mt-3 text-sm text-bad">{error}</p>}
 
         <button
           onClick={pay}

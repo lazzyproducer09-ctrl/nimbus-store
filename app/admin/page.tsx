@@ -35,10 +35,10 @@ export default async function AdminDashboard() {
   const featuredCount = products.filter((p) => p.is_featured).length;
 
   const stats = [
-    { label: "Revenue (paid)", value: inr(revenue), icon: "₹", tint: "bg-green-100 text-emerald-400" },
+    { label: "Revenue (paid)", value: inr(revenue), icon: "₹", tint: "bg-good-deep text-good" },
     { label: "Paid orders", value: String(paid.length), icon: "✓", tint: "bg-volt-deep text-volt" },
-    { label: "Total orders", value: String(orders.length), icon: "🧾", tint: "bg-blue-100 text-blue-700" },
-    { label: "Products", value: String(products.length), icon: "🏷️", tint: "bg-amber-100 text-amber-700" },
+    { label: "Total orders", value: String(orders.length), icon: "🧾", tint: "bg-info-deep text-info" },
+    { label: "Products", value: String(products.length), icon: "🏷️", tint: "bg-warn-deep text-warn" },
   ];
 
   return (
@@ -47,20 +47,20 @@ export default async function AdminDashboard() {
       {cancelRequests.length > 0 && (
         <Link
           href="/admin/orders"
-          className="flex items-center justify-between gap-3 rounded-2xl border border-orange-300 bg-orange-50 p-5 transition-colors hover:bg-orange-100"
+          className="flex items-center justify-between gap-3 rounded-2xl border border-warn/40 bg-warn-deep p-5 transition-colors hover:bg-warn-deep"
         >
           <div className="flex items-center gap-3">
             <span className="text-2xl">⚠️</span>
             <div>
-              <p className="font-heading font-semibold text-orange-800">
+              <p className="font-heading font-semibold text-warn">
                 {cancelRequests.length} request{cancelRequests.length === 1 ? "" : "s"} to review
               </p>
-              <p className="text-xs text-orange-700">
+              <p className="text-xs text-warn">
                 A customer asked to cancel or return. Approve or decline it in Orders.
               </p>
             </div>
           </div>
-          <span className="flex-shrink-0 text-sm font-medium text-orange-800">Review →</span>
+          <span className="flex-shrink-0 text-sm font-medium text-warn">Review →</span>
         </Link>
       )}
 
@@ -123,7 +123,7 @@ export default async function AdminDashboard() {
                   <span className="truncate pr-2">{p.name}</span>
                   <span
                     className={`whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ${
-                      p.stock === 0 ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-700"
+                      p.stock === 0 ? "bg-bad-deep text-bad" : "bg-warn-deep text-warn"
                     }`}
                   >
                     {p.stock} left
@@ -163,9 +163,9 @@ export default async function AdminDashboard() {
                     <span
                       className={`rounded-full px-2 py-0.5 text-xs font-medium capitalize ${
                         o.status === "paid"
-                          ? "bg-green-100 text-emerald-400"
+                          ? "bg-good-deep text-good"
                           : o.status === "created"
-                            ? "bg-amber-100 text-amber-700"
+                            ? "bg-warn-deep text-warn"
                             : "bg-surface text-ash"
                       }`}
                     >

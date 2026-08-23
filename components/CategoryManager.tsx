@@ -130,7 +130,7 @@ export function CategoryManager({ initial }: { initial: Category[] }) {
             <button
               onClick={() => remove(i)}
               aria-label="Delete category"
-              className="mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border border-edge text-ash transition-colors hover:border-red-400/60 hover:text-red-400"
+              className="mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border border-edge text-ash transition-colors hover:border-bad/60 hover:text-bad"
             >
               ✕
             </button>
@@ -146,8 +146,8 @@ export function CategoryManager({ initial }: { initial: Category[] }) {
         >
           {saving ? "Saving…" : "Save categories"}
         </button>
-        {saved && <p className="text-xs text-emerald-400">✓ Saved — check your homepage &amp; shop.</p>}
-        {error && <p className="text-xs text-red-400">{error}</p>}
+        {saved && <p className="text-xs text-good">✓ Saved — check your homepage &amp; shop.</p>}
+        {error && <p className="text-xs text-bad">{error}</p>}
       </div>
     </div>
   );

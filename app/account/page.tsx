@@ -87,15 +87,15 @@ export default async function AccountPage() {
                   <span
                     className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${
                       o.status === "paid" || o.status === "delivered"
-                        ? "bg-green-100 text-emerald-400"
+                        ? "bg-good-deep text-good"
                         : o.status === "created"
-                          ? "bg-amber-100 text-amber-700"
+                          ? "bg-warn-deep text-warn"
                           : o.status === "shipped"
-                            ? "bg-blue-100 text-blue-700"
+                            ? "bg-info-deep text-info"
                             : o.status === "cancel_requested"
-                              ? "bg-orange-100 text-orange-700"
+                              ? "bg-warn-deep text-warn"
                               : o.status === "cancelled"
-                                ? "bg-red-100 text-red-700"
+                                ? "bg-bad-deep text-bad"
                                 : "bg-surface text-ash"
                     }`}
                   >

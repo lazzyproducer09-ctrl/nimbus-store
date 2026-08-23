@@ -78,7 +78,7 @@ export function AddressManager({
                 </button>
                 <button
                   onClick={() => setPendingDelete(a.id)}
-                  className="text-ash hover:text-red-400"
+                  className="text-ash hover:text-bad"
                 >
                   Delete
                 </button>

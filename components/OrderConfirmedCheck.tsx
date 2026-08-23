@@ -26,12 +26,14 @@ export function OrderConfirmedCheck({
   }, [soundEnabled, volume, soundType]);
 
   return (
-    <div className="check-pop mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+    <div className="check-pop mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-good/30 bg-good-deep text-good">
       <svg viewBox="0 0 52 52" className="h-9 w-9" aria-hidden>
         <path
           className="check-draw"
           fill="none"
-          stroke="#16a34a"
+          /* was a hardcoded dark green (#16a34a) — invisible once the tick
+             circle became a dark surface. Follows the text colour now. */
+          stroke="currentColor"
           strokeWidth={5}
           strokeLinecap="round"
           strokeLinejoin="round"

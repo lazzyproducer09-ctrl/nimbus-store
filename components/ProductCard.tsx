@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import type { Product } from "@/lib/products";
 import { inr } from "@/lib/format";
 import { useCart } from "@/lib/cart-context";
-import { YoinkMark } from "./icons";
+import { YoinkMark, StarIcon } from "./icons";
 import { WishlistButton } from "./WishlistButton";
 
 // One product card. Image + name link to the product page; an "Add to cart"
@@ -82,7 +82,9 @@ export function ProductCard({ product: p }: { product: Product }) {
         onMouseEnter={() => setHovering(true)}
         onMouseLeave={() => setHovering(false)}
       >
-        <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-edge bg-surface transition-all duration-300 group-hover:-translate-y-1 group-hover:border-volt/40 group-hover:shadow-[0_20px_50px_-20px_rgba(200,255,0,0.25)]">
+        {/* hover glow was still rgba(200,255,0) — the lime from the old palette,
+            left behind when the accent changed to cyan */}
+        <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-edge bg-surface transition-all duration-300 group-hover:-translate-y-1 group-hover:border-volt/40 group-hover:shadow-[0_20px_50px_-20px_rgba(53,230,255,0.28)]">
           {p.tag && (
             <span className="absolute left-3 top-3 z-10 rounded-full bg-void/80 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-volt backdrop-blur-sm">
               {p.tag}
@@ -113,13 +115,13 @@ export function ProductCard({ product: p }: { product: Product }) {
           <Link href={`/product/${p.slug}`}>
             <h3 className="text-sm font-medium leading-snug text-chalk transition-colors hover:text-volt">{p.name}</h3>
           </Link>
-          <div className="mt-1 flex items-center gap-1 text-xs text-ash">
-            <span className="text-volt">★</span>
+          <div className="mt-1 flex items-center gap-1.5 text-xs text-ash">
+            <StarIcon className="h-3 w-3 text-volt" />
             <span className="text-chalk">{p.rating}</span>
             <span>({p.review_count})</span>
           </div>
           {lowStock && (
-            <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-red-400">
+            <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-warn">
               Only {p.stock} left
             </p>
           )}

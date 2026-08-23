@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { YoinkMark } from "./icons";
+import { YoinkMark, TruckIcon, LockIcon, ShieldIcon } from "./icons";
 
 // The site-wide footer. Hidden on the minimal login / signup pages.
 export function Footer() {
@@ -70,17 +70,29 @@ export function Footer() {
               ))}
             </div>
           </div>
-          <div className="flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-ash">
-            <span>🇮🇳 Ships across India</span>
-            <span>🔒 SSL secured</span>
-            <span>✓ Genuine products</span>
+          {/* emoji swapped for the house icon set — emoji look different on
+              every OS and can't inherit the brand colour */}
+          <div className="flex flex-wrap gap-x-5 gap-y-2 text-[11px] text-ash">
+            {[
+              [TruckIcon, "Ships across India"],
+              [LockIcon, "SSL secured"],
+              [ShieldIcon, "Genuine products"],
+            ].map(([Icon, label]) => {
+              const I = Icon as (p: { className?: string }) => React.ReactElement;
+              return (
+                <span key={label as string} className="inline-flex items-center gap-1.5">
+                  <I className="h-3.5 w-3.5 text-ash-dim" />
+                  {label as string}
+                </span>
+              );
+            })}
           </div>
         </div>
 
         <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-edge pt-6 text-xs text-ash-dim md:flex-row">
           <span>© 2026 YOINK. All rights reserved.</span>
           <span className="flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-volt" />
+            <LockIcon className="h-3.5 w-3.5 text-volt" />
             Secure checkout — payments secured by Razorpay
           </span>
         </div>

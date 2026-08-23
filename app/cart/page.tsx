@@ -132,7 +132,7 @@ export default function CartPage() {
                   </div>
                   <button
                     onClick={() => setPendingId(it.id)}
-                    className="text-xs text-ash transition-colors hover:text-red-400"
+                    className="text-xs text-ash transition-colors hover:text-bad"
                   >
                     Remove
                   </button>

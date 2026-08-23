@@ -150,7 +150,7 @@ export function ProductOptions({ product }: { product: Product }) {
             </button>
             <button
               onClick={() => removeItem(cartLine.id)}
-              className="h-12 flex-1 rounded-full border border-edge text-sm font-medium text-ash transition-all hover:-translate-y-0.5 hover:border-red-400/60 hover:text-red-400 active:translate-y-0"
+              className="h-12 flex-1 rounded-full border border-edge text-sm font-medium text-ash transition-all hover:-translate-y-0.5 hover:border-bad/60 hover:text-bad active:translate-y-0"
             >
               Remove
             </button>

@@ -4,20 +4,20 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getMyOrders, ORDER_STATUS_LABEL } from "@/lib/orders";
 import { inr } from "@/lib/format";
-import { UmbrellaMark } from "@/components/icons";
+import { PackageIcon } from "@/components/icons";
 
 export const metadata: Metadata = { title: "Your orders — YOINK" };
 
 const STATUS_STYLES: Record<string, string> = {
-  paid: "bg-green-100 text-emerald-400",
-  created: "bg-amber-100 text-amber-700",
-  shipped: "bg-blue-100 text-blue-700",
-  delivered: "bg-green-100 text-emerald-400",
-  cancel_requested: "bg-orange-100 text-orange-700",
-  cancelled: "bg-red-100 text-red-700",
-  return_requested: "bg-orange-100 text-orange-700",
+  paid: "bg-good-deep text-good",
+  created: "bg-warn-deep text-warn",
+  shipped: "bg-info-deep text-info",
+  delivered: "bg-good-deep text-good",
+  cancel_requested: "bg-warn-deep text-warn",
+  cancelled: "bg-bad-deep text-bad",
+  return_requested: "bg-warn-deep text-warn",
   return_approved: "bg-indigo-100 text-indigo-700",
-  returned: "bg-purple-100 text-purple-700",
+  returned: "bg-iris-deep text-iris",
 };
 
 const STATUS_LABEL = ORDER_STATUS_LABEL;
@@ -37,7 +37,7 @@ export default async function OrdersPage() {
 
       {orders.length === 0 ? (
         <div className="mt-8 rounded-2xl border border-edge bg-coal p-10 text-center">
-          <UmbrellaMark className="mx-auto h-12 w-12 text-volt/40" />
+          <PackageIcon className="mx-auto h-12 w-12 text-volt/40" />
           <p className="mt-3 text-sm text-ash">You haven&rsquo;t placed any orders yet.</p>
           <Link href="/shop" className="mt-4 inline-block text-sm font-medium text-volt hover:underline">
             Start shopping
@@ -88,7 +88,7 @@ export default async function OrdersPage() {
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={it.image} alt={it.name} className="h-full w-full object-cover" />
                         ) : (
-                          <UmbrellaMark className="h-5 w-5" />
+                          <PackageIcon className="h-5 w-5" />
                         )}
                       </div>
                     ))}

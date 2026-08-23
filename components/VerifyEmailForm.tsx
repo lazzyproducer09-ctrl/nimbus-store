@@ -46,9 +46,9 @@ export function VerifyEmailForm({ email }: { email: string }) {
 
   if (verified) {
     return (
-      <div className="rounded-lg bg-green-50 px-4 py-6 text-center">
-        <p className="text-sm font-medium text-green-800">✅ Email verified successfully!</p>
-        <p className="mt-1 text-xs text-emerald-400">Taking you to the next step…</p>
+      <div className="rounded-lg bg-good-deep px-4 py-6 text-center">
+        <p className="text-sm font-medium text-good">✅ Email verified successfully!</p>
+        <p className="mt-1 text-xs text-good">Taking you to the next step…</p>
       </div>
     );
   }
@@ -69,7 +69,7 @@ export function VerifyEmailForm({ email }: { email: string }) {
         />
       </div>
 
-      {error && <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-400">{error}</p>}
+      {error && <p className="rounded-lg bg-bad-deep px-4 py-3 text-sm text-bad">{error}</p>}
       {resent && (
         <p className="rounded-lg bg-volt-deep px-4 py-3 text-sm text-volt">
           New code sent — check your email.

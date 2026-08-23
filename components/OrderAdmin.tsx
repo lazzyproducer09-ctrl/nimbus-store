@@ -5,19 +5,19 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { Order } from "@/lib/orders";
 import { inr } from "@/lib/format";
-import { UmbrellaMark } from "./icons";
+import { PackageIcon } from "./icons";
 import { ConfirmDialog } from "./ConfirmDialog";
 
 const STATUS: Record<string, { label: string; cls: string; dot: string }> = {
-  created: { label: "Payment pending", cls: "bg-amber-100 text-amber-700", dot: "bg-amber-500" },
-  paid: { label: "Confirmed", cls: "bg-green-100 text-emerald-400", dot: "bg-green-500" },
-  shipped: { label: "Shipped", cls: "bg-blue-100 text-blue-700", dot: "bg-blue-500" },
-  delivered: { label: "Delivered", cls: "bg-emerald-100 text-emerald-700", dot: "bg-emerald-500" },
-  cancel_requested: { label: "Cancellation requested", cls: "bg-orange-100 text-orange-700", dot: "bg-orange-500" },
-  cancelled: { label: "Cancelled", cls: "bg-red-100 text-red-700", dot: "bg-red-500" },
-  return_requested: { label: "Return requested", cls: "bg-orange-100 text-orange-700", dot: "bg-orange-500" },
+  created: { label: "Payment pending", cls: "bg-warn-deep text-warn", dot: "bg-warn-deep0" },
+  paid: { label: "Confirmed", cls: "bg-good-deep text-good", dot: "bg-good-deep0" },
+  shipped: { label: "Shipped", cls: "bg-info-deep text-info", dot: "bg-info" },
+  delivered: { label: "Delivered", cls: "bg-good-deep text-good", dot: "bg-good" },
+  cancel_requested: { label: "Cancellation requested", cls: "bg-warn-deep text-warn", dot: "bg-warn-deep0" },
+  cancelled: { label: "Cancelled", cls: "bg-bad-deep text-bad", dot: "bg-bad-deep0" },
+  return_requested: { label: "Return requested", cls: "bg-warn-deep text-warn", dot: "bg-warn-deep0" },
   return_approved: { label: "Return approved · awaiting item", cls: "bg-indigo-100 text-indigo-700", dot: "bg-indigo-500" },
-  returned: { label: "Returned", cls: "bg-purple-100 text-purple-700", dot: "bg-purple-500" },
+  returned: { label: "Returned", cls: "bg-iris-deep text-iris", dot: "bg-iris" },
 };
 // Statuses the admin can set manually (request states are customer-driven).
 const STATUS_KEYS = ["created", "paid", "shipped", "delivered", "cancelled"];
@@ -150,7 +150,7 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
           <div
             key={o.id}
             className={`overflow-hidden rounded-2xl border bg-coal ${
-              isRequest ? "border-orange-300 ring-1 ring-orange-200" : "border-edge"
+              isRequest ? "border-warn/40 ring-1 ring-orange-200" : "border-edge"
             }`}
           >
             {/* top bar — status, id, prominent date/time, total */}
@@ -214,7 +214,7 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={it.image} alt="" className="h-full w-full object-cover" />
                       ) : (
-                        <UmbrellaMark className="h-4 w-4" />
+                        <PackageIcon className="h-4 w-4" />
                       )}
                     </div>
                     <span className="text-xs">
@@ -228,19 +228,19 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
 
             {/* cancellation / return request → approve / decline */}
             {isRequest && (
-              <div className="border-t border-orange-200 bg-orange-50 px-5 py-3">
-                <p className="text-sm font-medium text-orange-800">
+              <div className="border-t border-warn/30 bg-warn-deep px-5 py-3">
+                <p className="text-sm font-medium text-warn">
                   ⚠️ Customer requested {isReturn ? "a return" : "cancellation"} — please review.
                 </p>
                 {isReturn && o.return_reason && (
-                  <p className="mt-1 text-xs text-orange-700">
+                  <p className="mt-1 text-xs text-warn">
                     Reason: &ldquo;{o.return_reason}&rdquo;
                   </p>
                 )}
 
                 {rejectingId === o.id ? (
                   <div className="mt-3">
-                    <p className="mb-1.5 text-xs font-medium text-orange-800">
+                    <p className="mb-1.5 text-xs font-medium text-warn">
                       Pick a reason (or write your own) — the customer will see this:
                     </p>
                     <div className="mb-2 flex flex-wrap gap-1.5">
@@ -251,8 +251,8 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
                           onClick={() => setReason(r)}
                           className={`rounded-full border px-3 py-1 text-xs transition-colors ${
                             reason === r
-                              ? "border-orange-500 bg-orange-100 text-orange-800"
-                              : "border-orange-200 bg-coal text-orange-700 hover:border-orange-400"
+                              ? "border-warn bg-warn-deep text-warn"
+                              : "border-warn/30 bg-coal text-warn hover:border-warn/60"
                           }`}
                         >
                           {r}
@@ -264,7 +264,7 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
                       onChange={(e) => setReason(e.target.value)}
                       rows={2}
                       placeholder="…or type a custom reason here"
-                      className="w-full rounded-lg border border-orange-200 bg-coal px-3 py-2 text-sm outline-none focus:border-orange-400"
+                      className="w-full rounded-lg border border-warn/30 bg-coal px-3 py-2 text-sm outline-none focus:border-warn/60"
                     />
                     <div className="mt-2 flex gap-2">
                       <button
@@ -327,9 +327,9 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
 
             {/* refund control (for paid orders that were cancelled / returned) */}
             {o.refund_status === "pending" && (
-              <div className="border-t border-green-200 bg-green-50/60 px-5 py-3">
-                <p className="text-sm font-medium text-green-800">💳 Refund pending</p>
-                <p className="mt-0.5 text-xs text-emerald-400">
+              <div className="border-t border-good/30 bg-good-deep/60 px-5 py-3">
+                <p className="text-sm font-medium text-good">💳 Refund pending</p>
+                <p className="mt-0.5 text-xs text-good">
                   Refund the customer to their original payment method, then mark it done here.
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
@@ -337,7 +337,7 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
                     value={refundRef[o.id] ?? ""}
                     onChange={(e) => setRefundRef((m) => ({ ...m, [o.id]: e.target.value }))}
                     placeholder="Refund/UTR reference (optional)"
-                    className="h-9 flex-1 rounded-lg border border-green-200 bg-coal px-3 text-sm outline-none focus:border-green-400"
+                    className="h-9 flex-1 rounded-lg border border-good/30 bg-coal px-3 text-sm outline-none focus:border-good"
                   />
                   <button
                     onClick={() => markRefunded(o)}
@@ -350,7 +350,7 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
               </div>
             )}
             {o.refund_status === "refunded" && (
-              <div className="border-t border-edge bg-green-50/40 px-5 py-2.5 text-xs text-green-800">
+              <div className="border-t border-edge bg-good-deep/40 px-5 py-2.5 text-xs text-good">
                 ✓ Refunded{o.refunded_at ? ` on ${fmtDateTime(o.refunded_at)}` : ""}
                 {o.refund_reference ? ` · Ref: ${o.refund_reference}` : ""}
               </div>
@@ -378,7 +378,7 @@ export function OrderAdmin({ initialOrders }: { initialOrders: Order[] }) {
               </div>
               <button
                 onClick={() => setPendingDelete(o)}
-                className="text-xs font-medium text-ash transition-colors hover:text-red-400"
+                className="text-xs font-medium text-ash transition-colors hover:text-bad"
               >
                 Delete order
               </button>

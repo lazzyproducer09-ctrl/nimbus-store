@@ -62,21 +62,21 @@ export default async function AdminCustomersPage() {
                 <span className="rounded-full bg-surface px-2.5 py-0.5 font-medium">
                   {c.orders_count} order{c.orders_count === 1 ? "" : "s"}
                 </span>
-                <span className="rounded-full bg-green-100 px-2.5 py-0.5 font-medium text-emerald-400">
+                <span className="rounded-full bg-good-deep px-2.5 py-0.5 font-medium text-good">
                   {c.paid_count} paid
                 </span>
                 {c.pending_count > 0 && (
-                  <span className="rounded-full bg-amber-100 px-2.5 py-0.5 font-medium text-amber-700">
+                  <span className="rounded-full bg-warn-deep px-2.5 py-0.5 font-medium text-warn">
                     {c.pending_count} pending
                   </span>
                 )}
                 {c.cancelled_count > 0 && (
-                  <span className="rounded-full bg-red-100 px-2.5 py-0.5 font-medium text-red-700">
+                  <span className="rounded-full bg-bad-deep px-2.5 py-0.5 font-medium text-bad">
                     {c.cancelled_count} cancel
                   </span>
                 )}
                 {c.returned_count > 0 && (
-                  <span className="rounded-full bg-purple-100 px-2.5 py-0.5 font-medium text-purple-700">
+                  <span className="rounded-full bg-iris-deep px-2.5 py-0.5 font-medium text-iris">
                     {c.returned_count} return
                   </span>
                 )}

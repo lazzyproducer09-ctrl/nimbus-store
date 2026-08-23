@@ -49,7 +49,7 @@ export function WelcomeForm({ defaultName }: { defaultName: string }) {
         />
       </div>
 
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && <p className="text-sm text-bad">{error}</p>}
 
       <button
         type="submit"

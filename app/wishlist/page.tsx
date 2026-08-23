@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useWishlist } from "@/lib/wishlist-context";
 import { useCart } from "@/lib/cart-context";
 import { inr } from "@/lib/format";
-import { UmbrellaMark } from "@/components/icons";
+import { PackageIcon, HeartIcon, CloseIcon } from "@/components/icons";
 
 export default function WishlistPage() {
   const { items, remove, hydrated } = useWishlist();
@@ -17,8 +17,8 @@ export default function WishlistPage() {
   if (items.length === 0) {
     return (
       <div className="mx-auto w-full max-w-6xl px-5 py-24 text-center">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-2xl">
-          ♡
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-edge bg-surface text-ash">
+          <HeartIcon className="h-6 w-6" />
         </div>
         <h1 className="mt-4 font-heading text-2xl font-semibold">Your wishlist is empty</h1>
         <p className="mt-2 text-sm text-ash">
@@ -57,7 +57,7 @@ export default function WishlistPage() {
                   />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center text-volt/50">
-                    <UmbrellaMark className="h-12 w-12" />
+                    <PackageIcon className="h-12 w-12" />
                   </div>
                 )}
               </div>
@@ -91,9 +91,9 @@ export default function WishlistPage() {
               <button
                 onClick={() => remove(p.productId)}
                 aria-label="Remove"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-edge text-ash transition-colors hover:border-red-300 hover:text-red-400"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-edge text-ash transition-colors hover:border-bad/60 hover:text-bad"
               >
-                ✕
+                <CloseIcon className="h-4 w-4" />
               </button>
             </div>
           </div>

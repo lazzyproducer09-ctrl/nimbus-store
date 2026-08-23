@@ -79,7 +79,7 @@ export function PersonalInfo({
             </button>
           </div>
         )}
-        {error && <p className="mt-1 text-sm text-red-400">{error}</p>}
+        {error && <p className="mt-1 text-sm text-bad">{error}</p>}
       </div>
 
       {/* Email */}
@@ -88,7 +88,7 @@ export function PersonalInfo({
         <div className="mt-0.5 flex flex-wrap items-center gap-2">
           <p className="font-medium">{email}</p>
           {verified && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-emerald-400">
+            <span className="inline-flex items-center gap-1 rounded-full bg-good-deep px-2.5 py-0.5 text-xs font-medium text-good">
               ✓ Verified
             </span>
           )}

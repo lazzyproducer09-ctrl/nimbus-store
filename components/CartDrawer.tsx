@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/lib/cart-context";
 import { inr } from "@/lib/format";
-import { YoinkMark } from "./icons";
+import { YoinkMark, CloseIcon } from "./icons";
 import { ConfirmDialog } from "./ConfirmDialog";
 
 // The slide-out cart panel. Always mounted; it slides in/out based on `isOpen`.
@@ -53,9 +53,9 @@ export function CartDrawer() {
           <button
             onClick={closeCart}
             aria-label="Close cart"
-            className="text-lg text-ash transition-colors hover:text-chalk"
+            className="-mr-1 flex h-8 w-8 items-center justify-center rounded-full text-ash transition-colors hover:bg-surface hover:text-chalk"
           >
-            ✕
+            <CloseIcon className="h-4 w-4" />
           </button>
         </div>
 
@@ -103,7 +103,7 @@ export function CartDrawer() {
                         <p className="text-sm font-medium leading-snug text-chalk">{it.name}</p>
                         <button
                           onClick={() => setPendingId(it.id)}
-                          className="text-xs text-ash transition-colors hover:text-red-400"
+                          className="text-xs text-ash transition-colors hover:text-bad"
                         >
                           Remove
                         </button>

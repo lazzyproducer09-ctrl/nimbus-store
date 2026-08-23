@@ -58,7 +58,7 @@ export function ResetPasswordForm() {
 
   if (!ready) {
     return (
-      <p className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-700">
+      <p className="rounded-lg bg-warn-deep px-4 py-3 text-sm text-warn">
         This reset link is invalid or has expired. Please request a new one
         from the{" "}
         <a href="/forgot-password" className="font-medium underline">
@@ -96,7 +96,7 @@ export function ResetPasswordForm() {
         />
       </div>
       {error && (
-        <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-400">{error}</p>
+        <p className="rounded-lg bg-bad-deep px-4 py-3 text-sm text-bad">{error}</p>
       )}
       <button
         type="submit"
