@@ -6,16 +6,19 @@ import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import type { Category } from "@/lib/categories";
 import { useWishlist } from "@/lib/wishlist-context";
-import { MenuIcon, CloseIcon, YoinkMark, SearchIcon } from "./icons";
+import { MenuIcon, CloseIcon, YoinkMark, ChevronIcon } from "./icons";
 
 // ---------------------------------------------------------------------------
 // The site menu: a four-line button at the left edge of the page that slides a
 // panel in from the left.
 //
-// This is now the ONLY navigation. The header keeps just the wordmark and the
-// cart, so search, wishlist, account, orders and admin all live in here. The
-// header no longer changes shape between phone and desktop, and categories
-// finally have somewhere to be listed.
+// It holds what you browse once and then leave alone — categories, your
+// account, orders, wishlist, policies. The things a shopper reaches for over
+// and over (the shop views, search, cart) stay in the header bar, so neither
+// surface ends up crowded.
+//
+// Categories collapse behind a single row. Six of them listed flat pushed
+// everything else off the first screen.
 // ---------------------------------------------------------------------------
 
 const MINIMAL_ROUTES = [
@@ -50,14 +53,16 @@ export function SideMenu({
   const pathname = usePathname();
   const { count: wishlistCount, hydrated } = useWishlist();
   const [open, setOpen] = useState(false);
+  const [showCategories, setShowCategories] = useState(false);
   // The panel is portalled to <body>, which only exists in the browser.
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
   // Close on navigation — otherwise the panel stays over the page you just
-  // asked for.
+  // asked for. Categories fold back up too, so it always reopens compact.
   useEffect(() => {
     setOpen(false);
+    setShowCategories(false);
   }, [pathname]);
 
   // Escape closes it, and the page behind must not scroll while it's over them.
@@ -115,37 +120,54 @@ export function SideMenu({
         </div>
 
         {/* `inert` keeps the links out of tab order while the panel is closed */}
-        <nav className="flex-1 overflow-y-auto px-2 pb-6" inert={!open || undefined}>
-          <GroupLabel>Shop</GroupLabel>
-          <Link href="/shop" className={`${linkClass} flex items-center gap-2.5`}>
-            <SearchIcon className="h-4 w-4 flex-shrink-0 text-ash-dim" />
-            Search products
-          </Link>
-          <Link href="/shop" className={linkClass}>
-            Shop all
-          </Link>
-          <Link href="/shop?sort=newest" className={linkClass}>
-            New in
-          </Link>
-          <Link href="/shop?sort=rating" className={linkClass}>
-            Best sellers
-          </Link>
-
+        <nav className="flex-1 overflow-y-auto px-2 pb-6 pt-3" inert={!open || undefined}>
+          {/* Collapsed by default — one row instead of six. */}
           {categories.length > 0 && (
             <>
-              <GroupLabel>Categories</GroupLabel>
-              {categories.map((c) => (
-                <Link
-                  key={c.name}
-                  href={`/shop?category=${encodeURIComponent(c.name)}`}
-                  className={linkClass}
-                >
-                  {c.name}
-                  <span className="block text-[11px] text-ash-dim">{c.blurb}</span>
-                </Link>
-              ))}
+              <button
+                onClick={() => setShowCategories((v) => !v)}
+                aria-expanded={showCategories}
+                aria-controls="menu-categories"
+                className={`${linkClass} flex w-full items-center justify-between gap-2 text-left`}
+              >
+                Categories
+                <ChevronIcon
+                  className={`h-4 w-4 flex-shrink-0 transition-transform duration-200 ${
+                    showCategories ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+              {showCategories && (
+                <div id="menu-categories" className="ml-3 border-l border-edge pl-2">
+                  {categories.map((c) => (
+                    <Link
+                      key={c.name}
+                      href={`/shop?category=${encodeURIComponent(c.name)}`}
+                      className={linkClass}
+                    >
+                      {c.name}
+                      <span className="block text-[11px] text-ash-dim">{c.blurb}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </>
           )}
+
+          {/* On desktop these three sit in the header bar; a phone has no room
+              for them up there, so the menu carries them instead. */}
+          <div className="md:hidden">
+            <GroupLabel>Shop</GroupLabel>
+            <Link href="/shop" className={linkClass}>
+              Shop all
+            </Link>
+            <Link href="/shop?sort=newest" className={linkClass}>
+              New in
+            </Link>
+            <Link href="/shop?sort=rating" className={linkClass}>
+              Best sellers
+            </Link>
+          </div>
 
           <GroupLabel>You</GroupLabel>
           <Link href={loggedIn ? "/account" : "/login"} className={linkClass}>
@@ -161,15 +183,18 @@ export function SideMenu({
             className={`${linkClass} flex items-center justify-between gap-2`}
           >
             Wishlist
-            {/* the saved count lived on a header icon before this moved in */}
             {hydrated && wishlistCount > 0 && (
               <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-volt-deep px-1.5 text-[11px] font-semibold text-volt">
                 {wishlistCount}
               </span>
             )}
           </Link>
+          {/* the header shows an Admin chip from sm up, so only phones need this */}
           {admin && (
-            <Link href="/admin" className={`${linkClass} font-medium text-volt hover:text-volt`}>
+            <Link
+              href="/admin"
+              className={`${linkClass} font-medium text-volt hover:text-volt sm:hidden`}
+            >
               Admin panel
             </Link>
           )}
