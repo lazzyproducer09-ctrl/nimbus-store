@@ -10,6 +10,10 @@ import { CartDrawer } from "@/components/CartDrawer";
 import { createClient } from "@/lib/supabase/server";
 import { isAdmin } from "@/lib/admin";
 import { getSiteContent } from "@/lib/site-content";
+import { getStoreSettings } from "@/lib/store-settings";
+import { Analytics } from "@/components/Analytics";
+import { WhatsAppButton } from "@/components/WhatsAppButton";
+import { StoreSettingsProvider } from "@/components/StoreSettingsProvider";
 
 // Display font: geometric, techy and confident — the Dark-Tech-Drop headline.
 const sora = Sora({
@@ -42,9 +46,10 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const supabase = await createClient();
   // Auth and the editable copy are independent — fetch them together.
-  const [{ data: { user } }, content] = await Promise.all([
+  const [{ data: { user } }, content, store] = await Promise.all([
     supabase.auth.getUser(),
     getSiteContent(),
+    getStoreSettings(),
   ]);
 
   return (
@@ -53,6 +58,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${sora.variable} ${manrope.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="grain min-h-full flex flex-col overflow-x-hidden bg-void text-chalk">
+        <StoreSettingsProvider
+          value={{
+            freeShippingThreshold: store.freeShippingThreshold,
+            shippingFee: store.shippingFee,
+          }}
+        >
         <CartProvider>
           <WishlistProvider>
             <AnnouncementBar messages={content.announcements} />
@@ -60,8 +71,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <main className="flex flex-1 flex-col">{children}</main>
             <Footer blurb={content.footerBlurb} />
             <CartDrawer />
+            <WhatsAppButton
+              number={store.whatsappNumber}
+              message={store.whatsappMessage}
+            />
           </WishlistProvider>
         </CartProvider>
+        </StoreSettingsProvider>
+        {/* Marketing tags load last and only when an ID is configured. */}
+        <Analytics pixelId={store.metaPixelId} ga4Id={store.ga4Id} />
       </body>
     </html>
   );

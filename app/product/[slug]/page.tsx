@@ -6,6 +6,12 @@ import { ProductOptions } from "@/components/ProductOptions";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductGallery } from "@/components/ProductGallery";
 import { WishlistButton } from "@/components/WishlistButton";
+import { WhatsAppProductLink } from "@/components/WhatsAppButton";
+import {
+  RecordProductView,
+  RecentlyViewed,
+} from "@/components/RecentlyViewed";
+import { getStoreSettings } from "@/lib/store-settings";
 import {
   TruckIcon,
   RupeeIcon,
@@ -38,10 +44,19 @@ export default async function ProductPage({
     : 0;
   const lowStock = product.stock > 0 && product.stock <= 5;
 
-  const similar = await getSimilarProducts(product.category, product.id);
+  const [similar, store] = await Promise.all([
+    getSimilarProducts(product.category, product.id),
+    getStoreSettings(),
+  ]);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-5 py-10">
+      {/* remembers the visit + fires ViewContent for retargeting */}
+      <RecordProductView
+        productId={product.id}
+        name={product.name}
+        price={product.price}
+      />
       {/* breadcrumb */}
       <nav className="mb-6 flex flex-wrap items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-ash">
         <Link href="/" className="hover:text-volt">Home</Link>
@@ -109,7 +124,9 @@ export default async function ProductPage({
               You save {inr(savings)} — and you get to keep the stares.
             </p>
           )}
-          <p className="mt-1 text-xs text-ash">Inclusive of all taxes · Free shipping over ₹999</p>
+          <p className="mt-1 text-xs text-ash">
+            Inclusive of all taxes · Free shipping over ₹{store.freeShippingThreshold}
+          </p>
 
           <p className="mt-4 text-sm">
             {product.stock <= 0 ? (
@@ -145,6 +162,12 @@ export default async function ProductPage({
 
           {/* size / colour / quantity + add to cart */}
           <ProductOptions product={product} />
+
+          <WhatsAppProductLink
+            number={store.whatsappNumber}
+            message={store.whatsappMessage}
+            productName={product.name}
+          />
 
           <div className="mt-3">
             <WishlistButton
@@ -208,6 +231,10 @@ export default async function ProductPage({
           )}
         </section>
       )}
+
+      {/* Things this browser opened before — a second chance at the item
+          someone nearly bought. Renders nothing on a first visit. */}
+      <RecentlyViewed excludeId={product.id} />
 
       {/* ---- similar products ---- */}
       {similar.length > 0 && (

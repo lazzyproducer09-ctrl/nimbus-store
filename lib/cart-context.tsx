@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { trackAddToCart } from "@/lib/track";
 
 // One line in the cart. Same product with a different size/colour is a separate line.
 export type CartItem = {
@@ -198,6 +199,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [items, hydrated]);
 
   const addItem = useCallback<CartContextType["addItem"]>((item, quantity = 1) => {
+    // Tell Meta/GA someone added to cart. Fired here rather than in each
+    // button so every add path (card, product page, wishlist) is counted.
+    trackAddToCart({
+      productId: item.productId,
+      name: item.name,
+      price: item.price,
+      quantity,
+    });
     setItems((prev) => {
       const id = lineId(item.productId, item.size, item.color);
       const existing = prev.find((p) => p.id === id);

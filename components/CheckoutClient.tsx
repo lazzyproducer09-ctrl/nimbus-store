@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCart } from "@/lib/cart-context";
 import { inr } from "@/lib/format";
-import { YoinkMark } from "./icons";
+import { YoinkMark, LockIcon, CheckIcon, CloseIcon } from "./icons";
 import type { Address } from "@/lib/addresses";
 import { AddressForm } from "./AddressForm";
+import type { PublicStoreSettings } from "./StoreSettingsProvider";
+import { trackInitiateCheckout, trackPurchase } from "@/lib/track";
 
 // Load the Razorpay checkout script once, on demand.
 function loadRazorpay(): Promise<boolean> {
@@ -27,9 +29,11 @@ function loadRazorpay(): Promise<boolean> {
 export function CheckoutClient({
   userId,
   addresses,
+  settings,
 }: {
   userId: string;
   addresses: Address[];
+  settings: PublicStoreSettings;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -47,6 +51,18 @@ export function CheckoutClient({
   const [paying, setPaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Discount code.
+  //
+  // The code list lives on the server and is never sent here, so checking a
+  // code is a round-trip. What comes back is only a preview for the summary
+  // panel — create-order re-validates the code against its own subtotal
+  // before charging, so nothing here can lower the real price.
+  const [codeInput, setCodeInput] = useState("");
+  const [appliedCode, setAppliedCode] = useState<string | null>(null);
+  const [discount, setDiscount] = useState(0);
+  const [checkingCode, setCheckingCode] = useState(false);
+  const [couponError, setCouponError] = useState<string | null>(null);
+
   // When the address list changes (e.g. one was just added), keep a valid selection.
   useEffect(() => {
     if (!addresses.find((a) => a.id === selectedId)) {
@@ -56,9 +72,59 @@ export function CheckoutClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addresses]);
 
-  const shipping = purchaseSubtotal >= 999 ? 0 : 79;
-  const total = purchaseSubtotal + shipping;
+  const shipping =
+    purchaseSubtotal >= settings.freeShippingThreshold ? 0 : settings.shippingFee;
+  const total = Math.max(0, purchaseSubtotal + shipping - discount);
   const selectedAddress = addresses.find((a) => a.id === selectedId);
+
+  // Tell the ad platforms someone reached checkout — this is the step Meta
+  // optimises against before there are any purchases to learn from.
+  const trackedCheckout = useRef(false);
+  useEffect(() => {
+    if (trackedCheckout.current || purchaseItems.length === 0) return;
+    trackedCheckout.current = true;
+    trackInitiateCheckout(
+      purchaseItems.map((i) => ({
+        productId: i.productId,
+        name: i.name,
+        price: i.price,
+        quantity: i.quantity,
+      })),
+    );
+  }, [purchaseItems]);
+
+  async function tryCoupon() {
+    if (checkingCode) return;
+    setCheckingCode(true);
+    setCouponError(null);
+    try {
+      const res = await fetch("/api/coupon", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: codeInput, subtotal: purchaseSubtotal }),
+      });
+      const data = await res.json();
+      if (!data.ok) {
+        setCouponError(data.error ?? "That code isn’t valid.");
+        setAppliedCode(null);
+        setDiscount(0);
+        return;
+      }
+      setAppliedCode(data.code);
+      setDiscount(data.discount);
+      setCodeInput("");
+    } catch {
+      setCouponError("Could not check that code. Try again.");
+    } finally {
+      setCheckingCode(false);
+    }
+  }
+
+  function clearCoupon() {
+    setAppliedCode(null);
+    setDiscount(0);
+    setCouponError(null);
+  }
 
   // Nothing to buy → send them back to the cart.
   if (purchaseItems.length === 0) {
@@ -84,7 +150,11 @@ export function CheckoutClient({
       const res = await fetch("/api/razorpay/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: purchaseItems, address: selectedAddress }),
+        body: JSON.stringify({
+          items: purchaseItems,
+          address: selectedAddress,
+          couponCode: appliedCode ?? "",
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Could not start checkout.");
@@ -104,7 +174,9 @@ export function CheckoutClient({
           name: selectedAddress!.full_name,
           contact: selectedAddress!.phone,
         },
-        theme: { color: "#2a5a7c" },
+        // was #2a5a7c — the old NIMBUS storm blue, still theming the
+        // payment window long after the rebrand
+        theme: { color: "#35e6ff" },
         handler: async (response: {
           razorpay_order_id: string;
           razorpay_payment_id: string;
@@ -117,6 +189,19 @@ export function CheckoutClient({
           });
           const v = await verifyRes.json();
           if (v.success) {
+            // Report the amount actually charged (the server's figure), not
+            // the cart subtotal — otherwise ads optimise against revenue the
+            // business never received.
+            trackPurchase(
+              data.orderId,
+              typeof data.total === "number" ? data.total : total,
+              purchaseItems.map((i) => ({
+                productId: i.productId,
+                name: i.name,
+                price: i.price,
+                quantity: i.quantity,
+              })),
+            );
             // Clear the buy-now slot, or remove just the cart items we paid for.
             if (isBuyNow) clearBuyNow();
             else removeItems(selectedItems.map((i) => i.id));
@@ -251,6 +336,48 @@ export function CheckoutClient({
           </div>
         )}
 
+        {/* discount code */}
+        <div className="mt-4 border-t border-edge pt-4">
+          {appliedCode && discount > 0 ? (
+            <div className="flex items-center justify-between rounded-xl border border-good/30 bg-good-deep px-3 py-2">
+              <span className="flex items-center gap-2 text-sm text-good">
+                <CheckIcon className="h-4 w-4" />
+                <span className="font-mono text-xs uppercase tracking-wider">{appliedCode}</span>
+                applied
+              </span>
+              <button
+                onClick={clearCoupon}
+                aria-label="Remove discount code"
+                className="flex h-6 w-6 items-center justify-center rounded-md text-good transition-colors hover:bg-good/15"
+              >
+                <CloseIcon className="h-3 w-3" />
+              </button>
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <input
+                value={codeInput}
+                onChange={(e) => {
+                  setCodeInput(e.target.value);
+                  setCouponError(null);
+                }}
+                onKeyDown={(e) => e.key === "Enter" && tryCoupon()}
+                placeholder="Discount code"
+                aria-label="Discount code"
+                className="h-10 min-w-0 flex-1 rounded-lg border border-edge bg-surface px-3 font-mono text-sm uppercase tracking-wider text-chalk outline-none transition-colors focus:border-volt placeholder:font-body placeholder:normal-case placeholder:tracking-normal placeholder:text-ash-dim"
+              />
+              <button
+                onClick={tryCoupon}
+                disabled={checkingCode}
+                className="h-10 flex-shrink-0 rounded-lg border border-edge px-4 text-sm font-medium text-chalk transition-colors hover:border-volt/50 hover:text-volt disabled:opacity-50"
+              >
+                {checkingCode ? "…" : "Apply"}
+              </button>
+            </div>
+          )}
+          {couponError && <p className="mt-2 text-xs text-bad">{couponError}</p>}
+        </div>
+
         <div className="mt-4 space-y-2 border-t border-edge pt-4 text-sm">
           <div className="flex justify-between">
             <span className="text-ash">Subtotal</span>
@@ -260,6 +387,12 @@ export function CheckoutClient({
             <span className="text-ash">Shipping</span>
             <span className="text-chalk">{shipping === 0 ? "Free" : inr(shipping)}</span>
           </div>
+          {discount > 0 && (
+            <div className="flex justify-between">
+              <span className="text-ash">Discount ({appliedCode})</span>
+              <span className="text-good">− {inr(discount)}</span>
+            </div>
+          )}
           <div className="flex justify-between border-t border-edge pt-2 text-base font-semibold">
             <span>Total</span>
             <span className="text-chalk">{inr(total)}</span>
@@ -277,7 +410,7 @@ export function CheckoutClient({
         </button>
 
         <p className="mt-3 flex items-center justify-center gap-2 text-xs text-ash">
-          <span className="h-1.5 w-1.5 rounded-full bg-volt" />
+          <LockIcon className="h-3.5 w-3.5 text-volt" />
           Secure payment · Razorpay (TEST mode)
         </p>
       </aside>

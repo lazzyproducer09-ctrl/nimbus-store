@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 import { useCart } from "@/lib/cart-context";
 import { inr } from "@/lib/format";
 import { YoinkMark, CloseIcon } from "./icons";
+import { FreeShippingBar } from "./FreeShippingBar";
+import { useStoreSettings } from "./StoreSettingsProvider";
 import { ConfirmDialog } from "./ConfirmDialog";
 
 // The slide-out cart panel. Always mounted; it slides in/out based on `isOpen`.
@@ -20,6 +22,7 @@ export function CartDrawer() {
     removeItem,
     toggleSelected,
   } = useCart();
+  const { freeShippingThreshold } = useStoreSettings();
   const [pendingId, setPendingId] = useState<string | null>(null);
   const pathname = usePathname();
 
@@ -142,6 +145,12 @@ export function CartDrawer() {
             </div>
 
             <div className="border-t border-edge px-5 py-4">
+              {/* nudge towards the free-shipping threshold before they leave */}
+              <FreeShippingBar
+                subtotal={selectedSubtotal}
+                threshold={freeShippingThreshold}
+                className="mb-3"
+              />
               <div className="flex items-center justify-between text-sm">
                 <span className="text-ash">Selected subtotal</span>
                 <span className="font-semibold text-chalk">{inr(selectedSubtotal)}</span>

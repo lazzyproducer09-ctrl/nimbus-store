@@ -4,14 +4,16 @@ import { getAllProducts } from "@/lib/products-admin";
 import { getSettings } from "@/lib/settings";
 import { getCategories } from "@/lib/categories";
 import { getSiteContent } from "@/lib/site-content";
+import { getStoreSettings } from "@/lib/store-settings";
 import { inr } from "@/lib/format";
 import { HeroImageManager } from "@/components/HeroImageManager";
 import { CategoryManager } from "@/components/CategoryManager";
 import { ContentManager } from "@/components/ContentManager";
+import { StoreSettingsManager } from "@/components/StoreSettingsManager";
 import { SoundSettings } from "@/components/SoundSettings";
 
 export default async function AdminDashboard() {
-  const [orders, products, settings, categories, content] = await Promise.all([
+  const [orders, products, settings, categories, content, store] = await Promise.all([
     getAllOrders(),
     getAllProducts(),
     getSettings([
@@ -23,6 +25,7 @@ export default async function AdminDashboard() {
     ]),
     getCategories(),
     getSiteContent(),
+    getStoreSettings(),
   ]);
   const heroImage = settings["hero_image_url"];
   const heroVideo = settings["hero_video_url"];
@@ -92,6 +95,9 @@ export default async function AdminDashboard() {
 
       {/* every line of storefront copy */}
       <ContentManager initial={content} />
+
+      {/* shipping, WhatsApp, ad pixels, discount codes */}
+      <StoreSettingsManager initial={store} />
 
       {/* order success sound */}
       <SoundSettings

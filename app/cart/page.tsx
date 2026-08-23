@@ -6,6 +6,8 @@ import { useCart } from "@/lib/cart-context";
 import { inr } from "@/lib/format";
 import { YoinkMark } from "@/components/icons";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { FreeShippingBar } from "@/components/FreeShippingBar";
+import { useStoreSettings } from "@/components/StoreSettingsProvider";
 
 export default function CartPage() {
   const {
@@ -19,6 +21,7 @@ export default function CartPage() {
     toggleSelected,
     setAllSelected,
   } = useCart();
+  const { freeShippingThreshold, shippingFee } = useStoreSettings();
   const [pendingId, setPendingId] = useState<string | null>(null);
   const allSelected = items.length > 0 && selectedItems.length === items.length;
 
@@ -41,9 +44,11 @@ export default function CartPage() {
     );
   }
 
-  // Free shipping over ₹999 — matches our homepage promise. Only SELECTED items count.
-  // Nothing selected → no shipping charge shown.
-  const shipping = selectedSubtotal > 0 && selectedSubtotal < 999 ? 79 : 0;
+  // Shipping rules come from the admin panel, so the cart, the checkout and
+  // the server all charge against the same numbers. Only SELECTED items
+  // count; nothing selected → no shipping charge shown.
+  const shipping =
+    selectedSubtotal > 0 && selectedSubtotal < freeShippingThreshold ? shippingFee : 0;
   const total = selectedSubtotal + shipping;
 
   return (
@@ -158,10 +163,12 @@ export default function CartPage() {
               <span className="text-ash">Shipping</span>
               <span className="text-chalk">{shipping === 0 ? "Free" : inr(shipping)}</span>
             </div>
-            {shipping > 0 && selectedSubtotal > 0 && (
-              <p className="text-xs text-volt">
-                Add {inr(999 - selectedSubtotal)} more for free shipping.
-              </p>
+            {selectedSubtotal > 0 && (
+              <FreeShippingBar
+                subtotal={selectedSubtotal}
+                threshold={freeShippingThreshold}
+                className="!mt-3"
+              />
             )}
             <div className="mt-2 flex justify-between border-t border-edge pt-3 text-base font-semibold">
               <span>Total</span>
