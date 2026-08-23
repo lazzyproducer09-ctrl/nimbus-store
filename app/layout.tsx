@@ -11,6 +11,7 @@ import { createClient } from "@/lib/supabase/server";
 import { isAdmin } from "@/lib/admin";
 import { getSiteContent } from "@/lib/site-content";
 import { getStoreSettings } from "@/lib/store-settings";
+import { getCategories } from "@/lib/categories";
 import { Analytics } from "@/components/Analytics";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { StoreSettingsProvider } from "@/components/StoreSettingsProvider";
@@ -46,10 +47,11 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const supabase = await createClient();
   // Auth and the editable copy are independent — fetch them together.
-  const [{ data: { user } }, content, store] = await Promise.all([
+  const [{ data: { user } }, content, store, categories] = await Promise.all([
     supabase.auth.getUser(),
     getSiteContent(),
     getStoreSettings(),
+    getCategories(),
   ]);
 
   return (
@@ -67,7 +69,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <CartProvider>
           <WishlistProvider>
             <AnnouncementBar messages={content.announcements} />
-            <Header loggedIn={!!user} admin={isAdmin(user?.email)} />
+            <Header
+              loggedIn={!!user}
+              admin={isAdmin(user?.email)}
+              categories={categories}
+            />
             <main className="flex flex-1 flex-col">{children}</main>
             <Footer blurb={content.footerBlurb} />
             <CartDrawer />

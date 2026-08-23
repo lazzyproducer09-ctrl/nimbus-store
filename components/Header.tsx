@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { YoinkMark, SearchIcon, UserIcon } from "./icons";
 import { CartButton } from "./CartButton";
+import { SideMenu } from "./SideMenu";
+import type { Category } from "@/lib/categories";
 import { WishlistHeaderButton } from "./WishlistHeaderButton";
 
 // Pages that get a stripped-down header (just the logo) — like real stores' auth pages.
@@ -19,7 +21,15 @@ function Wordmark() {
   );
 }
 
-export function Header({ loggedIn, admin = false }: { loggedIn: boolean; admin?: boolean }) {
+export function Header({
+  loggedIn,
+  admin = false,
+  categories,
+}: {
+  loggedIn: boolean;
+  admin?: boolean;
+  categories: Category[];
+}) {
   const pathname = usePathname();
 
   // Minimal header on login / signup: centered logo only, no nav or cart.
@@ -37,7 +47,11 @@ export function Header({ loggedIn, admin = false }: { loggedIn: boolean; admin?:
   return (
     <header className="sticky top-0 z-40 border-b border-edge bg-void/80 backdrop-blur-md">
       <nav className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5">
-        <Wordmark />
+        {/* four-line menu, then the wordmark */}
+        <div className="flex items-center gap-2.5">
+          <SideMenu loggedIn={loggedIn} admin={admin} categories={categories} />
+          <Wordmark />
+        </div>
 
         <div className="hidden items-center gap-8 font-mono text-xs uppercase tracking-wider text-ash md:flex">
           <Link className="transition-colors hover:text-volt" href="/shop">Shop all</Link>
