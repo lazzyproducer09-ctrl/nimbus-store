@@ -22,7 +22,11 @@ export default async function AccountPage() {
 
   const addresses = await getMyAddresses();
   const orders = await getMyOrders();
-  const isVerified = user.user_metadata?.otp_verified === true;
+  // Google confirms the address as part of signing in, so trust Supabase's own
+  // confirmation timestamp. This used to read an `otp_verified` flag set by our
+  // own six-digit code flow — with that flow gone, nothing set it any more and
+  // the Verified badge could never appear.
+  const isVerified = !!user.email_confirmed_at;
   const name: string = user.user_metadata?.full_name || user.user_metadata?.name || "";
 
   return (
