@@ -148,13 +148,10 @@ export function SideMenu({
         }`}
       >
         <div className="flex items-center justify-between border-b border-edge px-4 py-4">
-          {/* Signed in → greet by name; signed out → the YOINK wordmark. Both
-              still link home so the top-left always goes back to the store. */}
+          {/* Signed in → the user's name, linking to their account; signed
+              out → the YOINK wordmark, linking home. */}
           {userName ? (
-            <Link href="/account" className="flex min-w-0 flex-col leading-tight">
-              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ash">
-                Hey,
-              </span>
+            <Link href="/account" className="flex min-w-0 items-center">
               <span className="truncate font-heading text-lg font-bold text-chalk">
                 {userName}
               </span>
