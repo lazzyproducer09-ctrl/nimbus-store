@@ -25,9 +25,6 @@ const MINIMAL_ROUTES = [
   "/login",
   "/signup",
   "/welcome",
-  "/forgot-password",
-  "/reset-password",
-  "/verify-email",
 ];
 
 const linkClass =

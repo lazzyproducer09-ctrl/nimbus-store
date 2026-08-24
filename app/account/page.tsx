@@ -3,7 +3,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "@/components/LogoutButton";
-import { AccountVerifyBanner } from "@/components/AccountVerifyBanner";
 import { PersonalInfo } from "@/components/PersonalInfo";
 import { AddressManager } from "@/components/AddressManager";
 import { getMyAddresses } from "@/lib/addresses";
@@ -30,12 +29,7 @@ export default async function AccountPage() {
     <div className="mx-auto w-full max-w-3xl px-5 py-12">
       <h1 className="font-heading text-3xl font-semibold tracking-tight">My account</h1>
 
-      <div className="mt-6">
-        <AccountVerifyBanner
-          email={user.email!}
-          verified={user.user_metadata?.otp_verified === true}
-        />
-      </div>
+      <div className="mt-6" />
 
       <div className="rounded-2xl border border-edge bg-coal p-6">
         <div className="flex items-center justify-between">

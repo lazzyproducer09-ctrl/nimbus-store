@@ -15,7 +15,7 @@ export default function SignupPage() {
       </p>
 
       <div className="mt-8">
-        <AuthForm mode="signup" />
+        <AuthForm />
       </div>
 
       <p className="mt-6 text-sm text-ash">

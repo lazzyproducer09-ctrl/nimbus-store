@@ -8,7 +8,7 @@ import { YoinkMark, TruckIcon, LockIcon, ShieldIcon } from "./icons";
 // `blurb` is the short line under the logo, edited in Admin → Storefront content.
 export function Footer({ blurb }: { blurb: string }) {
   const pathname = usePathname();
-  if (["/login", "/signup", "/welcome", "/forgot-password", "/reset-password", "/verify-email"].includes(pathname)) return null;
+  if (["/login", "/signup", "/welcome"].includes(pathname)) return null;
 
   return (
     <footer className="border-t border-edge bg-coal text-chalk">

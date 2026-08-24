@@ -11,7 +11,7 @@ export default function LoginPage() {
       <p className="mt-1 text-sm text-ash">Log in to your YOINK account.</p>
 
       <div className="mt-8">
-        <AuthForm mode="login" />
+        <AuthForm />
       </div>
 
       <p className="mt-6 text-sm text-ash">

@@ -8,7 +8,7 @@ import { SideMenu } from "./SideMenu";
 import type { Category } from "@/lib/categories";
 
 // Pages that get a stripped-down header (just the logo) — like real stores' auth pages.
-const MINIMAL_ROUTES = ["/login", "/signup", "/welcome", "/forgot-password", "/reset-password", "/verify-email"];
+const MINIMAL_ROUTES = ["/login", "/signup", "/welcome"];
 
 // The three shop views. Shown inline here on desktop; the menu carries the same
 // three on phones, where there is no room for them in the bar.

@@ -9,9 +9,6 @@ const MINIMAL_ROUTES = [
   "/login",
   "/signup",
   "/welcome",
-  "/forgot-password",
-  "/reset-password",
-  "/verify-email",
 ];
 
 // Rotating trust messages that sit above the header. The list is edited in

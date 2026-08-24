@@ -14,7 +14,7 @@ import { usePathname } from "next/navigation";
 // support bubble is just clutter.
 // ---------------------------------------------------------------------------
 
-const HIDDEN_PREFIXES = ["/admin", "/login", "/signup", "/welcome", "/forgot-password", "/reset-password", "/verify-email", "/checkout"];
+const HIDDEN_PREFIXES = ["/admin", "/login", "/signup", "/welcome", "/checkout"];
 
 export function whatsappHref(number: string, message: string) {
   return `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
