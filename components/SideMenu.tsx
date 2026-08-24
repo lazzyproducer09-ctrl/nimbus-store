@@ -17,8 +17,8 @@ import { MenuIcon, CloseIcon, YoinkMark, ChevronIcon } from "./icons";
 // and over (the shop views, search, cart) stay in the header bar, so neither
 // surface ends up crowded.
 //
-// Categories collapse behind a single row. Six of them listed flat pushed
-// everything else off the first screen.
+// Categories and Help each collapse behind a single row. Listed flat they
+// pushed everything else off the first screen.
 // ---------------------------------------------------------------------------
 
 const MINIMAL_ROUTES = [
@@ -41,6 +41,45 @@ function GroupLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
+// A group that folds behind one row. Used for Categories and Help so both
+// behave identically — same chevron, same indent, same keyboard semantics.
+function Collapsible({
+  id,
+  label,
+  open,
+  onToggle,
+  children,
+}: {
+  id: string;
+  label: string;
+  open: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <>
+      <button
+        onClick={onToggle}
+        aria-expanded={open}
+        aria-controls={id}
+        className={`${linkClass} flex w-full items-center justify-between gap-2 text-left`}
+      >
+        {label}
+        <ChevronIcon
+          className={`h-4 w-4 flex-shrink-0 transition-transform duration-200 ${
+            open ? "rotate-180" : ""
+          }`}
+        />
+      </button>
+      {open && (
+        <div id={id} className="ml-3 border-l border-edge pl-2">
+          {children}
+        </div>
+      )}
+    </>
+  );
+}
+
 export function SideMenu({
   loggedIn,
   admin = false,
@@ -54,15 +93,17 @@ export function SideMenu({
   const { count: wishlistCount, hydrated } = useWishlist();
   const [open, setOpen] = useState(false);
   const [showCategories, setShowCategories] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   // The panel is portalled to <body>, which only exists in the browser.
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
   // Close on navigation — otherwise the panel stays over the page you just
-  // asked for. Categories fold back up too, so it always reopens compact.
+  // asked for. The groups fold back up too, so it always reopens compact.
   useEffect(() => {
     setOpen(false);
     setShowCategories(false);
+    setShowHelp(false);
   }, [pathname]);
 
   // Escape closes it, and the page behind must not scroll while it's over them.
@@ -123,35 +164,23 @@ export function SideMenu({
         <nav className="flex-1 overflow-y-auto px-2 pb-6 pt-3" inert={!open || undefined}>
           {/* Collapsed by default — one row instead of six. */}
           {categories.length > 0 && (
-            <>
-              <button
-                onClick={() => setShowCategories((v) => !v)}
-                aria-expanded={showCategories}
-                aria-controls="menu-categories"
-                className={`${linkClass} flex w-full items-center justify-between gap-2 text-left`}
-              >
-                Categories
-                <ChevronIcon
-                  className={`h-4 w-4 flex-shrink-0 transition-transform duration-200 ${
-                    showCategories ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-              {showCategories && (
-                <div id="menu-categories" className="ml-3 border-l border-edge pl-2">
-                  {categories.map((c) => (
-                    <Link
-                      key={c.name}
-                      href={`/shop?category=${encodeURIComponent(c.name)}`}
-                      className={linkClass}
-                    >
-                      {c.name}
-                      <span className="block text-[11px] text-ash-dim">{c.blurb}</span>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </>
+            <Collapsible
+              id="menu-categories"
+              label="Categories"
+              open={showCategories}
+              onToggle={() => setShowCategories((v) => !v)}
+            >
+              {categories.map((c) => (
+                <Link
+                  key={c.name}
+                  href={`/shop?category=${encodeURIComponent(c.name)}`}
+                  className={linkClass}
+                >
+                  {c.name}
+                  <span className="block text-[11px] text-ash-dim">{c.blurb}</span>
+                </Link>
+              ))}
+            </Collapsible>
           )}
 
           {/* On desktop these three sit in the header bar; a phone has no room
@@ -199,16 +228,24 @@ export function SideMenu({
             </Link>
           )}
 
-          <GroupLabel>Help</GroupLabel>
-          <Link href="/shipping" className={linkClass}>
-            Shipping
-          </Link>
-          <Link href="/refund" className={linkClass}>
-            Returns &amp; refunds
-          </Link>
-          <Link href="/contact" className={linkClass}>
-            Contact us
-          </Link>
+          <div className="pt-2">
+            <Collapsible
+              id="menu-help"
+              label="Help"
+              open={showHelp}
+              onToggle={() => setShowHelp((v) => !v)}
+            >
+              <Link href="/shipping" className={linkClass}>
+                Shipping
+              </Link>
+              <Link href="/refund" className={linkClass}>
+                Returns &amp; refunds
+              </Link>
+              <Link href="/contact" className={linkClass}>
+                Contact us
+              </Link>
+            </Collapsible>
+          </div>
         </nav>
       </aside>
     </>
