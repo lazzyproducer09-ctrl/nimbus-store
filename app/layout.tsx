@@ -54,6 +54,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     getCategories(),
   ]);
 
+  // First name for the menu's greeting — same fields the homepage reads.
+  // Empty when signed out, which is the menu's cue to show the YOINK wordmark.
+  const fullName: string =
+    user?.user_metadata?.full_name || user?.user_metadata?.name || "";
+  const firstName = fullName.trim().split(" ")[0];
+
   return (
     <html
       lang="en"
@@ -73,6 +79,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               loggedIn={!!user}
               admin={isAdmin(user?.email)}
               categories={categories}
+              userName={firstName}
             />
             <main className="flex flex-1 flex-col">{children}</main>
             <Footer blurb={content.footerBlurb} />

@@ -32,10 +32,12 @@ export function Header({
   loggedIn,
   admin = false,
   categories,
+  userName = "",
 }: {
   loggedIn: boolean;
   admin?: boolean;
   categories: Category[];
+  userName?: string;
 }) {
   const pathname = usePathname();
 
@@ -64,7 +66,7 @@ export function Header({
     <header className="sticky top-0 z-40 border-b border-edge bg-void/80 backdrop-blur-md">
       <nav className="grid h-16 w-full grid-cols-[1fr_auto_1fr] items-center px-3 sm:px-4">
         <div className="flex items-center gap-6 justify-self-start">
-          <SideMenu loggedIn={loggedIn} admin={admin} categories={categories} />
+          <SideMenu loggedIn={loggedIn} admin={admin} categories={categories} userName={userName} />
           <div className="hidden items-center gap-6 font-mono text-xs uppercase tracking-wider text-ash md:flex">
             {SHOP_LINKS.map((l) => (
               <Link key={l.href} href={l.href} className="transition-colors hover:text-volt">

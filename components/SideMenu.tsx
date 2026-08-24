@@ -84,10 +84,13 @@ export function SideMenu({
   loggedIn,
   admin = false,
   categories,
+  userName = "",
 }: {
   loggedIn: boolean;
   admin?: boolean;
   categories: Category[];
+  /** first name of the signed-in shopper; empty when signed out */
+  userName?: string;
 }) {
   const pathname = usePathname();
   const { count: wishlistCount, hydrated } = useWishlist();
@@ -145,16 +148,29 @@ export function SideMenu({
         }`}
       >
         <div className="flex items-center justify-between border-b border-edge px-4 py-4">
-          <Link href="/" className="flex items-center gap-2">
-            <YoinkMark className="h-5 w-5 text-volt" />
-            <span className="font-heading text-lg font-black tracking-[0.3em] text-chalk">
-              YOINK
-            </span>
-          </Link>
+          {/* Signed in → greet by name; signed out → the YOINK wordmark. Both
+              still link home so the top-left always goes back to the store. */}
+          {userName ? (
+            <Link href="/account" className="flex min-w-0 flex-col leading-tight">
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ash">
+                Hey,
+              </span>
+              <span className="truncate font-heading text-lg font-bold text-chalk">
+                {userName}
+              </span>
+            </Link>
+          ) : (
+            <Link href="/" className="flex items-center gap-2">
+              <YoinkMark className="h-5 w-5 text-volt" />
+              <span className="font-heading text-lg font-black tracking-[0.3em] text-chalk">
+                YOINK
+              </span>
+            </Link>
+          )}
           <button
             onClick={() => setOpen(false)}
             aria-label="Close menu"
-            className="flex h-8 w-8 items-center justify-center rounded-full text-ash transition-colors hover:bg-surface hover:text-chalk"
+            className="ml-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-ash transition-colors hover:bg-surface hover:text-chalk"
           >
             <CloseIcon className="h-4 w-4" />
           </button>
